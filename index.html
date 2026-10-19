@@ -16,7 +16,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- شاشة تسجيل الدخول السهلة -->
+    <!-- شاشة تسجيل الدخول -->
     <div id="login-screen" class="fixed inset-0 bg-pink-950/80 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border-t-4 border-pink-500">
             <div class="text-center mb-6">
@@ -24,7 +24,7 @@
                     <i class="fa-solid fa-spa"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-800">صالون جودة الأظافر</h2>
-                <p class="text-sm text-gray-500 mt-1">بوابة الإدارة الشاملة</p>
+                <p class="text-sm text-gray-500 mt-1">بوابة الإدارة الشاملة (صاحبة الصالون)</p>
             </div>
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
@@ -65,14 +65,16 @@
                 <button onclick="switchTab('invoices')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-file-invoice-dollar ml-1"></i> الفواتير والتعديل</button>
                 <button onclick="switchTab('bookings')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-calendar-check ml-1"></i> الحجوزات</button>
                 <button onclick="switchTab('staff')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-user-gear ml-1"></i> أداء الموظفات</button>
+                <button onclick="switchTab('staff-salaries')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-file-contract ml-1"></i> الرواتب والإقامات</button>
+                <button onclick="switchTab('expenses')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-wallet ml-1"></i> الإيجارات والمصروفات</button>
                 <button onclick="switchTab('profits')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-chart-line ml-1"></i> تقارير الأرباح</button>
-                <button onclick="switchTab('expenses')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-wallet ml-1"></i> المصروفات والرواتب</button>
                 <button onclick="switchTab('inventory')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-boxes-stacked ml-1"></i> المخزون</button>
                 <button onclick="switchTab('clients')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-users ml-1"></i> العملاء والولاء</button>
             </div>
         </nav>
 
         <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
+            <!-- 1. الكاشير -->
             <div id="tab-pos" class="tab-content active space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="md:col-span-2 bg-white p-5 rounded-2xl shadow-sm border">
@@ -83,8 +85,8 @@
                         <div>
                             <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-cart-shopping text-pink-600 ml-2"></i>الفاتورة الحالية</h2>
                             <div class="mb-3">
-                                <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميقة ورقم الجوال</label>
-                                <input type="text" id="pos-client-name" placeholder="اسم العميقة / الجوال" class="w-full px-3 py-2 border rounded-lg text-sm">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميلة ورقم الجوال</label>
+                                <input type="text" id="pos-client-name" placeholder="اسم العميلة / الجوال" class="w-full px-3 py-2 border rounded-lg text-sm">
                             </div>
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة المسؤولة</label>
@@ -110,11 +112,12 @@
                 </div>
             </div>
 
+            <!-- 2. الفواتير -->
             <div id="tab-invoices" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-file-invoice-dollar text-pink-600 ml-2"></i>سجل الفواتير وإدارتها</h2>
-                        <input type="text" id="search-invoice" onkeyup="renderInvoices()" placeholder="بحث برقم الفاتورة أو اسم العميقة..." class="px-4 py-2 border rounded-lg text-sm w-72">
+                        <input type="text" id="search-invoice" onkeyup="renderInvoices()" placeholder="بحث برقم الفاتورة أو اسم العميلة..." class="px-4 py-2 border rounded-lg text-sm w-72">
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
@@ -122,7 +125,7 @@
                                 <tr>
                                     <th class="p-3">رقم الفاتورة</th>
                                     <th class="p-3">التاريخ والوقت</th>
-                                    <th class="p-3">العميقة</th>
+                                    <th class="p-3">العميلة</th>
                                     <th class="p-3">الموظفة</th>
                                     <th class="p-3">الخدمات والمبلغ</th>
                                     <th class="p-3">الحالة</th>
@@ -135,6 +138,7 @@
                 </div>
             </div>
 
+            <!-- 3. الحجوزات -->
             <div id="tab-bookings" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex justify-between items-center mb-4">
@@ -145,7 +149,7 @@
                         <table class="w-full text-right text-sm">
                             <thead class="bg-pink-50 text-pink-900 border-b">
                                 <tr>
-                                    <th class="p-3">اسم العميقة</th>
+                                    <th class="p-3">اسم العميلة</th>
                                     <th class="p-3">رقم الجوال</th>
                                     <th class="p-3">الخدمة</th>
                                     <th class="p-3">الموعد والتاريخ</th>
@@ -160,17 +164,31 @@
                 </div>
             </div>
 
+            <!-- 4. أداء الموظفات -->
             <div id="tab-staff" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-user-gear text-pink-600 ml-2"></i>تقارير وأداء الموظفات</h2>
-                        <select id="staff-filter-period" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm font-bold">
-                            <option value="all">كل الفترات</option>
-                            <option value="today">اليوم</option>
-                            <option value="yesterday">أمس</option>
-                            <option value="this_month">الشهر الحالي</option>
-                            <option value="last_month">الشهر الماضي</option>
-                        </select>
+                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-user-gear text-pink-600 ml-2"></i>تقارير أداء الموظفات (حسب الوقت المحدد)</h2>
+                        <div class="flex items-center gap-2">
+                            <select id="staff-filter-period" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm font-bold">
+                                <option value="all">كل الفترات</option>
+                                <option value="today">اليوم</option>
+                                <option value="yesterday">أمس</option>
+                                <option value="this_month">الشهر الحالي</option>
+                                <option value="last_month">الشهر الماضي</option>
+                                <option value="custom">مخصص (من تاريخ إلى تاريخ)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="custom-date-box" class="hidden flex gap-3 mb-6 bg-pink-50 p-4 rounded-xl border">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-1">من تاريخ:</label>
+                            <input type="date" id="filter-start-date" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-1">إلى تاريخ:</label>
+                            <input type="date" id="filter-end-date" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm bg-white">
+                        </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="staff-summary-cards"></div>
                     <div class="overflow-x-auto">
@@ -179,7 +197,7 @@
                                 <tr>
                                     <th class="p-3">اسم الموظفة</th>
                                     <th class="p-3">عدد الخدمات المنفذة</th>
-                                    <th class="p-3">إجمالي الإيرادات (Total)</th>
+                                    <th class="p-3">إجمالي الإيرادات</th>
                                     <th class="p-3">تفاصيل الخدمات والأسعار</th>
                                 </tr>
                             </thead>
@@ -189,33 +207,40 @@
                 </div>
             </div>
 
-            <div id="tab-profits" class="tab-content space-y-6">
+            <!-- 5. رواتب وإقامات الموظفات -->
+            <div id="tab-staff-salaries" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-chart-line text-pink-600 ml-2"></i>تقارير الأرباح والملخص المالي</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                        <div class="p-4 bg-pink-50 rounded-xl border border-pink-100">
-                            <p class="text-xs text-gray-500 font-bold">إجمالي المبيعات</p>
-                            <h3 id="stat-sales" class="text-2xl font-black text-pink-600 mt-1">0.00 ر.س</h3>
-                        </div>
-                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                            <p class="text-xs text-gray-500 font-bold">إجمالي المصروفات والرواتب</p>
-                            <h3 id="stat-expenses" class="text-2xl font-black text-purple-600 mt-1">0.00 ر.س</h3>
-                        </div>
-                        <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                            <p class="text-xs text-gray-500 font-bold">صافي الأرباح</p>
-                            <h3 id="stat-net" class="text-2xl font-black text-emerald-600 mt-1">0.00 ر.س</h3>
-                        </div>
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-file-contract text-pink-600 ml-2"></i>إدارة رواتب الموظفات وإقاماتهن</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <input type="text" id="sal-name" placeholder="اسم الموظفة" class="px-3 py-2 border rounded-lg text-sm">
+                        <input type="number" id="sal-amount" placeholder="الراتب الشهري (ر.س)" class="px-3 py-2 border rounded-lg text-sm">
+                        <input type="text" id="sal-iqama" placeholder="تاريخ انتهاء الإقامة (مثال: 2028/05)" class="px-3 py-2 border rounded-lg text-sm">
+                        <button onclick="addStaffSalary()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">حفظ بيانات الموظفة</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-sm">
+                            <thead class="bg-pink-50 text-pink-900 border-b">
+                                <tr>
+                                    <th class="p-3">اسم الموظفة</th>
+                                    <th class="p-3">الراتب الشهري</th>
+                                    <th class="p-3">انتهاء الإقامة</th>
+                                    <th class="p-3 text-center">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staff-salaries-table-body"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
+            <!-- 6. الإيجارات والمصروفات -->
             <div id="tab-expenses" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-wallet text-pink-600 ml-2"></i>تسجيل المصروفات والإيجارات والرواتب</h2>
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-wallet text-pink-600 ml-2"></i>إدارة الإيجارات والمصروفات العامة</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <input type="text" id="exp-desc" placeholder="بيان المصروف (إيجار، رواتب، مواد...)" class="px-3 py-2 border rounded-lg text-sm">
-                        <input type="number" id="exp-amount" placeholder="المبلغ ر.س" class="px-3 py-2 border rounded-lg text-sm">
-                        <button onclick="addExpense()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">إضافة مصروف</button>
+                        <input type="text" id="exp-desc" placeholder="البيان (إيجار الصالون، فواتير، مواد...)" class="px-3 py-2 border rounded-lg text-sm">
+                        <input type="number" id="exp-amount" placeholder="المبلغ (ر.س)" class="px-3 py-2 border rounded-lg text-sm">
+                        <button onclick="addExpense()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">إضافة مصروف / إيجار</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
@@ -233,11 +258,33 @@
                 </div>
             </div>
 
+            <!-- 7. الأرباح -->
+            <div id="tab-profits" class="tab-content space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-chart-line text-pink-600 ml-2"></i>تقارير الأرباح والملخص المالي</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="p-4 bg-pink-50 rounded-xl border border-pink-100">
+                            <p class="text-xs text-gray-500 font-bold">إجمالي المبيعات</p>
+                            <h3 id="stat-sales" class="text-2xl font-black text-pink-600 mt-1">0.00 ر.س</h3>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
+                            <p class="text-xs text-gray-500 font-bold">إجمالي الرواتب والمصروفات</p>
+                            <h3 id="stat-expenses" class="text-2xl font-black text-purple-600 mt-1">0.00 ر.س</h3>
+                        </div>
+                        <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                            <p class="text-xs text-gray-500 font-bold">صافي الأرباح</p>
+                            <h3 id="stat-net" class="text-2xl font-black text-emerald-600 mt-1">0.00 ر.س</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. المخزون -->
             <div id="tab-inventory" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-boxes-stacked text-pink-600 ml-2"></i>إدارة المخزون والمنتجات</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <input type="text" id="inv-name" placeholder="اسم المنتج/الاداة" class="px-3 py-2 border rounded-lg text-sm">
+                        <input type="text" id="inv-name" placeholder="اسم المنتج / الأداة" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="number" id="inv-qty" placeholder="الكمية المتاحة" class="px-3 py-2 border rounded-lg text-sm">
                         <button onclick="addInventoryItem()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">إضافة للمخزون</button>
                     </div>
@@ -256,6 +303,7 @@
                 </div>
             </div>
 
+            <!-- 9. العملاء -->
             <div id="tab-clients" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-users text-pink-600 ml-2"></i>قاعدة العملاء ونقاط الولاء</h2>
@@ -263,7 +311,7 @@
                         <table class="w-full text-right text-sm">
                             <thead class="bg-pink-50 text-pink-900 border-b">
                                 <tr>
-                                    <th class="p-3">اسم العميقة / الجوال</th>
+                                    <th class="p-3">اسم العميلة / الجوال</th>
                                     <th class="p-3">عدد الزيارات</th>
                                     <th class="p-3">إجمالي المشتريات</th>
                                     <th class="p-3">نقاط الولاء</th>
@@ -284,7 +332,7 @@
             <input type="hidden" id="edit-inv-id">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميقة</label>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميلة</label>
                     <input type="text" id="edit-inv-client" class="w-full px-3 py-2 border rounded-lg text-sm">
                 </div>
                 <div>
@@ -322,7 +370,7 @@
             <input type="hidden" id="booking-id">
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميقة ورقم الجوال</label>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميلة ورقم الجوال</label>
                     <input type="text" id="book-client" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="الاسم / الجوال">
                 </div>
                 <div>
@@ -345,8 +393,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">تاريخ ووقت الموعد</label>
-                    <input type="datetime-local" id="book-datetime" class="w-full px-3 py-2 border rounded-lg text-sm">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">تاريخ ووقت الموعد (متاح من 2020 إلى 2050)</label>
+                    <input type="datetime-local" id="book-datetime" min="2020-01-01T00:00" max="2050-12-31T23:59" class="w-full px-3 py-2 border rounded-lg text-sm">
                 </div>
                 <div class="flex space-x-2 space-x-reverse pt-2">
                     <button onclick="saveBooking()" class="flex-1 bg-pink-600 text-white font-bold py-2 rounded-lg shadow text-sm">حفظ الحجز</button>
@@ -369,6 +417,12 @@
         let invoices = JSON.parse(localStorage.getItem('salon_invoices')) || [];
         let bookings = JSON.parse(localStorage.getItem('salon_bookings')) || [];
         let expenses = JSON.parse(localStorage.getItem('salon_expenses')) || [];
+        let staffSalaries = JSON.parse(localStorage.getItem('salon_staff_salaries')) || [
+            { name: "سارة", salary: 4000, iqama: "2028/05" },
+            { name: "نورا", salary: 3800, iqama: "2027/11" },
+            { name: "لينا", salary: 4200, iqama: "2029/02" },
+            { name: "فاطمة", salary: 3900, iqama: "2026/09" }
+        ];
         let inventory = JSON.parse(localStorage.getItem('salon_inventory')) || [
             { id: 1, name: "جل طلاء أظافر وردي", qty: 15 },
             { id: 2, name: "مبرد أظافر احترافي", qty: 40 }
@@ -473,6 +527,7 @@
             if(tabId === 'invoices') renderInvoices();
             if(tabId === 'bookings') renderBookings();
             if(tabId === 'staff') renderStaffPerformance();
+            if(tabId === 'staff-salaries') renderStaffSalaries();
             if(tabId === 'profits') renderProfits();
             if(tabId === 'expenses') renderExpenses();
             if(tabId === 'inventory') renderInventory();
@@ -533,7 +588,7 @@
                 alert('الرجاء اختيار خدمة واحدة على الأقل');
                 return;
             }
-            const clientName = document.getElementById('pos-client-name').value || 'عميقة عامة';
+            const clientName = document.getElementById('pos-client-name').value || 'عميلة عامة';
             const staffName = document.getElementById('pos-staff').value;
             const total = cart.reduce((sum, item) => sum + item.price, 0);
 
@@ -666,7 +721,7 @@
             const datetime = document.getElementById('book-datetime').value;
 
             if(!client || !datetime) {
-                alert('الرجاء إدخال اسم العميقة ووقت الموعد');
+                alert('الرجاء إدخال اسم العميلة ووقت الموعد');
                 return;
             }
 
@@ -703,11 +758,18 @@
         }
 
         function renderStaffPerformance() {
-            const period = document.getElementById('staff-filter-period')?.value || 'all';
+            const period = document.getElementById('staff-filter-period').value;
+            const customBox = document.getElementById('custom-date-box');
+            if(period === 'custom') {
+                customBox.classList.remove('hidden');
+            } else {
+                customBox.classList.add('hidden');
+            }
+
             const tbody = document.getElementById('staff-performance-tbody');
             const cardsContainer = document.getElementById('staff-summary-cards');
-
             const now = new Date();
+
             const filteredInvoices = invoices.filter(inv => {
                 if(inv.status !== 'مدفوعة') return false;
                 const invDate = new Date(inv.date);
@@ -722,6 +784,11 @@
                 } else if(period === 'last_month') {
                     const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
                     return invDate.getMonth() === lastMonth.getMonth() && invDate.getFullYear() === lastMonth.getFullYear();
+                } else if(period === 'custom') {
+                    const startDate = document.getElementById('filter-start-date').value;
+                    const endDate = document.getElementById('filter-end-date').value;
+                    if(!startDate || !endDate) return true;
+                    return invDate >= new Date(startDate) && invDate <= new Date(endDate + 'T23:59:59');
                 }
                 return true;
             });
@@ -760,14 +827,38 @@
             `).join('');
         }
 
-        function renderProfits() {
-            const totalSales = invoices.filter(i => i.status === 'مدفوعة').reduce((sum, i) => sum + i.total, 0);
-            const totalExp = expenses.reduce((sum, e) => sum + e.amount, 0);
-            const net = totalSales - totalExp;
+        function addStaffSalary() {
+            const name = document.getElementById('sal-name').value;
+            const salary = parseFloat(document.getElementById('sal-amount').value);
+            const iqama = document.getElementById('sal-iqama').value;
+            if(!name || isNaN(salary)) {
+                alert('الرجاء إدخال اسم الموظفة والراتب بشكل صحيح');
+                return;
+            }
+            staffSalaries.push({ name, salary, iqama: iqama || 'غير محدد' });
+            localStorage.setItem('salon_staff_salaries', JSON.stringify(staffSalaries));
+            document.getElementById('sal-name').value = '';
+            document.getElementById('sal-amount').value = '';
+            document.getElementById('sal-iqama').value = '';
+            renderStaffSalaries();
+        }
 
-            document.getElementById('stat-sales').innerText = totalSales.toFixed(2) + ' ر.س';
-            document.getElementById('stat-expenses').innerText = totalExp.toFixed(2) + ' ر.س';
-            document.getElementById('stat-net').innerText = net.toFixed(2) + ' ر.س';
+        function renderStaffSalaries() {
+            const tbody = document.getElementById('staff-salaries-table-body');
+            tbody.innerHTML = staffSalaries.map((st, idx) => `
+                <tr class="border-b">
+                    <td class="p-3 font-bold">${st.name}</td>
+                    <td class="p-3 text-pink-600 font-bold">${st.salary} ر.س</td>
+                    <td class="p-3 text-xs text-gray-600">${st.iqama}</td>
+                    <td class="p-3 text-center"><button onclick="deleteStaffSalary(${idx})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteStaffSalary(idx) {
+            staffSalaries.splice(idx, 1);
+            localStorage.setItem('salon_staff_salaries', JSON.stringify(staffSalaries));
+            renderStaffSalaries();
         }
 
         function addExpense() {
@@ -800,6 +891,18 @@
             expenses.splice(idx, 1);
             localStorage.setItem('salon_expenses', JSON.stringify(expenses));
             renderExpenses();
+        }
+
+        function renderProfits() {
+            const totalSales = invoices.filter(i => i.status === 'مدفوعة').reduce((sum, i) => sum + i.total, 0);
+            const totalSalaries = staffSalaries.reduce((sum, s) => sum + s.salary, 0);
+            const totalOtherExp = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const totalExpenses = totalSalaries + totalOtherExp;
+            const net = totalSales - totalExpenses;
+
+            document.getElementById('stat-sales').innerText = totalSales.toFixed(2) + ' ر.س';
+            document.getElementById('stat-expenses').innerText = totalExpenses.toFixed(2) + ' ر.س';
+            document.getElementById('stat-net').innerText = net.toFixed(2) + ' ر.س';
         }
 
         function addInventoryItem() {
