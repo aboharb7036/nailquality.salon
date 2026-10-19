@@ -117,10 +117,6 @@
                                 <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة المفضلة (اختياري)</label>
                                 <select id="client-book-staff" class="w-full px-3 py-2 border rounded-xl text-sm">
                                     <option value="أي موظفة متاحة">أي موظفة متاحة</option>
-                                    <option value="سارة">سارة</option>
-                                    <option value="نورا">نورا</option>
-                                    <option value="لينا">لينا</option>
-                                    <option value="فاطمة">فاطمة</option>
                                 </select>
                             </div>
                             <div>
@@ -191,12 +187,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة المسؤولة</label>
-                                <select id="pos-staff" class="w-full px-3 py-2 border rounded-lg text-sm">
-                                    <option value="سارة">سارة</option>
-                                    <option value="نورا">نورا</option>
-                                    <option value="لينا">لينا</option>
-                                    <option value="فاطمة">فاطمة</option>
-                                </select>
+                                <select id="pos-staff" class="w-full px-3 py-2 border rounded-lg text-sm"></select>
                             </div>
                             <div id="cart-items" class="space-y-2 max-h-48 overflow-y-auto mb-4 border-b pb-2">
                                 <p class="text-sm text-gray-400 text-center py-4">لم يتم اختيار خدمات بعد</p>
@@ -241,7 +232,7 @@
             <div id="tab-invoices" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-file-invoice-dollar text-pink-600 ml-2"></i>سجل الفواتير وإدارتها</h2>
+                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-file-invoice-dollar text-pink-600 ml-2"></i>سجل الفواتير وإدارتها والاسترجاع</h2>
                         <input type="text" id="search-invoice" onkeyup="renderInvoices()" placeholder="بحث برقم الفاتورة أو اسم العميلة..." class="px-4 py-2 border rounded-lg text-sm w-72">
                     </div>
                     <div class="overflow-x-auto">
@@ -335,10 +326,10 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-file-contract text-pink-600 ml-2"></i>إدارة رواتب الموظفات وإقاماتهن</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <input type="text" id="sal-name" placeholder="اسم الموظفة" class="px-3 py-2 border rounded-lg text-sm">
+                        <input type="text" id="sal-name" placeholder="اسم الموظفة الجديدة" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="number" id="sal-amount" placeholder="الراتب الشهري (ر.س)" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="text" id="sal-iqama" placeholder="انتهاء الإقامة (مثال: 2028/05)" class="px-3 py-2 border rounded-lg text-sm">
-                        <button onclick="addStaffSalary()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">حفظ بيانات الموظفة</button>
+                        <button onclick="addStaffSalary()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">حفظ وإضافة الموظفة</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
@@ -387,7 +378,7 @@
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-chart-line text-pink-600 ml-2"></i>تقارير الأرباح والملخص المالي</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                         <div class="p-4 bg-pink-50 rounded-xl border border-pink-100">
-                            <p class="text-xs text-gray-500 font-bold">إجمالي المبيعات</p>
+                            <p class="text-xs text-gray-500 font-bold">إجمالي المبيعات (الصافية بعد الاسترجاع)</p>
                             <h3 id="stat-sales" class="text-2xl font-black text-pink-600 mt-1">0.00 ر.س</h3>
                         </div>
                         <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
@@ -448,10 +439,10 @@
         </main>
     </div>
 
-    <!-- نافذة تعديل الفاتورة -->
+    <!-- نافذة تعديل الفاتورة والاسترجاع -->
     <div id="edit-invoice-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <h3 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-pen-to-square text-pink-600 ml-2"></i>تعديل الفاتورة</h3>
+            <h3 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-pen-to-square text-pink-600 ml-2"></i>تعديل الفاتورة أو الاسترجاع</h3>
             <input type="hidden" id="edit-inv-id">
             <div class="space-y-4">
                 <div>
@@ -460,12 +451,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة المسؤولة</label>
-                    <select id="edit-inv-staff" class="w-full px-3 py-2 border rounded-lg text-sm">
-                        <option value="سارة">سارة</option>
-                        <option value="نورا">نورا</option>
-                        <option value="لينا">لينا</option>
-                        <option value="فاطمة">فاطمة</option>
-                    </select>
+                    <select id="edit-inv-staff" class="w-full px-3 py-2 border rounded-lg text-sm"></select>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">السعر الإجمالي (ر.س)</label>
@@ -473,9 +459,9 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">حالة الفاتورة</label>
-                    <select id="edit-inv-status" class="w-full px-3 py-2 border rounded-lg text-sm">
+                    <select id="edit-inv-status" class="w-full px-3 py-2 border rounded-lg text-sm font-bold text-pink-600">
                         <option value="مدفوعة">مدفوعة</option>
-                        <option value="مسترجعة (Refund)">مسترجعة (Refund)</option>
+                        <option value="مسترجعة (Refund)">مسترجعة (Refund - لا تحسب بالأرباح)</option>
                     </select>
                 </div>
                 <div class="flex space-x-2 space-x-reverse pt-2">
@@ -502,12 +488,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة</label>
-                    <select id="book-staff" class="w-full px-3 py-2 border rounded-lg text-sm">
-                        <option value="سارة">سارة</option>
-                        <option value="نورا">نورا</option>
-                        <option value="لينا">لينا</option>
-                        <option value="فاطمة">فاطمة</option>
-                    </select>
+                    <select id="book-staff" class="w-full px-3 py-2 border rounded-lg text-sm font-bold"></select>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">تاريخ ووقت الموعد (متاح من 2020 إلى 2050)</label>
@@ -530,16 +511,17 @@
             { id: 5, name: "إزالة جل / أكريليك", price: 60 }
         ];
 
-        let cart = [];
-        let invoices = JSON.parse(localStorage.getItem('salon_invoices')) || [];
-        let bookings = JSON.parse(localStorage.getItem('salon_bookings')) || [];
-        let expenses = JSON.parse(localStorage.getItem('salon_expenses')) || [];
         let staffSalaries = JSON.parse(localStorage.getItem('salon_staff_salaries')) || [
             { name: "سارة", salary: 4000, iqama: "2028/05" },
             { name: "نورا", salary: 3800, iqama: "2027/11" },
             { name: "لينا", salary: 4200, iqama: "2029/02" },
             { name: "فاطمة", salary: 3900, iqama: "2026/09" }
         ];
+
+        let cart = [];
+        let invoices = JSON.parse(localStorage.getItem('salon_invoices')) || [];
+        let bookings = JSON.parse(localStorage.getItem('salon_bookings')) || [];
+        let expenses = JSON.parse(localStorage.getItem('salon_expenses')) || [];
         let inventory = JSON.parse(localStorage.getItem('salon_inventory')) || [
             { id: 1, name: "جل طلاء أظافر وردي", qty: 15 },
             { id: 2, name: "مبرد أظافر احترافي", qty: 40 }
@@ -552,6 +534,27 @@
             checkLockout();
         };
 
+        function getStaffNames() {
+            return staffSalaries.map(st => st.name);
+        }
+
+        function updateStaffDropdowns() {
+            const staffList = getStaffNames();
+            const selects = ['pos-staff', 'edit-inv-staff', 'book-staff', 'client-book-staff'];
+            selects.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    const currentVal = el.value;
+                    if(id === 'client-book-staff') {
+                        el.innerHTML = '<option value="أي موظفة متاحة">أي موظفة متاحة</option>' + staffList.map(s => `<option value="${s}">${s}</option>`).join('');
+                    } else {
+                        el.innerHTML = staffList.map(s => `<option value="${s}">${s}</option>`).join('');
+                    }
+                    el.value = currentVal;
+                }
+            });
+        }
+
         function backToMainGate() {
             document.getElementById('main-gate').classList.remove('hidden');
             document.getElementById('login-screen').classList.add('hidden');
@@ -562,6 +565,7 @@
         function openClientPortal() {
             document.getElementById('main-gate').classList.add('hidden');
             document.getElementById('client-portal').classList.remove('hidden');
+            updateStaffDropdowns();
             renderClientPortalServices();
         }
 
@@ -709,6 +713,7 @@
             event.currentTarget.classList.add('bg-pink-600', 'text-white', 'shadow');
             event.currentTarget.classList.remove('bg-white', 'text-gray-700');
             
+            updateStaffDropdowns();
             if(tabId === 'services') renderServicesManage();
             if(tabId === 'invoices') renderInvoices();
             if(tabId === 'bookings') renderBookings();
@@ -721,6 +726,7 @@
         }
 
         function initApp() {
+            updateStaffDropdowns();
             renderAdminServices();
             renderServicesManage();
             renderInvoices();
@@ -760,7 +766,7 @@
             document.getElementById('new-srv-price').value = '';
             renderServicesManage();
             renderAdminServices();
-            alert('تمت إضافة الخدمة بنجاح وتحديثها لدى بوابة العميقة فوراً!');
+            alert('تمت إضافة الخدمة بنجاح وتحديثها لدى بوابة العميلة فوراً!');
         }
 
         function deleteService(idx) {
@@ -852,13 +858,14 @@
                     <td class="p-3">${inv.services.map(s => s.name).join(', ')} <br><strong>${inv.total} ر.س</strong></td>
                     <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${inv.status === 'مدفوعة' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">${inv.status}</span></td>
                     <td class="p-3 text-center">
-                        <button onclick="openEditInvoiceModal('${inv.id}')" class="bg-pink-50 text-pink-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-pink-100 transition"><i class="fa-solid fa-pen ml-1"></i> تعديل</button>
+                        <button onclick="openEditInvoiceModal('${inv.id}')" class="bg-pink-50 text-pink-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-pink-100 transition"><i class="fa-solid fa-pen ml-1"></i> تعديل / استرجاع</button>
                     </td>
                 </tr>
             `).join('');
         }
 
         function openEditInvoiceModal(id) {
+            updateStaffDropdowns();
             const inv = invoices.find(i => i.id === id);
             if(!inv) return;
             document.getElementById('edit-inv-id').value = inv.id;
@@ -884,7 +891,7 @@
                 localStorage.setItem('salon_invoices', JSON.stringify(invoices));
                 closeEditInvoiceModal();
                 renderInvoices();
-                alert('تم تعديل الفاتورة بنجاح');
+                alert('تم تعديل الفاتورة وحالتها بنجاح');
             }
         }
 
@@ -912,6 +919,7 @@
         }
 
         function openBookingModal(id = null) {
+            updateStaffDropdowns();
             const sSelect = document.getElementById('book-service');
             sSelect.innerHTML = services.map(s => `<option value="${s.name} (${s.price} ر.س)">${s.name} - ${s.price} ر.س</option>`).join('');
 
@@ -995,7 +1003,7 @@
             const now = new Date();
 
             const filteredInvoices = invoices.filter(inv => {
-                if(inv.status !== 'مدفوعة') return false;
+                if(inv.status !== 'مدفوعة') return false; // الفواتير المسترجعة لا تحتسب في أداء الموظفات
                 const invDate = new Date(inv.date);
                 if(period === 'today') {
                     return invDate.toDateString() === now.toDateString();
@@ -1017,7 +1025,7 @@
                 return true;
             });
 
-            const staffList = ["سارة", "نورا", "لينا", "فاطمة"];
+            const staffList = getStaffNames();
             let staffStats = {};
             staffList.forEach(s => {
                 staffStats[s] = { count: 0, total: 0, details: [] };
@@ -1036,17 +1044,17 @@
             cardsContainer.innerHTML = staffList.map(s => `
                 <div class="p-4 bg-pink-50 rounded-xl border border-pink-100">
                     <p class="text-xs text-gray-500 font-bold">الموظفة: ${s}</p>
-                    <h3 class="text-xl font-black text-pink-600 mt-1">${staffStats[s].total} ر.س</h3>
-                    <p class="text-xs text-gray-600 mt-1">عدد الخدمات: ${staffStats[s].count}</p>
+                    <h3 class="text-xl font-black text-pink-600 mt-1">${staffStats[s] ? staffStats[s].total : 0} ر.س</h3>
+                    <p class="text-xs text-gray-600 mt-1">عدد الخدمات: ${staffStats[s] ? staffStats[s].count : 0}</p>
                 </div>
             `).join('');
 
             tbody.innerHTML = staffList.map(s => `
                 <tr class="border-b hover:bg-gray-50">
                     <td class="p-3 font-bold text-gray-800">${s}</td>
-                    <td class="p-3">${staffStats[s].count} خدمة</td>
-                    <td class="p-3 font-bold text-pink-600">${staffStats[s].total} ر.س</td>
-                    <td class="p-3 text-xs text-gray-600">${staffStats[s].details.join('، ') || 'لا توجد خدمات منفذة بالفترة'}</td>
+                    <td class="p-3">${staffStats[s] ? staffStats[s].count : 0} خدمة</td>
+                    <td class="p-3 font-bold text-pink-600">${staffStats[s] ? staffStats[s].total : 0} ر.س</td>
+                    <td class="p-3 text-xs text-gray-600">${staffStats[s] ? staffStats[s].details.join('، ') : 'لا توجد خدمات منفذة'}</td>
                 </tr>
             `).join('');
         }
@@ -1064,7 +1072,9 @@
             document.getElementById('sal-name').value = '';
             document.getElementById('sal-amount').value = '';
             document.getElementById('sal-iqama').value = '';
+            updateStaffDropdowns();
             renderStaffSalaries();
+            alert('تمت إضافة الموظفة بنجاح وربطها بنظام الأداء والكاشير!');
         }
 
         function renderStaffSalaries() {
@@ -1082,6 +1092,7 @@
         function deleteStaffSalary(idx) {
             staffSalaries.splice(idx, 1);
             localStorage.setItem('salon_staff_salaries', JSON.stringify(staffSalaries));
+            updateStaffDropdowns();
             renderStaffSalaries();
         }
 
@@ -1118,6 +1129,7 @@
         }
 
         function renderProfits() {
+            // المبيعات تحتسب فقط للفواتير المدفوعة (الفواتير المسترجعة مستبعدة تماماً)
             const totalSales = invoices.filter(i => i.status === 'مدفوعة').reduce((sum, i) => sum + i.total, 0);
             const totalSalaries = staffSalaries.reduce((sum, s) => sum + s.salary, 0);
             const totalOtherExp = expenses.reduce((sum, e) => sum + e.amount, 0);
