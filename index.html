@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صالون جودة الأظافر - النظام الشامل المتكامل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6f42c1;
+            --primary-hover: #59339d;
+            --accent: #d63384;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f6f9; color: var(--dark); min-height: 100vh; }
+
+        /* شاشات الترحيب والدخول */
+        .auth-container { max-width: 450px; margin: 50px auto; background: white; padding: 30px; border-radius: 16px; box-shadow: var(--card-shadow); text-align: center; }
+        .auth-title { color: var(--primary); font-size: 24px; font-weight: 800; margin-bottom: 20px; }
+        .role-btn { width: 100%; padding: 14px; margin-bottom: 12px; border: 2px solid var(--primary); border-radius: 10px; background: white; color: var(--primary); font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .role-btn:hover { background: var(--primary); color: white; }
+
+        .form-group { margin-bottom: 12px; text-align: right; }
+        label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 13px; }
+        input, select, textarea { width: 100%; padding: 9px 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 13.5px; outline: none; }
+        input:focus, select:focus { border-color: var(--primary); }
+
+        .btn { padding: 9px 16px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 13.5px; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-warning { background: var(--warning); color: #212529; }
+
+        /* لوحة التحكم الرئيسية */
+        .app-layout { display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 280px; background: #fff; border-left: 1px solid #e9ecef; display: flex; flex-direction: column; padding: 20px; }
+        .sidebar .brand { font-size: 20px; font-weight: 800; color: var(--primary); margin-bottom: 20px; text-align: center; border-bottom: 2px solid #f8f9fa; padding-bottom: 12px; }
+        .nav-list { list-style: none; overflow-y: auto; flex: 1; }
+        .nav-item { padding: 10px 12px; border-radius: 10px; margin-bottom: 5px; cursor: pointer; color: var(--gray); font-weight: 600; font-size: 13px; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { background: #f0ebf8; color: var(--primary); font-weight: 700; }
+
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+
+        table { width: 100%; border-collapse: collapse; text-align: right; }
+        th, td { padding: 11px; border-bottom: 1px solid #e9ecef; font-size: 13.5px; }
+        th { background: #f8f9fa; color: var(--gray); font-weight: 700; }
+
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: #fff; padding: 18px; border-radius: 12px; box-shadow: var(--card-shadow); border-right: 4px solid var(--primary); }
+        .stat-title { font-size: 13px; color: var(--gray); margin-bottom: 6px; }
+        .stat-value { font-size: 22px; font-weight: 800; color: var(--dark); }
+
+        /* الكاشير */
+        .pos-layout { display: flex; gap: 20px; }
+        .pos-left { flex: 1.8; }
+        .pos-right { flex: 1.2; background: #fff; padding: 18px; border-radius: 12px; box-shadow: var(--card-shadow); }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; max-height: 400px; overflow-y: auto; }
+        .service-box { background: #fff; border: 1px solid #e9ecef; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .service-box:hover { border-color: var(--primary); background: #f0ebf8; }
+
+        /* واجهة العميلة */
+        .client-header { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        .client-body { max-width: 900px; margin: 25px auto; padding: 0 15px; }
+        .service-card { background: white; padding: 18px; border-radius: 12px; box-shadow: var(--card-shadow); display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+
+        .badge-pending { background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+        .badge-paid { background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+        .badge-refund { background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 12px; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #receipt-print-area, #receipt-print-area * { visibility: visible; }
+            #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; direction: rtl; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= 1. شاشة اختيار نوع المستخدم ================= -->
+    <div id="screen-welcome" class="auth-container">
+        <h1 class="auth-title">💅 صالون جودة الأظافر</h1>
+        <p style="color:var(--gray); margin-bottom:25px;">مرحباً بكِ! أهلاً وسهلاً في نظامنا الشامل</p>
+        <button class="role-btn" onclick="showAuthScreen('client')">👑 دخول كـ عميلة</button>
+        <button class="role-btn" style="border-color:var(--dark); color:var(--dark);" onclick="showAuthScreen('owner')">🔒 دخول صاحبة الصالون</button>
+    </div>
+
+    <!-- ================= 2. شاشة العميلات (دخول / جديد) ================= -->
+    <div id="screen-client-auth" class="auth-container" style="display:none;">
+        <h2 class="auth-title">بوابة العميلات ✨</h2>
+        
+        <div id="client-login-form">
+            <div class="form-group"><label>البريد الإلكتروني:</label><input type="email" id="c-login-email" placeholder="example@mail.com"></div>
+            <div class="form-group"><label>كلمة المرور:</label><input type="password" id="c-login-pass"></div>
+            <button class="btn btn-primary" style="width:100%;" onclick="loginClient()">تسجيل الدخول</button>
+            <p style="margin-top:15px; font-size:13px; color:var(--gray);">ليس لديكِ حساب؟ <a href="#" onclick="toggleClientAuth('signup')" style="color:var(--primary); font-weight:bold;">إنشاء حساب جديد</a></p>
+        </div>
+
+        <div id="client-signup-form" style="display:none;">
+            <div class="form-group"><label>الاسم الكريم:</label><input type="text" id="c-signup-name" placeholder="اسمك"></div>
+            <div class="form-group"><label>البريد الإلكتروني:</label><input type="email" id="c-signup-email" placeholder="example@mail.com"></div>
+            <div class="form-group"><label>رقم الجوال:</label><input type="text" id="c-signup-phone" placeholder="05xxxxxxxx"></div>
+            <div class="form-group"><label>كلمة المرور:</label><input type="password" id="c-signup-pass"></div>
+            <button class="btn btn-success" style="width:100%;" onclick="signupClient()">إنشاء الحساب وتأكيد البريد 📩</button>
+            <p style="margin-top:15px; font-size:13px; color:var(--gray);">لديكِ حساب بالفعل؟ <a href="#" onclick="toggleClientAuth('login')" style="color:var(--primary); font-weight:bold;">تسجيل الدخول</a></p>
+        </div>
+
+        <button class="btn btn-danger" style="margin-top:15px; background:none; color:var(--gray);" onclick="showWelcome()">الرجوع للخلف</button>
+    </div>
+
+    <!-- ================= 3. شاشة دخول صاحبة الصالون ================= -->
+    <div id="screen-owner-auth" class="auth-container" style="display:none;">
+        <h2 class="auth-title">دخول صاحبة الصالون 🔒</h2>
+        <div class="form-group"><label>اسم المستخدم:</label><input type="text" id="owner-user" placeholder="أدخل اسم المستخدم المعقد"></div>
+        <div class="form-group"><label>كلمة المرور:</label><input type="password" id="owner-pass" placeholder="أدخل كلمة المرور"></div>
+        <button class="btn btn-primary" style="width:100%;" onclick="loginOwner()">دخول لوحة التحكم</button>
+        <button class="btn btn-danger" style="margin-top:15px; background:none; color:var(--gray); width:100%;" onclick="showWelcome()">الرجوع للخلف</button>
+    </div>
+
+    <!-- ================= 4. واجهة العميلة (عروض وحجز) ================= -->
+    <div id="screen-client-view" style="display:none;">
+        <div class="client-header">
+            <h2 style="color:var(--primary);">💅 صالون جودة الأظافر</h2>
+            <div>
+                <span id="client-welcome-msg" style="margin-left:15px; font-weight:bold;"></span>
+                <button class="btn btn-danger" onclick="logout()">تسجيل الخروج</button>
+            </div>
+        </div>
+
+        <div class="client-body">
+            <div class="card" style="background:#f0ebf8; text-align:center;">
+                <h3>أهلاً بكِ في قائمة الخدمات والأسعار والعروض ✨</h3>
+                <p style="color:var(--gray); font-size:13px; margin-top:5px;">يمكنكِ الاطلاع على الأسعار وحجز موعدكِ مباشرة</p>
+            </div>
+
+            <h3 style="margin-bottom:15px;">💎 الخدمات والأسعار المتاحة:</h3>
+            <div id="client-prices-list"></div>
+
+            <div style="text-align:center; margin:30px 0;">
+                <button class="btn btn-primary" style="font-size:18px; padding:12px 30px;" onclick="openBookingModal()">🗓️ حجز موعد جديد الآن</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة حجز موعد العميلة -->
+    <div id="booking-modal" class="auth-container" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:500px; z-index:999; border:2px solid var(--primary);">
+        <h3 style="color:var(--primary); margin-bottom:15px;">🗓️ حجز موعد جديد</h3>
+        <div class="form-group"><label>الخدمة المطلوبة:</label><select id="book-service-select"></select></div>
+        <div class="form-group"><label>تاريخ الموعد:</label><input type="date" id="book-date"></div>
+        <div class="form-group"><label>الوقت المحدد:</label><input type="time" id="book-time"></div>
+        <div class="form-group"><label>رقم الجوال:</label><input type="text" id="book-phone" placeholder="05xxxxxxxx"></div>
+        
+        <button class="btn btn-success" style="width:100%; margin-bottom:10px;" onclick="confirmBooking()">تأكيد الحجز والدفع</button>
+        <button class="btn btn-danger" style="width:100%;" onclick="closeBookingModal()">إلغاء</button>
+    </div>
+
+    <!-- نافذة دفع العربون -->
+    <div id="deposit-modal" class="auth-container" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:500px; z-index:1000; border:2px solid var(--success);">
+        <h3 style="color:var(--success); margin-bottom:15px;">✅ تم طلب الحجز برقم: <span id="dep-booking-id"></span></h3>
+        <div style="background:#fff3cd; padding:15px; border-radius:10px; margin-bottom:15px; text-align:right;">
+            <p style="font-weight:bold; color:#856404;">الرجاء دفع العربون بالتواصل مع جوال الصالون:</p>
+            <h2 style="text-align:center; color:var(--dark); margin:10px 0;">📱 0500000000</h2>
+        </div>
+        <button class="btn btn-primary" style="width:100%;" onclick="goToWhatsapp()">التواصل عبر الواتساب لتأكيد العربون 📲</button>
+        <button class="btn btn-danger" style="width:100%; margin-top:10px;" onclick="closeDepositModal()">إغلاق الشاشة</button>
+    </div>
+
+    <!-- ================= 5. لوحة تحكم صاحبة الصالون الكاملة ================= -->
+    <div id="screen-owner-view" class="app-layout" style="display:none;">
+        <div class="sidebar">
+            <div class="brand">💅 جودة الأظافر</div>
+            <ul class="nav-list">
+                <li class="nav-item active" onclick="switchTab('customers-tab', this)">👑 سجل العملاء ونقاط الولاء</li>
+                <li class="nav-item" onclick="switchTab('pos-tab', this)">🛒 الكاشير ونقاط البيع</li>
+                <li class="nav-item" onclick="switchTab('invoices-tab', this)">📄 سجل الفواتير والطباعة</li>
+                <li class="nav-item" onclick="switchTab('bookings-tab', this)">📅 الحجوزات والعرابين</li>
+                <li class="nav-item" onclick="switchTab('dashboard-tab', this)">📊 الأرباح والمقارنات البيانية</li>
+                <li class="nav-item" onclick="switchTab('services-tab', this)">💆‍♀️ إدارة الخدمات والأسعار</li>
+                <li class="nav-item" onclick="switchTab('rents-tab', this)">🏢 إدارة الإيجارات والمصاريف</li>
+                <li class="nav-item" onclick="switchTab('employees-tab', this)">👩‍💼 الموظفات والرواتب</li>
+                <li class="nav-item" onclick="switchTab('inventory-tab', this)">📦 المستلزمات والمخزون</li>
+            </ul>
+            <button class="btn btn-danger" style="margin-top:auto;" onclick="logout()">تسجيل الخروج 🔒</button>
+        </div>
+
+        <div class="main-content">
+
+            <!-- 1. سجل العملاء ونقاط الولاء والبحث الشامل -->
+            <div id="customers-tab" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>👑 سجل العملاء الشامل ونقاط الولاء ⭐</h3>
+                        <input type="text" id="cust-search-input" placeholder="🔍 ابحث باسم العميلة أو رقم جوالها..." style="width:320px;" oninput="renderCustomersTable()">
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم العميلة</th>
+                                <th>رقم الجوال / البريد</th>
+                                <th>تاريخ آخر خدمة 📅</th>
+                                <th>نقاط الولاء ⭐</th>
+                                <th>إجمالي ما دفعته</th>
+                                <th>سجل وتفاصيل الخدمات السابقة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. الكاشير ونقاط البيع -->
+            <div id="pos-tab" class="tab-content">
+                <div class="pos-layout">
+                    <div class="pos-left">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>قائمة الخدمات للبيع المباشر</h3>
+                                <input type="text" id="pos-search" placeholder="🔍 بحث..." style="width: 180px;" oninput="renderPOSServices()">
+                            </div>
+                            <div class="services-grid" id="pos-services-container"></div>
+                        </div>
+                    </div>
+                    <div class="pos-right">
+                        <h3>إصدار فاتورة كاشير</h3>
+                        <div style="background:#f0ebf8; padding:10px; border-radius:8px; margin:10px 0;">
+                            <div class="form-group"><label>رقم الجوال:</label><input type="text" id="bill-phone" placeholder="05xxxxxxxx" onblur="checkCustomerByPhone()"></div>
+                            <div class="form-group" style="margin-bottom:6px;"><label>اسم العميلة:</label><input type="text" id="bill-name" placeholder="الاسم الكامل"></div>
+                            <div class="form-group" style="margin:0;">
+                                <label>نوع الخدمة:</label>
+                                <select id="bill-service-type" onchange="renderCart()">
+                                    <option value="salon">داخل الصالون 💇‍♀️</option>
+                                    <option value="home">خدمة منزلية 🏠 (+50 ر.س توصيل)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="cart-items-container" style="max-height: 160px; overflow-y: auto;">
+                            <p style="text-align:center; color:var(--gray); margin-top:15px;">السلة فارغة</p>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:16px; margin:10px 0;">
+                            <span>الإجمالي:</span><span id="cart-grand-total" style="color:var(--primary);">0 ر.س</span>
+                        </div>
+                        <div class="form-group">
+                            <label>طريقة الدفع:</label>
+                            <select id="bill-payment-method">
+                                <option value="مدى / شبكة">مدى / شبكة</option>
+                                <option value="كاش (نقدي)">كاش (نقدي)</option>
+                                <option value="تحويل بنكي">تحويل بنكي</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%; padding:10px;" onclick="checkoutInvoice()">إتمام الفاتورة 💳</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. سجل الفواتير والطباعة -->
+            <div id="invoices-tab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>سجل الفواتير الصادرة والطباعة</h3>
+                        <input type="text" id="inv-search" placeholder="🔍 بحث برقم الفاتورة أو اسم العميلة..." style="width:250px;" oninput="renderInvoicesTable()">
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>رقم الفاتورة</th><th>العميلة والجوال</th><th>الخدمات والموظفة</th><th>طريقة الدفع</th><th>الإجمالي</th><th>الحالة</th><th>التاريخ</th><th>الإجراءات</th></tr>
+                        </thead>
+                        <tbody id="invoices-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4. الحجوزات والعرابين -->
+            <div id="bookings-tab" class="tab-content">
+                <div class="card">
+                    <h3>📅 سجل حجوزات العميلات والعرابين</h3>
+                    <table style="margin-top:15px;">
+                        <thead>
+                            <tr><th>رقم الحجز</th><th>العميلة والجوال</th><th>الخدمة المطلوبة</th><th>الموعد والوقت</th><th>حالة العربون</th><th>الإجراءات</th></tr>
+                        </thead>
+                        <tbody id="owner-bookings-table"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 5. الأرباح والمقارنات البيانية -->
+            <div id="dashboard-tab" class="tab-content">
+                <h2>📊 التقرير الشامل والمقارنات البيانية للأرباح</h2>
+                <div style="display:flex; gap:10px; margin:15px 0;">
+                    <button class="btn btn-primary" onclick="updateChartComparison('day')">مقارنة بالأيام (اليوم مقابل أمس)</button>
+                    <button class="btn btn-primary" onclick="updateChartComparison('month')">مقارنة بالأشهر (هذا الشهر مقابل السابق)</button>
+                    <button class="btn btn-primary" onclick="updateChartComparison('year')">مقارنة بالسنوات (هذه السنة مقابل السابقة)</button>
+                </div>
+                <div class="grid-4">
+                    <div class="stat-card"><div class="stat-title">إجمالي مبيعات الفترة الحالية</div><div class="stat-value" id="chart-curr-income">0 ر.س</div></div>
+                    <div class="stat-card" style="border-color:var(--danger);"><div class="stat-title">إجمالي مبيعات الفترة السابقة</div><div class="stat-value" id="chart-prev-income">0 ر.س</div></div>
+                    <div class="stat-card" style="border-color:var(--success);"><div class="stat-title">نسبة النمو / التغير</div><div class="stat-value" id="chart-growth-rate">0%</div></div>
+                </div>
+                <div class="card">
+                    <h3>📈 الرسم البياني المقارن</h3>
+                    <div style="height:300px; margin-top:15px;">
+                        <canvas id="profitComparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. إدارة الخدمات والأسعار -->
+            <div id="services-tab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>تغيير وإدارة أسعار الخدمات والعروض (تنعكس عند العميلات)</h3>
+                        <button class="btn btn-primary" onclick="showServiceForm()">+ إضافة خدمة جديدة</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>اسم الخدمة</th><th>الوقت (دقيقة)</th><th>السعر الأساسي</th><th>الإجراءات</th></tr>
+                        </thead>
+                        <tbody id="owner-services-table"></tbody>
+                    </table>
+                </div>
+
+                <div class="card" id="srv-form" style="display:none;">
+                    <h4>إضافة / تعديل سعر خدمة</h4>
+                    <input type="hidden" id="srv-id">
+                    <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; margin-top:10px;">
+                        <div class="form-group"><label>اسم الخدمة:</label><input type="text" id="srv-name"></div>
+                        <div class="form-group"><label>الوقت (دقيقة):</label><input type="number" id="srv-time"></div>
+                        <div class="form-group"><label>السعر (ر.س):</label><input type="number" id="srv-price"></div>
+                    </div>
+                    <button class="btn btn-success" onclick="saveService()">حفظ وتحديث الأسعار</button>
+                </div>
+            </div>
+
+            <!-- 7. إدارة الإيجارات والمصاريف -->
+            <div id="rents-tab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🏢 إدارة إيجارات الصالون والسكن والمصاريف الثابتة</h3>
+                        <button class="btn btn-primary" onclick="showRentForm()">+ إضافة إيجار / مصروف</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>الاسم</th><th>عبارة عن ماذا</th><th>القيمة (ر.س)</th><th>مدة العقد (شهر)</th><th>تاريخ الدفعة القادمة</th><th>المتبقي لدفع الإيجار</th><th>الإجراءات</th></tr>
+                        </thead>
+                        <tbody id="rents-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="card" id="rent-form-card" style="display:none;">
+                    <h4>إضافة / تعديل إيجار</h4>
+                    <input type="hidden" id="rent-id">
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:10px;">
+                        <div class="form-group"><label>الاسم (مثال: إيجار المحل، شقق العاملات):</label><input type="text" id="rent-name"></div>
+                        <div class="form-group"><label>عبارة عن ماذا:</label><input type="text" id="rent-desc" placeholder="تفاصيل..."></div>
+                        <div class="form-group"><label>المبلغ (ر.س):</label><input type="number" id="rent-amount"></div>
+                        <div class="form-group"><label>مدة العقد (شهر):</label><input type="number" id="rent-months" value="6"></div>
+                        <div class="form-group"><label>تاريخ الاستحقاق القادم:</label><input type="date" id="rent-next-date"></div>
+                    </div>
+                    <button class="btn btn-success" onclick="saveRentItem()">حفظ الإيجار</button>
+                </div>
+            </div>
+
+            <!-- 8. الموظفات والرواتب -->
+            <div id="employees-tab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>👩‍💼 سجل الموظفات والرواتب والخصومات والعقود</h3>
+                        <button class="btn btn-primary" onclick="showEmpForm()">+ إضافة موظفة جديدة</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>اسم الموظفة</th><th>الجوال</th><th>الراتب الأساسي</th><th>الخصومات/السلف</th><th>الراتب الصافي</th><th>الإجازات</th><th>انتهاء العقد</th><th>الإجراءات</th></tr>
+                        </thead>
+                        <tbody id="employees-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="card" id="emp-form-card" style="display:none;">
+                    <h4>إضافة / تعديل موظفة</h4>
+                    <input type="hidden" id="emp-id">
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:10px;">
+                        <div class="form-group"><label>اسم الموظفة:</label><input type="text" id="emp-name"></div>
+                        <div class="form-group"><label>الجوال:</label><input type="text" id="emp-phone"></div>
+                        <div class="form-group"><label>الراتب الأساسي:</label><input type="number" id="emp-salary"></div>
+                        <div class="form-group"><label>الخصومات/السلف:</label><input type="number" id="emp-deductions" value="0"></div>
+                        <div class="form-group"><label>أيام الإجازات:</label><input type="number" id="emp-vacation" value="0"></div>
+                        <div class="form-group"><label>تاريخ انتهاء العقد:</label><input type="date" id="emp-expiry"></div>
+                    </div>
+                    <button class="btn btn-success" onclick="saveEmployee()">حفظ الموظفة</button>
+                </div>
+            </div>
+
+            <!-- 9. المستلزمات والمخزون -->
+            <div id="inventory-tab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📦 مستلزمات الصالون والأغراض والمخزون</h3>
+                        <button class="btn btn-primary" onclick="showInvForm()">+ إضافة غرض جديد</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>اسم الغرض</th><th>الكمية المتوفرة</th><th>الحد الأدنى للتنبيه</th><th>سعر التكلفة</th><th>التكلفة الإجمالية</th><th>الإجراءات</th></tr>
+                        </thead>
+                        <tbody id="inventory-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="card" id="inv-form-card" style="display:none;">
+                    <h4>إضافة / تعديل مستلزم صالون</h4>
+                    <input type="hidden" id="inv-id">
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-top:10px;">
+                        <div class="form-group"><label>اسم الغرض:</label><input type="text" id="inv-name"></div>
+                        <div class="form-group"><label>الكمية:</label><input type="number" id="inv-qty"></div>
+                        <div class="form-group"><label>الحد الأدنى:</label><input type="number" id="inv-min"></div>
+                        <div class="form-group"><label>سعر التكلفة:</label><input type="number" id="inv-cost"></div>
+                    </div>
+                    <button class="btn btn-success" onclick="saveInventoryItem()">حفظ الغرض</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- منطقة الطباعة للفواتير -->
+    <div id="receipt-print-area" style="display:none;">
+        <div style="text-align:center; margin-bottom:10px;">
+            <h2>💅 صالون جودة الأظافر</h2>
+            <p>فاتورة ضريبية مبسطة</p>
+            <p id="print-inv-id" style="font-weight:bold;"></p>
+        </div>
+        <hr>
+        <p id="print-cust-info"></p>
+        <p id="print-date"></p>
+        <hr>
+        <div id="print-items-list"></div>
+        <hr>
+        <h3 id="print-total" style="text-align:left;"></h3>
+        <div style="text-align:center; margin-top:15px;">
+            <p>شكرًا لزيارتك صالون جودة الأظافر! ✨</p>
+        </div>
+    </div>
+
+    <script>
+        // قواعد البيانات المحلية الشاملة
+        let services = JSON.parse(localStorage.getItem('j_services')) || [
+            { id: 1, name: 'بديكير ومناكير كلاسيك', time: 45, price: 120 },
+            { id: 2, name: 'تركيب أظافر جل بريميوم', time: 60, price: 200 }
+        ];
+
+        let employees = JSON.parse(localStorage.getItem('j_employees')) || [
+            { id: 1, name: 'سارة', phone: '0500000001', salary: 3000, deductions: 200, vacation: 3, expiry: '2027-05-15' },
+            { id: 2, name: 'ريم', phone: '0500000002', salary: 2800, deductions: 0, vacation: 0, expiry: '2026-11-20' }
+        ];
+
+        let inventory = JSON.parse(localStorage.getItem('j_inventory')) || [
+            { id: 1, name: 'طلاء أظافر احمر بريميوم', qty: 20, minQty: 5, cost: 25 }
+        ];
+
+        let rents = JSON.parse(localStorage.getItem('j_rents')) || [
+            { id: 1, name: 'إيجار المحل الرئيسي', desc: 'المعرض التجاري', amount: 40000, months: 12, nextDate: '2026-12-01' },
+            { id: 2, name: 'سكن العاملات', desc: 'شقة رقم 3', amount: 18000, months: 6, nextDate: '2026-11-15' }
+        ];
+
+        let customers = JSON.parse(localStorage.getItem('j_customers')) || [];
+        let invoices = JSON.parse(localStorage.getItem('j_invoices')) || [];
+        let bookings = JSON.parse(localStorage.getItem('j_bookings')) || [];
+        let cart = [];
+        let currentClientEmail = '';
+        let myChart = null;
+
+        function saveData() {
+            localStorage.setItem('j_services', JSON.stringify(services));
+            localStorage.setItem('j_employees', JSON.stringify(employees));
+            localStorage.setItem('j_inventory', JSON.stringify(inventory));
+            localStorage.setItem('j_rents', JSON.stringify(rents));
+            localStorage.setItem('j_customers', JSON.stringify(customers));
+            localStorage.setItem('j_invoices', JSON.stringify(invoices));
+            localStorage.setItem('j_bookings', JSON.stringify(bookings));
+            renderAll();
+        }
+
+        // التحكم بالشاشات التنقلية
+        function hideAllScreens() {
+            document.getElementById('screen-welcome').style.display = 'none';
+            document.getElementById('screen-client-auth').style.display = 'none';
+            document.getElementById('screen-owner-auth').style.display = 'none';
+            document.getElementById('screen-client-view').style.display = 'none';
+            document.getElementById('screen-owner-view').style.display = 'none';
+        }
+
+        function showWelcome() { hideAllScreens(); document.getElementById('screen-welcome').style.display = 'block'; }
+
+        function showAuthScreen(role) {
+            hideAllScreens();
+            if(role === 'client') document.getElementById('screen-client-auth').style.display = 'block';
+            else document.getElementById('screen-owner-auth').style.display = 'block';
+        }
+
+        function toggleClientAuth(mode) {
+            if(mode === 'signup') {
+                document.getElementById('client-login-form').style.display = 'none';
+                document.getElementById('client-signup-form').style.display = 'block';
+            } else {
+                document.getElementById('client-login-form').style.display = 'block';
+                document.getElementById('client-signup-form').style.display = 'none';
+            }
+        }
+
+        function signupClient() {
+            const name = document.getElementById('c-signup-name').value.trim();
+            const email = document.getElementById('c-signup-email').value.trim();
+            const phone = document.getElementById('c-signup-phone').value.trim();
+            const pass = document.getElementById('c-signup-pass').value.trim();
+
+            if(!email || !phone || !pass || !name) return alert('يرجى كتابة الاسم والبريد والجوال وكلمة المرور!');
+            
+            let found = customers.find(c => c.phone === phone || c.email === email);
+            if(!found) {
+                customers.push({ id: Date.now(), name, phone, email, points: 0, totalSpent: 0, lastServiceDate: 'لم تُنفذ خدمة بعد', history: [] });
+            }
+            saveData();
+
+            alert(`📩 تم إرسال رسالة تأكيد إلى بريدكِ الإلكتروني (${email})، يمكنكِ الآن تسجيل الدخول.`);
+            toggleClientAuth('login');
+        }
+
+        function loginClient() {
+            const email = document.getElementById('c-login-email').value.trim();
+            const pass = document.getElementById('c-login-pass').value.trim();
+
+            if(!email || !pass) return alert('أدخل البريد وكلمة المرور!');
+            currentClientEmail = email;
+            hideAllScreens();
+            document.getElementById('screen-client-view').style.display = 'block';
+            document.getElementById('client-welcome-msg').innerText = 'أهلاً بكِ: ' + email;
+            renderClientPrices();
+        }
+
+        function loginOwner() {
+            const user = document.getElementById('owner-user').value.trim();
+            const pass = document.getElementById('owner-pass').value.trim();
+
+            if (user === 'Owner_Jawharat_2026!#' && pass === 'X9#qL$8mZ@2026') {
+                hideAllScreens();
+                document.getElementById('screen-owner-view').style.display = 'flex';
+                renderAll();
+            } else {
+                alert('❌ اسم المستخدم أو كلمة المرور غير صحيحة!');
+            }
+        }
+
+        function logout() { showWelcome(); }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(el) el.classList.add('active');
+            if(tabId === 'dashboard-tab') initChart();
+        }
+
+        function renderAll() {
+            renderCustomersTable();
+            renderPOSServices();
+            renderInvoicesTable();
+            renderOwnerBookings();
+            renderOwnerServices();
+            renderRentsTable();
+            renderEmployeesTable();
+            renderInventoryTable();
+        }
+
+        // ================= 1. سجل العملاء ونقاط الولاء والبحث =================
+        function renderCustomersTable() {
+            const tbody = document.getElementById('customers-table-body');
+            const searchVal = (document.getElementById('cust-search-input') ? document.getElementById('cust-search-input').value : '').toLowerCase().trim();
+            tbody.innerHTML = '';
+
+            const filtered = customers.filter(c => 
+                (c.name || '').toLowerCase().includes(searchVal) || 
+                (c.phone || '').includes(searchVal) ||
+                (c.email || '').toLowerCase().includes(searchVal)
+            );
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--gray); padding:20px;">لا توجد عميلات مطابقة للبحث</td></tr>';
+                return;
+            }
+
+            filtered.forEach(c => {
+                let historyHtml = (c.history && c.history.length > 0) ? c.history.map(h => `• ${h}`).join('<br>') : 'لا توجد عمليات سابقة';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${c.name}</b></td>
+                        <td>${c.phone}<br><small style="color:var(--gray);">${c.email || ''}</small></td>
+                        <td><span style="color:var(--primary); font-weight:700;">${c.lastServiceDate || 'غير محدد'}</span></td>
+                        <td><span style="color:var(--primary); font-weight:800;">⭐ ${c.points || 0} نقطة</span></td>
+                        <td><b>${c.totalSpent || 0} ر.س</b></td>
+                        <td><div style="font-size:12px; max-height:80px; overflow-y:auto;">${historyHtml}</div></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // ================= 2. الكاشير ونقاط البيع =================
+        function renderPOSServices() {
+            const container = document.getElementById('pos-services-container');
+            const searchVal = document.getElementById('pos-search').value.toLowerCase();
+            container.innerHTML = '';
+            
+            services.filter(s => s.name.toLowerCase().includes(searchVal)).forEach(s => {
+                container.innerHTML += `
+                    <div class="service-box" onclick="addToCart(${s.id})">
+                        <div style="font-weight:700; font-size:12px;">${s.name}</div>
+                        <div style="color:var(--gray); font-size:11px;">⏱️ ${s.time} دقيقة</div>
+                        <div style="color:var(--primary); font-weight:800; font-size:13px;">${s.price} ر.س</div>
+                    </div>
+                `;
+            });
+        }
+
+        function addToCart(sId) {
+            const s = services.find(x => x.id === sId);
+            cart.push({ ...s, employee: employees.length > 0 ? employees[0].name : 'عام' });
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--gray); margin-top:15px;">السلة فارغة</p>';
+                document.getElementById('cart-grand-total').innerText = '0 ر.س';
+                return;
+            }
+
+            let html = '';
+            let grandTotal = 0;
+            const isHomeService = document.getElementById('bill-service-type').value === 'home';
+            if(isHomeService) grandTotal += 50;
+
+            cart.forEach((item, index) => {
+                grandTotal += parseFloat(item.price) || 0;
+                let empOptions = employees.map(e => `<option value="${e.name}" ${item.employee === e.name ? 'selected' : ''}>${e.name}</option>`).join('');
+
+                html += `
+                    <div style="background:#f8f9fa; padding:8px; border-radius:6px; margin-bottom:6px; font-size:12px;">
+                        <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                            <span>${item.name} (${item.time} د)</span>
+                            <button class="btn btn-danger" style="padding:2px 6px;" onclick="cart.splice(${index},1); renderCart();">حذف</button>
+                        </div>
+                        <div style="display:flex; gap:5px; margin-top:4px;">
+                            <input type="number" value="${item.price}" onchange="cart[${index}].price=this.value; renderCart();" style="padding:2px; font-weight:bold; width:70px;">
+                            <select onchange="cart[${index}].employee=this.value;">${empOptions}</select>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('cart-grand-total').innerText = grandTotal + ' ر.س' + (isHomeService ? ' (شامل التوصيل)' : '');
+        }
+
+        function checkCustomerByPhone() {
+            const phone = document.getElementById('bill-phone').value.trim();
+            const found = customers.find(c => c.phone === phone);
+            if (found) document.getElementById('bill-name').value = found.name;
+        }
+
+        function checkoutInvoice() {
+            if (cart.length === 0) return alert('السلة فارغة!');
+            const phone = document.getElementById('bill-phone').value.trim();
+            const name = document.getElementById('bill-name').value.trim();
+            const paymentMethod = document.getElementById('bill-payment-method').value;
+
+            if (!phone || !name) return alert('يرجى كتابة رقم الجوال واسم العميلة!');
+
+            let grandTotal = cart.reduce((s, i) => s + (parseFloat(i.price) || 0), 0);
+            if(document.getElementById('bill-service-type').value === 'home') grandTotal += 50;
+
+            const now = new Date();
+            const currentDateStr = now.toLocaleDateString('ar-SA') + ' ' + now.toLocaleTimeString('ar-SA');
+
+            let cust = customers.find(c => c.phone === phone);
+            const itemsListStr = cart.map(i => i.name + ' (' + i.employee + ')').join(', ');
+
+            if (cust) {
+                cust.name = name;
+                cust.points += Math.floor(grandTotal / 10);
+                cust.totalSpent += grandTotal;
+                cust.lastServiceDate = currentDateStr;
+                if(!cust.history) cust.history = [];
+                cust.history.push(`فاتورة بقيمة ${grandTotal} ر.س - خدمات: ${itemsListStr} بتاريخ ${currentDateStr}`);
+            } else {
+                customers.push({ 
+                    id: Date.now(), 
+                    name, 
+                    phone, 
+                    points: Math.floor(grandTotal / 10), 
+                    totalSpent: grandTotal, 
+                    lastServiceDate: currentDateStr,
+                    history: [`فاتورة بقيمة ${grandTotal} ر.س - خدمات: ${itemsListStr} بتاريخ ${currentDateStr}`] 
+                });
+            }
+
+            const invId = 'INV-' + Math.floor(1000 + Math.random() * 9000);
+            
+            invoices.push({
+                id: invId,
+                customerName: name, 
+                customerPhone: phone,
+                items: [...cart], 
+                total: grandTotal,
+                paymentMethod: paymentMethod,
+                status: 'مدفوعة',
+                rawDate: now.toISOString(),
+                date: currentDateStr
+            });
+
+            cart = [];
+            document.getElementById('bill-phone').value = '';
+            document.getElementById('bill-name').value = '';
+            renderCart();
+            saveData();
+            alert('✅ تم تسديد الفاتورة بنجاح وحفظ نقاط العميلة وتحديث سجلها!');
+        }
+
+        // ================= 3. الفواتير والطباعة والاسترجاع =================
+        function renderInvoicesTable() {
+            const tbody = document.getElementById('invoices-table-body');
+            const searchVal = (document.getElementById('inv-search') ? document.getElementById('inv-search').value : '').toLowerCase().trim();
+            tbody.innerHTML = '';
+
+            const filtered = invoices.filter(inv => 
+                inv.id.toLowerCase().includes(searchVal) || 
+                inv.customerName.toLowerCase().includes(searchVal) || 
+                inv.customerPhone.includes(searchVal)
+            );
+
+            filtered.reverse().forEach(inv => {
+                let itemsList = inv.items.map(i => `• ${i.name} (الموظفة: <b>${i.employee}</b>)`).join('<br>');
+                let statusBadge = inv.status === 'مسترجعة' ? '<span class="badge-refund">مسترجعة 🔄</span>' : '<span class="badge-paid">مدفوعة ✅</span>';
+                let actionBtn = inv.status === 'مسترجعة' ? '-' : `
+                    <button class="btn btn-primary" onclick="printInvoiceReceipt('${inv.id}')">طباعة 🖨️</button>
+                    <button class="btn btn-warning" onclick="refundInvoice('${inv.id}')">استرجاع 🔄</button>
+                `;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${inv.id}</b></td>
+                        <td><b>${inv.customerName}</b><br><small style="color:var(--gray);">${inv.customerPhone}</small></td>
+                        <td><div style="font-size:12px;">${itemsList}</div></td>
+                        <td><b>${inv.paymentMethod || 'شبكة'}</b></td>
+                        <td><b>${inv.total} ر.س</b></td>
+                        <td>${statusBadge}</td>
+                        <td><small>${inv.date}</small></td>
+                        <td>${actionBtn}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function printInvoiceReceipt(invId) {
+            const inv = invoices.find(i => i.id === invId);
+            if(!inv) return;
+
+            document.getElementById('print-inv-id').innerText = 'رقم الفاتورة: ' + inv.id;
+            document.getElementById('print-cust-info').innerText = 'العميلة: ' + inv.customerName + ' (' + inv.customerPhone + ')';
+            document.getElementById('print-date').innerText = 'التاريخ: ' + inv.date;
+
+            let itemsHtml = '';
+            inv.items.forEach(i => {
+                itemsHtml += `<div style="display:flex; justify-content:space-between;"><span>${i.name} (${i.employee})</span><span>${i.price} ر.س</span></div>`;
+            });
+            document.getElementById('print-items-list').innerHTML = itemsHtml;
+            document.getElementById('print-total').innerText = 'الإجمالي: ' + inv.total + ' ر.س';
+
+            window.print();
+        }
+
+        function refundInvoice(invId) {
+            if(!confirm('هل أنت متأكد من رغبتك في استرجاع هذه الفاتورة؟')) return;
+            let inv = invoices.find(i => i.id === invId);
+            if (inv) {
+                inv.status = 'مسترجعة';
+                let cust = customers.find(c => c.phone === inv.customerPhone);
+                if (cust) {
+                    cust.points = Math.max(0, cust.points - Math.floor(inv.total / 10));
+                    cust.totalSpent = Math.max(0, cust.totalSpent - inv.total);
+                }
+                saveData();
+                alert('🔄 تم استرجاع الفاتورة وخصم النقاط بنجاح!');
+            }
+        }
+
+        // ================= 4. باقي الأقسام =================
+        function renderClientPrices() {
+            const container = document.getElementById('client-prices-list');
+            const selectBox = document.getElementById('book-service-select');
+            container.innerHTML = ''; selectBox.innerHTML = '';
+
+            services.forEach(s => {
+                container.innerHTML += `
+                    <div class="service-card">
+                        <div><h4 style="color:var(--primary);">${s.name}</h4><span style="color:var(--gray); font-size:12px;">⏱️ الوقت: ${s.time} دقيقة</span></div>
+                        <div style="font-size:20px; font-weight:800;">${s.price} ر.س</div>
+                    </div>
+                `;
+                selectBox.innerHTML += `<option value="${s.name}">${s.name} (${s.price} ر.س)</option>`;
+            });
+        }
+
+        function openBookingModal() { document.getElementById('booking-modal').style.display = 'block'; }
+        function closeBookingModal() { document.getElementById('booking-modal').style.display = 'none'; }
+
+        function confirmBooking() {
+            const service = document.getElementById('book-service-select').value;
+            const date = document.getElementById('book-date').value;
+            const time = document.getElementById('book-time').value;
+            const phone = document.getElementById('book-phone').value.trim();
+
+            if(!date || !time || !phone) return alert('أكمل البيانات!');
+
+            const bId = 'BK-' + Math.floor(1000 + Math.random() * 9000);
+            bookings.push({ id: bId, email: currentClientEmail, phone, service, date, time, status: 'بانتظار دفع العربون' });
+            
+            let cust = customers.find(c => c.phone === phone || c.email === currentClientEmail);
+            if(cust) {
+                if(!cust.history) cust.history = [];
+                cust.history.push(`حجز موعد برقم ${bId} لخدمة ${service} بتاريخ ${date}`);
+                cust.lastServiceDate = date;
+            }
+
+            saveData();
+            closeBookingModal();
+            document.getElementById('dep-booking-id').innerText = bId;
+            document.getElementById('deposit-modal').style.display = 'block';
+        }
+
+        function closeDepositModal() { document.getElementById('deposit-modal').style.display = 'none'; }
+
+        function goToWhatsapp() {
+            const bId = document.getElementById('dep-booking-id').innerText;
+            const msg = `مرحباً صالون جودة الأظافر، قمت بحجز موعد برقم: ${bId} وأود تحويل العربون.`;
+            window.open(`https://api.whatsapp.com/send?phone=966500000000&text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function renderOwnerBookings() {
+            const tbody = document.getElementById('owner-bookings-table');
+            tbody.innerHTML = '';
+            bookings.forEach(b => {
+                let badge = b.status === 'تم دفع العربون' ? '<span class="badge-paid">تم دفع العربون ✅</span>' : '<span class="badge-pending">بانتظار دفع العربون ⏳</span>';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${b.id}</b></td>
+                        <td>${b.email}<br><small>${b.phone}</small></td>
+                        <td>${b.service}</td>
+                        <td>${b.date} (${b.time})</td>
+                        <td>${badge}</td>
+                        <td><button class="btn btn-success" onclick="confirmDepositOwner('${b.id}')">تأكيد العربون</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function confirmDepositOwner(bId) {
+            let b = bookings.find(x => x.id === bId);
+            if(b) { b.status = 'تم دفع العربون'; saveData(); alert('تم تأكيد العربون بنجاح!'); }
+        }
+
+        function renderOwnerServices() {
+            const tbody = document.getElementById('owner-services-table');
+            tbody.innerHTML = '';
+            services.forEach(s => {
+                tbody.innerHTML += `<tr><td><b>${s.name}</b></td><td>${s.time} دقيقة</td><td><b>${s.price} ر.س</b></td><td><button class="btn btn-primary" onclick="editService(${s.id})">تعديل السعر</button></td></tr>`;
+            });
+        }
+
+        function showServiceForm() {
+            document.getElementById('srv-id').value = ''; document.getElementById('srv-name').value = ''; document.getElementById('srv-time').value = ''; document.getElementById('srv-price').value = '';
+            document.getElementById('srv-form').style.display = 'block';
+        }
+
+        function editService(id) {
+            const s = services.find(x => x.id === id); if(!s) return;
+            document.getElementById('srv-id').value = s.id; document.getElementById('srv-name').value = s.name; document.getElementById('srv-time').value = s.time; document.getElementById('srv-price').value = s.price;
+            document.getElementById('srv-form').style.display = 'block';
+        }
+
+        function saveService() {
+            const id = document.getElementById('srv-id').value;
+            const name = document.getElementById('srv-name').value.trim();
+            const time = parseInt(document.getElementById('srv-time').value) || 30;
+            const price = parseFloat(document.getElementById('srv-price').value) || 0;
+
+            if(!name || !price) return alert('أدخل البيانات!');
+            if(id) { let s = services.find(x => x.id == id); s.name = name; s.time = time; s.price = price; }
+            else { services.push({ id: Date.now(), name, time, price }); }
+            document.getElementById('srv-form').style.display = 'none';
+            saveData(); alert('✅ تم تحديث الأسعار بنجاح لجميع العميلات!');
+        }
+
+        function renderRentsTable() {
+            const tbody = document.getElementById('rents-table-body');
+            tbody.innerHTML = '';
+            rents.forEach(r => {
+                const nextD = new Date(r.nextDate); const today = new Date(); const diffDays = Math.ceil((nextD - today) / (1000 * 60 * 60 * 24));
+                tbody.innerHTML += `<tr><td><b>${r.name}</b></td><td>${r.desc}</td><td><b>${r.amount} ر.س</b></td><td>${r.months} أشهر</td><td>${r.nextDate}</td><td style="${diffDays<=15?'color:red;font-weight:bold;':'color:green;'}">${diffDays > 0 ? diffDays + ' يوم متبقي' : 'متأخر!'}</td><td><button class="btn btn-primary" onclick="editRentItem(${r.id})">تعديل</button> <button class="btn btn-danger" onclick="deleteRentItem(${r.id})">حذف</button></td></tr>`;
+            });
+        }
+
+        function showRentForm() { document.getElementById('rent-form-card').style.display = 'block'; }
+        function saveRentItem() {
+            const id = document.getElementById('rent-id').value; const name = document.getElementById('rent-name').value; const desc = document.getElementById('rent-desc').value; const amount = parseFloat(document.getElementById('rent-amount').value)||0; const months = parseInt(document.getElementById('rent-months').value)||6; const nextDate = document.getElementById('rent-next-date').value;
+            if(!name||!amount) return alert('أدخل البيانات');
+            if(id) { let r = rents.find(x=>x.id==id); r.name=name; r.desc=desc; r.amount=amount; r.months=months; r.nextDate=nextDate; }
+            else { rents.push({ id: Date.now(), name, desc, amount, months, nextDate }); }
+            document.getElementById('rent-form-card').style.display = 'none'; saveData();
+        }
+        function deleteRentItem(id) { rents = rents.filter(r => r.id !== id); saveData(); }
+
+        function renderEmployeesTable() {
+            const tbody = document.getElementById('employees-table-body');
+            tbody.innerHTML = '';
+            employees.forEach(e => {
+                let netSalary = e.salary - e.deductions;
+                tbody.innerHTML += `<tr><td><b>${e.name}</b></td><td>${e.phone}</td><td>${e.salary} ر.س</td><td style="color:red;">${e.deductions} ر.س</td><td style="color:green; font-weight:bold;">${netSalary} ر.س</td><td>${e.vacation} يوم</td><td>${e.expiry || 'غير محدد'}</td><td><button class="btn btn-primary" onclick="editEmployee(${e.id})">تعديل</button> <button class="btn btn-danger" onclick="deleteEmployee(${e.id})">حذف</button></td></tr>`;
+            });
+        }
+
+        function showEmpForm() { document.getElementById('emp-form-card').style.display = 'block'; }
+        function editEmployee(id) {
+            const e = employees.find(x => x.id === id); if(!e) return;
+            document.getElementById('emp-id').value = e.id; document.getElementById('emp-name').value = e.name; document.getElementById('emp-phone').value = e.phone; document.getElementById('emp-salary').value = e.salary; document.getElementById('emp-deductions').value = e.deductions; document.getElementById('emp-vacation').value = e.vacation; document.getElementById('emp-expiry').value = e.expiry || '';
+            document.getElementById('emp-form-card').style.display = 'block';
+        }
+        function saveEmployee() {
+            const id = document.getElementById('emp-id').value; const name = document.getElementById('emp-name').value; const phone = document.getElementById('emp-phone').value; const salary = parseFloat(document.getElementById('emp-salary').value)||0; const deductions = parseFloat(document.getElementById('emp-deductions').value)||0; const vacation = parseInt(document.getElementById('emp-vacation').value)||0; const expiry = document.getElementById('emp-expiry').value;
+            if(!name) return alert('أدخل الاسم');
+            if(id) { let e = employees.find(x=>x.id==id); e.name=name; e.phone=phone; e.salary=salary; e.deductions=deductions; e.vacation=vacation; e.expiry=expiry; }
+            else { employees.push({ id: Date.now(), name, phone, salary, deductions, vacation, expiry }); }
+            document.getElementById('emp-form-card').style.display = 'none'; saveData();
+        }
+        function deleteEmployee(id) { employees = employees.filter(e => e.id !== id); saveData(); }
+
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventory-table-body');
+            tbody.innerHTML = '';
+            inventory.forEach(i => {
+                tbody.innerHTML += `<tr><td><b>${i.name}</b></td><td>${i.qty}</td><td>${i.minQty}</td><td>${i.cost} ر.س</td><td><b>${i.qty * i.cost} ر.س</b></td><td><button class="btn btn-primary" onclick="editInventoryItem(${i.id})">تعديل</button> <button class="btn btn-danger" onclick="deleteInventoryItem(${i.id})">حذف</button></td></tr>`;
+            });
+        }
+
+        function showInvForm() { document.getElementById('inv-form-card').style.display = 'block'; }
+        function editInventoryItem(id) {
+            const i = inventory.find(x => x.id === id); if(!i) return;
+            document.getElementById('inv-id').value = i.id; document.getElementById('inv-name').value = i.name; document.getElementById('inv-qty').value = i.qty; document.getElementById('inv-min').value = i.minQty; document.getElementById('inv-cost').value = i.cost;
+            document.getElementById('inv-form-card').style.display = 'block';
+        }
+        function saveInventoryItem() {
+            const id = document.getElementById('inv-id').value; const name = document.getElementById('inv-name').value; const qty = parseInt(document.getElementById('inv-qty').value)||0; const minQty = parseInt(document.getElementById('inv-min').value)||0; const cost = parseFloat(document.getElementById('inv-cost').value)||0;
+            if(!name) return alert('أدخل الاسم');
+            if(id) { let i = inventory.find(x=>x.id==id); i.name=name; i.qty=qty; i.minQty=minQty; i.cost=cost; }
+            else { inventory.push({ id: Date.now(), name, qty, minQty, cost }); }
+            document.getElementById('inv-form-card').style.display = 'none'; saveData();
+        }
+        function deleteInventoryItem(id) { inventory = inventory.filter(i => i.id !== id); saveData(); }
+
+        function initChart() {
+            const ctx = document.getElementById('profitComparisonChart').getContext('2d');
+            if(myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: ['الفترة السابقة', 'الفترة الحالية'], datasets: [{ label: 'المبيعات (ر.س)', data: [0, 0], backgroundColor: ['#6c757d', '#6f42c1'] }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            updateChartComparison('month');
+        }
+
+        function updateChartComparison(type) {
+            let curr = 0, prev = 0; const now = new Date();
+            invoices.forEach(inv => {
+                if(inv.status === 'مسترجعة') return;
+                const d = new Date(inv.rawDate || Date.now());
+                if(type === 'month') {
+                    if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) curr += inv.total;
+                    else if(d.getMonth() === now.getMonth() - 1) prev += inv.total;
+                } else if(type === 'day') {
+                    if(d.getDate() === now.getDate()) curr += inv.total;
+                    else if(d.getDate() === now.getDate() - 1) prev += inv.total;
+                } else if(type === 'year') {
+                    if(d.getFullYear() === now.getFullYear()) curr += inv.total;
+                    else if(d.getFullYear() === now.getFullYear() - 1) prev += inv.total;
+                }
+            });
+
+            document.getElementById('chart-curr-income').innerText = curr + ' ر.س';
+            document.getElementById('chart-prev-income').innerText = prev + ' ر.س';
+            let growth = prev > 0 ? Math.round(((curr - prev) / prev) * 100) : 100;
+            document.getElementById('chart-growth-rate').innerText = growth + '%';
+
+            if(myChart) { myChart.data.datasets[0].data = [prev, curr]; myChart.update(); }
+        }
+
+        showWelcome();
+    </script>
+</body>
+</html>
