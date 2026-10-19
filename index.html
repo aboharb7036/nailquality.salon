@@ -16,7 +16,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- شاشة تسجيل الدخول مع حماية المحاولات وتنبيه البريد -->
+    <!-- شاشة تسجيل الدخول السهلة -->
     <div id="login-screen" class="fixed inset-0 bg-pink-950/80 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border-t-4 border-pink-500">
             <div class="text-center mb-6">
@@ -34,7 +34,7 @@
                 <button type="submit" id="login-btn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg shadow-md transition duration-200">
                     تسجيل الدخول
                 </button>
-                <p id="login-error" class="text-red-500 text-sm text-center hidden font-medium">كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى.</p>
+                <p id="login-error" class="text-red-500 text-sm text-center hidden font-medium">كلمة المرور غير صحيحة.</p>
                 <p id="lockout-timer" class="text-orange-600 text-sm text-center hidden font-bold"></p>
             </form>
         </div>
@@ -42,7 +42,6 @@
 
     <!-- التطبيق الرئيسي -->
     <div id="app-container" class="flex-1 flex flex-col hidden">
-        <!-- شريط التنقل العلوي -->
         <header class="bg-white shadow-sm border-b sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center space-x-3 space-x-reverse">
@@ -60,7 +59,6 @@
             </div>
         </header>
 
-        <!-- التبويبات الرئيسية -->
         <nav class="bg-pink-100 shadow-inner overflow-x-auto">
             <div class="max-w-7xl mx-auto px-4 flex space-x-2 space-x-reverse py-2 whitespace-nowrap">
                 <button onclick="switchTab('pos')" class="tab-btn active px-4 py-2 rounded-lg font-bold text-sm bg-pink-600 text-white shadow transition"><i class="fa-solid fa-cash-register ml-1"></i> الكاشير (POS)</button>
@@ -74,10 +72,7 @@
             </div>
         </nav>
 
-        <!-- المحتوى -->
         <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
-            
-            <!-- 1. تبويب الكاشير (POS) -->
             <div id="tab-pos" class="tab-content active space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="md:col-span-2 bg-white p-5 rounded-2xl shadow-sm border">
@@ -115,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- 2. تبويب الفواتير والتعديل -->
             <div id="tab-invoices" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex justify-between items-center mb-4">
@@ -141,7 +135,6 @@
                 </div>
             </div>
 
-            <!-- 3. تبويب الحجوزات -->
             <div id="tab-bookings" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex justify-between items-center mb-4">
@@ -167,20 +160,17 @@
                 </div>
             </div>
 
-            <!-- 4. تبويب أداء الموظفات -->
             <div id="tab-staff" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
                         <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-user-gear text-pink-600 ml-2"></i>تقارير وأداء الموظفات</h2>
-                        <div class="flex gap-2">
-                            <select id="staff-filter-period" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm font-bold">
-                                <option value="all">كل الفترات</option>
-                                <option value="today">اليوم</option>
-                                <option value="yesterday">أمس</option>
-                                <option value="this_month">الشهر الحالي</option>
-                                <option value="last_month">الشهر الماضي</option>
-                            </select>
-                        </div>
+                        <select id="staff-filter-period" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm font-bold">
+                            <option value="all">كل الفترات</option>
+                            <option value="today">اليوم</option>
+                            <option value="yesterday">أمس</option>
+                            <option value="this_month">الشهر الحالي</option>
+                            <option value="last_month">الشهر الماضي</option>
+                        </select>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="staff-summary-cards"></div>
                     <div class="overflow-x-auto">
@@ -199,7 +189,6 @@
                 </div>
             </div>
 
-            <!-- 5. تبويب الأرباح -->
             <div id="tab-profits" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-chart-line text-pink-600 ml-2"></i>تقارير الأرباح والملخص المالي</h2>
@@ -220,7 +209,6 @@
                 </div>
             </div>
 
-            <!-- 6. تبويب المصروفات -->
             <div id="tab-expenses" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-wallet text-pink-600 ml-2"></i>تسجيل المصروفات والإيجارات والرواتب</h2>
@@ -245,7 +233,6 @@
                 </div>
             </div>
 
-            <!-- 7. تبويب المخزون -->
             <div id="tab-inventory" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-boxes-stacked text-pink-600 ml-2"></i>إدارة المخزون والمنتجات</h2>
@@ -269,7 +256,6 @@
                 </div>
             </div>
 
-            <!-- 8. تبويب العملاء -->
             <div id="tab-clients" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-users text-pink-600 ml-2"></i>قاعدة العملاء ونقاط الولاء</h2>
@@ -288,7 +274,6 @@
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 
@@ -389,11 +374,9 @@
             { id: 2, name: "مبرد أظافر احترافي", qty: 40 }
         ];
 
-        // متغيرات الحماية ومحاولات الدخول الخاطئة
         let failedAttempts = parseInt(localStorage.getItem('salon_failed_attempts')) || 0;
         let lockoutUntil = parseInt(localStorage.getItem('salon_lockout_until')) || 0;
 
-        // فحص قفل الشاشة عند التحميل
         window.onload = function() {
             checkLockout();
         };
@@ -437,13 +420,13 @@
             }, 1000);
         }
 
-        // تسجيل الدخول مع الحماية
         function handleLogin(e) {
             e.preventDefault();
             const now = Date.now();
             if (now < lockoutUntil) return;
 
-            const pass = document.getElementById('login-pass').value;
+            const pass = document.getElementById('login-pass').value.trim();
+
             if (pass === "nail_quality@@salon90981") {
                 failedAttempts = 0;
                 localStorage.removeItem('salon_failed_attempts');
@@ -455,10 +438,9 @@
                 localStorage.setItem('salon_failed_attempts', failedAttempts);
                 
                 if (failedAttempts >= 5) {
-                    lockoutUntil = Date.now() + 15000; // 15 ثانية قفل
+                    lockoutUntil = Date.now() + 15000;
                     localStorage.setItem('salon_lockout_until', lockoutUntil);
                     
-                    // فتح البريد الإلكتروني لإرسال تنبيه بالمحاولات الخاطئة
                     const subject = encodeURIComponent("تنبيه أمني: محاولات دخول خاطئة لنظام صالون جودة الأظافر");
                     const body = encodeURIComponent("تنبيه: تم رصد أكثر من 5 محاولات فاشلة لتسجيل الدخول إلى لوحة تحكم صالون جودة الأظافر وتم حظر الدخول مؤقتاً لمدة 15 ثانية.");
                     window.location.href = `mailto:?subject=${subject}&body=${body}`;
@@ -502,7 +484,6 @@
             renderInvoices();
         }
 
-        // الكاشير
         function renderServices() {
             const grid = document.getElementById('services-grid');
             grid.innerHTML = services.map(s => `
@@ -576,7 +557,6 @@
             renderInvoices();
         }
 
-        // الفواتير والتعديل والاسترجاع
         function renderInvoices() {
             const tbody = document.getElementById('invoices-table-body');
             const search = document.getElementById('search-invoice')?.value.toLowerCase() || '';
@@ -632,7 +612,6 @@
             }
         }
 
-        // الحجوزات وإدارتها
         function renderBookings() {
             const tbody = document.getElementById('bookings-table-body');
             if (bookings.length === 0) {
@@ -723,7 +702,6 @@
             }
         }
 
-        // أداء الموظفات
         function renderStaffPerformance() {
             const period = document.getElementById('staff-filter-period')?.value || 'all';
             const tbody = document.getElementById('staff-performance-tbody');
@@ -782,7 +760,6 @@
             `).join('');
         }
 
-        // الأرباح والمصروفات والمخزون والعملاء
         function renderProfits() {
             const totalSales = invoices.filter(i => i.status === 'مدفوعة').reduce((sum, i) => sum + i.total, 0);
             const totalExp = expenses.reduce((sum, e) => sum + e.amount, 0);
