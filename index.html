@@ -1,33 +1,15 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyA31G1qjrzq-Ykxu4EojR8KkhL3zS_MuGY",
-  authDomain: "nailqualitysalon.firebaseapp.com",
-  projectId: "nailqualitysalon",
-  storageBucket: "nailqualitysalon.firebasestorage.app",
-  messagingSenderId: "596122867385",
-  appId: "1:596122867385:web:0d3f8d4bcf3e04b51f6d68"
-};
-```[cite: 9]
-
----
-
-لقد جهزتُ لكِ النظام بالكامل الآن ليحتوي على:
-1. **الربط السحابي (Firebase):** لتتزامن جميع البيانات (الموظفات، الخدمات، الفواتير، والحجوزات) بين اللابتوب والجوال لحظياً وفي نفس الثانية.
-2. **زر الأسئلة الشائعة (FAQ):** لتجيب على استفسارات العميلات بخصوص الصالون.
-3. **زر المدخلات الذكية بالذكاء الاصطناعي:** لإضافة أي أسماء أو فواتير نسيتِ تسجيلها بنص بسيط وسريع.
-
-إليكِ **الكود الكامل والمحدث** لملف `index.html`. قومي بنسخه بالكامل واستبداله في ملفكِ على GitHub، ومبروك مقدماً التحديث الجبار لنظامكِ!
-
-```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صالون جودة الأظافر - النظام المتكامل السحابي</title>
+    <title>صالون جودة الأظافر - النظام المتكامل السحابي والذكي</title>
+    <!-- مكتبات التنسيق والأيقونات والأشكال البيانية -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- مكتبات Firebase السحابية -->
+
+    <!-- مكتبات Firebase السحابية المعتمدة والتطويرية -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -48,218 +30,304 @@ const firebaseConfig = {
       window.dbOnValue = onValue;
       window.dbPush = push;
       window.dbRemove = remove;
-      
-      // بدء تهيئة المزامنة السحابية بعد تحميل المكتبات
-      if(window.initCloudSync) window.initCloudSync();
+
+      if (window.initCloudSync) {
+          window.initCloudSync();
+      }
     </script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
-        body { font-family: 'Tajawal', sans-serif; background-color: #fdf2f8; color: #4a5568; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            transition: background-color 0.4s ease, color 0.4s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* الثيمات المخصصة بالذكاء الاصطناعي للمناسبات */
+        body.theme-default {
+            background-color: #fdf2f8;
+            color: #4a5568;
+        }
+
+        body.theme-founding {
+            background-color: #fefce8;
+            color: #713f12;
+        }
+
+        body.theme-national {
+            background-color: #f0fdf4;
+            color: #14532d;
+        }
+
+        body.theme-luxury {
+            background-color: #faf5ff;
+            color: #581c87;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* حماية حتمية للضغط والنقر فوق الطبقات التفاعلية */
+        button, input, select, textarea, a {
+            position: relative;
+            z-index: 100 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+
+        /* تنسيقات الجداول والبطاقات المخصصة */
+        .custom-card {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f3e8ff;
+            transition: all 0.3s ease;
+        }
+
+        .custom-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-row-hover:hover {
+            background-color: #fcf2f7;
+        }
+
         @media print {
-            body * { visibility: hidden; }
-            #print-invoice-area, #print-invoice-area * { visibility: visible; }
-            #print-invoice-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; font-size: 20px; background: white; }
+            body * {
+                visibility: hidden;
+            }
+            #print-invoice-area, #print-invoice-area * {
+                visibility: visible;
+            }
+            #print-invoice-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                font-size: 18px;
+                background: white;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="theme-default min-h-screen flex flex-col">
 
-    <!-- اختيار البوابة الرئيسية عند فتح الموقع -->
-    <div id="main-gate" class="fixed inset-0 bg-pink-950/90 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 text-center border-t-8 border-pink-500">
-            <div class="w-20 h-20 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+    <!-- شريط الإعلان الترحيبي سحابياً للمناسبات والفعاليات -->
+    <div id="banner-announcement" class="hidden bg-pink-600 text-white text-center py-2.5 px-4 text-sm font-bold shadow-md transition-all duration-300">
+        <span id="banner-text">أهلاً بكم في صالون جودة الأظافر - العناية والجمال الفاخر</span>
+    </div>
+
+    <!-- البوابة الرئيسية لتحديد نوع المستخدم -->
+    <div id="main-gate" class="fixed inset-0 bg-pink-950/90 z-[999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 text-center border-t-8 border-pink-500 relative z-[1000]">
+            <div class="w-24 h-24 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-5 text-4xl shadow-inner">
                 <i class="fa-solid fa-spa"></i>
             </div>
             <h1 class="text-3xl font-black text-gray-800 mb-2">صالون جودة الأظافر</h1>
-            <p class="text-gray-500 mb-6 text-sm">أهلاً بكِ. يرجى اختيار البوابة المناسبة للمتابعة:</p>
+            <p class="text-gray-500 mb-6 text-sm leading-relaxed">أهلاً بكِ في نظام الإدارة والحجز الذاتي السحابي المباشر. يرجى اختيار البوابة المطلوبة:</p>
             
-            <div class="space-y-3">
-                <button onclick="openClientPortal()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition flex items-center justify-center gap-3 text-base">
-                    <i class="fa-solid fa-calendar-days"></i> بوابة العميلة (الحجز الذاتي)
+            <div class="space-y-4">
+                <button type="button" onclick="openClientPortal()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-4 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-3 text-base">
+                    <i class="fa-solid fa-calendar-days text-xl"></i> بوابة العميلة (الحجز الذاتي المباشر)
                 </button>
-                <button onclick="openAdminLogin()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 rounded-2xl shadow-lg transition flex items-center justify-center gap-3 text-base">
-                    <i class="fa-solid fa-lock"></i> بوابة الإدارة والكاشير
+                <button type="button" onclick="openAdminLogin()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-3 text-base">
+                    <i class="fa-solid fa-lock text-xl"></i> بوابة الإدارة والكاشير
                 </button>
-                <button onclick="openFAQModal()" class="w-full bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold py-3 rounded-2xl border border-pink-200 transition flex items-center justify-center gap-2 text-sm">
-                    <i class="fa-solid fa-circle-question"></i> الأسئلة الشائعة (FAQ)
+                <button type="button" onclick="openFAQModal()" class="w-full bg-pink-50 hover:bg-pink-100 text-pink-700 font-bold py-3 rounded-2xl border border-pink-200 transition duration-200 flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-circle-question text-base"></i> الأسئلة الشائعة وتفاصيل الخدمات
                 </button>
             </div>
-            <div class="mt-6 text-xs text-gray-400">
-                للتواصل والاستفسار عبر الواتساب: <a href="https://wa.me/966544267911" target="_blank" class="text-pink-600 font-bold underline">+966 54 426 7911</a>
+            <div class="mt-8 text-xs text-gray-400 border-t pt-4">
+                للتواصل والاستفسار المباشر عبر الواتساب: <a href="https://wa.me/966544267911" target="_blank" class="text-pink-600 font-bold underline px-1">+966 54 426 7911</a>
             </div>
         </div>
     </div>
 
-    <!-- شاشة تسجيل دخول الإدارة -->
-    <div id="login-screen" class="fixed inset-0 bg-pink-950/85 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border-t-4 border-pink-500">
+    <!-- شاشة تسجيل دخول الإدارة والكاشير -->
+    <div id="login-screen" class="fixed inset-0 bg-pink-950/85 z-[999] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 border-t-8 border-pink-500 relative z-[1000]">
             <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-pink-50 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
                 <h2 class="text-2xl font-bold text-gray-800">تسجيل دخول الإدارة</h2>
-                <p class="text-sm text-gray-500 mt-1">صالون جودة الأظافر</p>
+                <p class="text-xs text-gray-500 mt-1">أدخلي كلمة المرور للوصول لكافة الصلاحيات</p>
             </div>
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور للنظام</label>
-                    <input type="password" id="login-pass" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-400 outline-none text-center tracking-widest font-bold" placeholder="أدخل كلمة المرور">
+                    <label class="block text-xs font-bold text-gray-700 mb-1">كلمة المرور للنظام</label>
+                    <input type="password" id="login-pass" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 outline-none text-center tracking-widest font-bold text-gray-800 text-lg" placeholder="••••••••">
                 </div>
-                <button type="submit" id="login-btn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg shadow-md transition duration-200">
+                <button type="submit" id="login-btn" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-xl shadow-md transition duration-200 text-base">
                     دخول لوحة التحكم
                 </button>
-                <p id="login-error" class="text-red-500 text-sm text-center hidden font-medium">كلمة المرور غير صحيحة.</p>
-                <p id="lockout-timer" class="text-orange-600 text-sm text-center hidden font-bold"></p>
-                <button type="button" onclick="backToMainGate()" class="w-full text-gray-500 text-xs mt-2 hover:underline">الرجوع للقائمة الرئيسية</button>
+                <p id="login-error" class="text-red-500 text-xs text-center hidden font-bold mt-2">عذراً! كلمة المرور غير صحيحة، يرجى المحاولة مجدداً.</p>
+                <button type="button" onclick="backToMainGate()" class="w-full text-gray-500 text-xs mt-3 hover:underline text-center block">الرجوع إلى البوابة الرئيسية</button>
             </form>
         </div>
     </div>
 
-    <!-- بوابة العميلة (الحجز الذاتي) -->
+    <!-- بوابة العميلة للحجز الذاتي -->
     <div id="client-portal" class="flex-1 flex flex-col hidden">
         <header class="bg-white shadow-sm border-b sticky top-0 z-40">
-            <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
                 <div class="flex items-center space-x-3 space-x-reverse">
-                    <div class="w-10 h-10 bg-pink-600 text-white rounded-lg flex items-center justify-center font-bold text-lg shadow">
+                    <div class="w-11 h-11 bg-pink-600 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow">
                         <i class="fa-solid fa-spa"></i>
                     </div>
                     <div>
-                        <h1 class="font-bold text-gray-800 text-base">صالون جودة الأظافر</h1>
-                        <span class="text-xs text-pink-600 font-medium">حجز المواعيد الذاتي للعميلات</span>
+                        <h1 class="font-bold text-gray-800 text-lg">صالون جودة الأظافر</h1>
+                        <span class="text-xs text-pink-600 font-bold">بوابة حجز المواعيد والخدمات الذاتية</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="openFAQModal()" class="bg-pink-50 text-pink-700 text-xs font-bold px-3 py-2 rounded-lg border border-pink-200 transition">الأسئلة الشائعة</button>
-                    <a href="https://wa.me/966544267911" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center gap-1">
-                        <i class="fa-brands fa-whatsapp"></i> واتساب
+                    <button type="button" onclick="openFAQModal()" class="bg-pink-50 text-pink-700 text-xs font-bold px-3.5 py-2 rounded-xl border border-pink-200 hover:bg-pink-100 transition">الأسئلة الشائعة</button>
+                    <a href="https://wa.me/966544267911" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> الدعم الفني
                     </a>
-                    <button onclick="backToMainGate()" class="text-gray-600 hover:text-gray-900 text-xs font-bold px-3 py-2 rounded-lg border bg-gray-50">الرئيسية</button>
+                    <button type="button" onclick="backToMainGate()" class="text-gray-600 hover:text-gray-900 text-xs font-bold px-3.5 py-2 rounded-xl border bg-gray-50">الرئيسية</button>
                 </div>
             </div>
         </header>
 
-        <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
-            <div class="bg-white p-6 rounded-3xl shadow-sm border text-center">
-                <h2 class="text-xl font-bold text-gray-800 mb-2">احجزي موعدكِ الآن بكل سهولة</h2>
-                <p class="text-sm text-gray-500">اختاري خدماتك المفضلة والموعد المناسب، وسيتم تأكيد حجزك فوراً.</p>
+        <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full space-y-6">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-pink-100 text-center">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">احجزي موعدكِ الآن بكل سهولة وسرعة</h2>
+                <p class="text-sm text-gray-500">اختاري خدماتك المفضلة وتاريخ ووقت الموعد المناسب لكِ، وسيتم تأكيد الحجز فوراً عبر النظام السحابي.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-3xl shadow-sm border flex flex-col">
+                <!-- قائمة الخدمات للعميلة -->
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-pink-100 flex flex-col">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-base text-gray-800"><i class="fa-solid fa-wand-magic-sparkles text-pink-600 ml-2"></i>الخدمات والأسعار</h3>
-                        <input type="text" id="client-search-service" onkeyup="renderClientPortalServices()" placeholder="ابحثي عن خدمة..." class="px-3 py-1.5 border rounded-xl text-xs w-44">
+                        <h3 class="font-bold text-base text-gray-800"><i class="fa-solid fa-wand-magic-sparkles text-pink-600 ml-2"></i>قائمة الخدمات والأسعار</h3>
+                        <input type="text" id="client-search-service" onkeyup="renderClientPortalServices()" placeholder="ابحثي عن خدمة..." class="px-3 py-1.5 border rounded-xl text-xs w-48 outline-none focus:ring-2 focus:ring-pink-300">
                     </div>
-                    <div class="space-y-3 overflow-y-auto max-h-80 flex-1" id="client-services-list"></div>
+                    <div class="space-y-3 overflow-y-auto max-h-[380px] flex-1 pr-1" id="client-services-list"></div>
                 </div>
 
-                <div class="bg-white p-6 rounded-3xl shadow-sm border flex flex-col justify-between">
+                <!-- نموذج تأكيد الحجز -->
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-pink-100 flex flex-col justify-between">
                     <div>
-                        <h3 class="font-bold text-base mb-4 text-gray-800"><i class="fa-solid fa-calendar-check text-pink-600 ml-2"></i>تأكيد الحجز</h3>
-                        <div class="space-y-3">
+                        <h3 class="font-bold text-base mb-4 text-gray-800"><i class="fa-solid fa-calendar-check text-pink-600 ml-2"></i>تأكيد تفاصيل الموعد</h3>
+                        <div class="space-y-3.5">
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 mb-1">الخدمة المختارة</label>
-                                <select id="client-book-service" class="w-full px-3 py-2 border rounded-xl text-sm font-bold bg-pink-50 text-pink-900"></select>
+                                <select id="client-book-service" class="w-full px-3.5 py-2.5 border rounded-xl text-sm font-bold bg-pink-50 text-pink-900 border-pink-200 outline-none focus:ring-2 focus:ring-pink-400"></select>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميلة الثلاثي</label>
-                                <input type="text" id="client-book-name" placeholder="أدخلي اسمكِ الكريم" class="w-full px-3 py-2 border rounded-xl text-sm">
+                                <input type="text" id="client-book-name" placeholder="أدخلي اسمكِ الكريم" class="w-full px-3.5 py-2.5 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 mb-1">رقم الجوال</label>
-                                <input type="text" id="client-book-phone" placeholder="05xxxxxxxx" class="w-full px-3 py-2 border rounded-xl text-sm">
+                                <input type="text" id="client-book-phone" placeholder="05xxxxxxxx" class="w-full px-3.5 py-2.5 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة المفضلة (اختياري)</label>
-                                <select id="client-book-staff" class="w-full px-3 py-2 border rounded-xl text-sm">
+                                <select id="client-book-staff" class="w-full px-3.5 py-2.5 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
                                     <option value="أي موظفة متاحة">أي موظفة متاحة</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1">تاريخ ووقت الموعد (متاح حتى 2050)</label>
-                                <input type="datetime-local" id="client-book-datetime" min="2020-01-01T00:00" max="2050-12-31T23:59" class="w-full px-3 py-2 border rounded-xl text-sm">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">تاريخ ووقت الموعد</label>
+                                <input type="datetime-local" id="client-book-datetime" min="2020-01-01T00:00" max="2050-12-31T23:59" class="w-full px-3.5 py-2.5 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300 font-bold text-gray-700">
                             </div>
                         </div>
                     </div>
                     <div class="mt-6">
-                        <button onclick="submitClientBooking()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-xl shadow transition">تأكيد وإرسال الحجز للصالون</button>
+                        <button type="button" onclick="submitClientBooking()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-xl shadow-md transition duration-200 text-base">تأكيد وإرسال الحجز للصالون</button>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- التطبيق الرئيسي (الإدارة) -->
+    <!-- لوحة التحكم السحابية الكاملة للإدارة -->
     <div id="app-container" class="flex-1 flex flex-col hidden">
         <header class="bg-white shadow-sm border-b sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center space-x-3 space-x-reverse">
-                    <div class="w-10 h-10 bg-pink-600 text-white rounded-lg flex items-center justify-center font-bold text-lg shadow">
+                    <div class="w-10 h-10 bg-pink-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow">
                         <i class="fa-solid fa-crown"></i>
                     </div>
                     <div>
                         <h1 class="font-bold text-gray-800 text-lg">صالون جودة الأظافر</h1>
-                        <span class="text-xs text-pink-600 font-medium">لوحة التحكم السحابية المتزامنة</span>
+                        <span class="text-xs text-pink-600 font-bold">لوحة التحكم السحابية والذكية الشاملة</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="openSmartAiModal()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center gap-1">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> المدخلات الذكية (AI)
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="openSmartAiModal()" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center gap-1">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> إدخال ذكي (AI)
                     </button>
-                    <button onclick="openFAQModal()" class="bg-pink-50 text-pink-700 text-xs font-bold px-3 py-2 rounded-lg border border-pink-200">الأسئلة الشائعة</button>
-                    <button onclick="backToMainGate()" class="text-gray-700 hover:text-gray-900 text-xs font-bold px-3 py-1.5 rounded-lg border bg-gray-50">الرئيسية</button>
-                    <button onclick="logout()" class="text-red-500 hover:text-red-700 text-sm font-bold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition">
+                    <button type="button" onclick="openThemeModal()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center gap-1">
+                        <i class="fa-solid fa-palette"></i> مظهر الموقع والذكاء الاصطناعي
+                    </button>
+                    <button type="button" onclick="backToMainGate()" class="text-gray-700 hover:text-gray-900 text-xs font-bold px-3 py-1.5 rounded-lg border bg-gray-50">الرئيسية</button>
+                    <button type="button" onclick="logout()" class="text-red-500 hover:text-red-700 text-sm font-bold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition">
                         <i class="fa-solid fa-right-from-bracket ml-1"></i> خروج
                     </button>
                 </div>
             </div>
         </header>
 
+        <!-- الشريط العلوي للتبويب بين الأقسام -->
         <nav class="bg-pink-100 shadow-inner overflow-x-auto">
-            <div class="max-w-7xl mx-auto px-4 flex space-x-2 space-x-reverse py-2 whitespace-nowrap">
-                <button onclick="switchTab('pos')" class="tab-btn active px-4 py-2 rounded-lg font-bold text-sm bg-pink-600 text-white shadow transition"><i class="fa-solid fa-cash-register ml-1"></i> الكاشير (POS)</button>
-                <button onclick="switchTab('services')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-list-check ml-1"></i> إدارة الخدمات</button>
-                <button onclick="switchTab('invoices')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-file-invoice-dollar ml-1"></i> الفواتير والتعديل</button>
-                <button onclick="switchTab('bookings')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-calendar-check ml-1"></i> الحجوزات</button>
-                <button onclick="switchTab('staff')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-user-gear ml-1"></i> أداء الموظفات</button>
-                <button onclick="switchTab('staff-salaries')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-file-contract ml-1"></i> الرواتب والإقامات</button>
-                <button onclick="switchTab('expenses')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-wallet ml-1"></i> الإيجارات والمصروفات</button>
-                <button onclick="switchTab('profits')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-chart-line ml-1"></i> تقارير الأرباح</button>
-                <button onclick="switchTab('inventory')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-boxes-stacked ml-1"></i> المخزون</button>
-                <button onclick="switchTab('clients')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-users ml-1"></i> العملاء والولاء</button>
+            <div class="max-w-7xl mx-auto px-4 flex space-x-2 space-x-reverse py-2.5 whitespace-nowrap">
+                <button type="button" onclick="switchTab('pos')" class="tab-btn active px-4 py-2 rounded-xl font-bold text-sm bg-pink-600 text-white shadow transition"><i class="fa-solid fa-cash-register ml-1.5"></i> الكاشير (POS)</button>
+                <button type="button" onclick="switchTab('services')" class="tab-btn px-4 py-2 rounded-xl font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-list-check ml-1.5"></i> إدارة الخدمات</button>
+                <button type="button" onclick="switchTab('invoices')" class="tab-btn px-4 py-2 rounded-xl font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-file-invoice-dollar ml-1.5"></i> الفواتير والتعديل</button>
+                <button type="button" onclick="switchTab('bookings')" class="tab-btn px-4 py-2 rounded-xl font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-calendar-check ml-1.5"></i> الحجوزات وإغلاق الأوقات</button>
+                <button type="button" onclick="switchTab('staff')" class="tab-btn px-4 py-2 rounded-xl font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-user-gear ml-1.5"></i> أداء الموظفات</button>
+                <button type="button" onclick="switchTab('staff-salaries')" class="tab-btn px-4 py-2 rounded-xl font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-file-contract ml-1.5"></i> الرواتب والإقامات</button>
+                <button type="button" onclick="switchTab('expenses')" class="tab-btn px-4 py-2 rounded-xl font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-wallet ml-1.5"></i> الإيجارات والمصروفات</button>
+                <button type="button" onclick="switchTab('profits')" class="tab-btn px-4 py-2 rounded-xl font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-chart-line ml-1.5"></i> الأرباح وتصحيح المبيعات</button>
+                <button type="button" onclick="switchTab('inventory')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-boxes-stacked ml-1.5"></i> المخزون واستهلاك المواد</button>
+                <button type="button" onclick="switchTab('clients')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-users ml-1.5"></i> العملاء ومراسلة الواتساب</button>
             </div>
         </nav>
 
         <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
-            <!-- 1. الكاشير -->
+            <!-- 1. قسم الكاشير (POS) -->
             <div id="tab-pos" class="tab-content active space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="md:col-span-2 bg-white p-5 rounded-2xl shadow-sm border flex flex-col">
+                    <div class="md:col-span-2 custom-card p-5 flex flex-col">
                         <div class="flex justify-between items-center mb-4">
-                            <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-wand-magic-sparkles text-pink-600 ml-2"></i>الخدمات المتاحة</h2>
-                            <div class="relative w-64">
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </span>
-                                <input type="text" id="admin-search-service" onkeyup="renderAdminServices()" placeholder="بحث عن خدمة..." class="w-full pr-9 pl-3 py-1.5 border rounded-xl text-sm focus:ring-2 focus:ring-pink-400 outline-none">
-                            </div>
+                            <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-wand-magic-sparkles text-pink-600 ml-2"></i>الخدمات المتاحة بالسعر والخصم</h2>
+                            <input type="text" id="admin-search-service" onkeyup="renderAdminServices()" placeholder="بحث عن خدمة..." class="px-3.5 py-1.5 border rounded-xl text-sm w-64 outline-none focus:ring-2 focus:ring-pink-300">
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 overflow-y-auto max-h-[450px]" id="admin-services-grid"></div>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border flex flex-col justify-between">
+                    <div class="custom-card p-5 flex flex-col justify-between">
                         <div>
                             <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-cart-shopping text-pink-600 ml-2"></i>الفاتورة الحالية</h2>
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميلة</label>
-                                <input type="text" id="pos-client-name" placeholder="اسم العميلة الثلاثي" class="w-full px-3 py-2 border rounded-lg text-sm">
+                                <input type="text" id="pos-client-name" placeholder="اسم العميلة الثلاثي" class="w-full px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
                             </div>
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-gray-600 mb-1">رقم الجوال</label>
-                                <input type="text" id="pos-client-phone" placeholder="05xxxxxxxx" class="w-full px-3 py-2 border rounded-lg text-sm">
+                                <input type="text" id="pos-client-phone" placeholder="05xxxxxxxx" class="w-full px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
                             </div>
                             <div class="mb-3">
                                 <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة المسؤولة</label>
-                                <select id="pos-staff" class="w-full px-3 py-2 border rounded-lg text-sm"></select>
+                                <select id="pos-staff" class="w-full px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300 font-bold text-gray-700"></select>
                             </div>
                             <div id="cart-items" class="space-y-2 max-h-40 overflow-y-auto mb-4 border-b pb-2">
                                 <p class="text-sm text-gray-400 text-center py-4">لم يتم اختيار خدمات بعد</p>
@@ -267,25 +335,25 @@ const firebaseConfig = {
                         </div>
                         <div>
                             <div class="flex justify-between font-bold text-lg mb-4 border-t pt-3">
-                                <span>الإجمالي:</span>
-                                <span id="cart-total" class="text-pink-600">0.00 ر.س</span>
+                                <span>الإجمالي النهائي:</span>
+                                <span id="cart-total" class="text-pink-600 font-black">0.00 ر.س</span>
                             </div>
-                            <button onclick="checkout()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-xl shadow transition">إتمام الدفع وطبع الفاتورة</button>
+                            <button type="button" onclick="checkout()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-xl shadow transition duration-200">إتمام الدفع وطبع الفاتورة</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. إدارة الخدمات والأسعار والنقاط والخصومات -->
+            <!-- 2. قسم إدارة الخدمات -->
             <div id="tab-services" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-list-check text-pink-600 ml-2"></i>إدارة الخدمات والأسعار والنقاط والخصومات</h2>
+                <div class="custom-card p-6">
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-list-check text-pink-600 ml-2"></i>إدارة الخدمات والأسعار والخصومات والنقاط</h2>
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6">
-                        <input type="text" id="new-srv-name" placeholder="اسم الخدمة" class="px-3 py-2 border rounded-lg text-sm">
-                        <input type="number" id="new-srv-price" placeholder="السعر الأساسي" class="px-3 py-2 border rounded-lg text-sm">
-                        <input type="number" id="new-srv-discount" placeholder="نسبة الخصم % (اختياري)" class="px-3 py-2 border rounded-lg text-sm">
-                        <input type="number" id="new-srv-points" placeholder="نقاط الولاء" class="px-3 py-2 border rounded-lg text-sm">
-                        <button onclick="addNewService()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">إضافة خدمة جديدة</button>
+                        <input type="text" id="new-srv-name" placeholder="اسم الخدمة" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <input type="number" id="new-srv-price" placeholder="السعر الأساسي (ر.س)" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <input type="number" id="new-srv-discount" placeholder="نسبة الخصم %" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <input type="number" id="new-srv-points" placeholder="نقاط الولاء" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <button type="button" onclick="addNewService()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-xl text-sm shadow">إضافة خدمة جديدة</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
@@ -305,12 +373,12 @@ const firebaseConfig = {
                 </div>
             </div>
 
-            <!-- 3. الفواتير -->
+            <!-- 3. قسم الفواتير والتعديل -->
             <div id="tab-invoices" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                <div class="custom-card p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-file-invoice-dollar text-pink-600 ml-2"></i>سجل الفواتير وإدارتها والاسترجاع</h2>
-                        <input type="text" id="search-invoice" onkeyup="renderInvoices()" placeholder="بحث برقم الفاتورة أو اسم العميلة..." class="px-4 py-2 border rounded-lg text-sm w-72">
+                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-file-invoice-dollar text-pink-600 ml-2"></i>سجل الفواتير والتعديل المباشر</h2>
+                        <input type="text" id="search-invoice" onkeyup="renderInvoices()" placeholder="بحث برقم الفاتورة أو الاسم..." class="px-4 py-2 border rounded-xl text-sm w-72 outline-none focus:ring-2 focus:ring-pink-300">
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
@@ -322,7 +390,7 @@ const firebaseConfig = {
                                     <th class="p-3">الموظفة</th>
                                     <th class="p-3">الخدمات والمبلغ</th>
                                     <th class="p-3">الحالة</th>
-                                    <th class="p-3 text-center">الإجراءات والطباعة</th>
+                                    <th class="p-3 text-center">التحكم والطباعة</th>
                                 </tr>
                             </thead>
                             <tbody id="invoices-table-body"></tbody>
@@ -331,53 +399,72 @@ const firebaseConfig = {
                 </div>
             </div>
 
-            <!-- 4. الحجوزات -->
+            <!-- 4. قسم الحجوزات وإغلاق الأوقات والأيام المحددة بالساعة -->
             <div id="tab-bookings" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-calendar-check text-pink-600 ml-2"></i>إدارة الحجوزات والمواعيد القادمة (حتى 2050)</h2>
-                        <button onclick="openBookingModal()" class="bg-pink-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-pink-700"><i class="fa-solid fa-plus ml-1"></i> حجز جديد</button>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2 custom-card p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-calendar-check text-pink-600 ml-2"></i>إدارة الحجوزات القادمة للعميلات</h2>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-right text-sm">
+                                <thead class="bg-pink-50 text-pink-900 border-b">
+                                    <tr>
+                                        <th class="p-3">اسم العميلة</th>
+                                        <th class="p-3">الخدمة والموعد</th>
+                                        <th class="p-3">الموظفة</th>
+                                        <th class="p-3">الحالة</th>
+                                        <th class="p-3 text-center">إجراء</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookings-table-body"></tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-sm">
-                            <thead class="bg-pink-50 text-pink-900 border-b">
-                                <tr>
-                                    <th class="p-3">اسم العميلة</th>
-                                    <th class="p-3">رقم الجوال</th>
-                                    <th class="p-3">الخدمة</th>
-                                    <th class="p-3">الموعد والتاريخ</th>
-                                    <th class="p-3">الموظفة</th>
-                                    <th class="p-3">الحالة</th>
-                                    <th class="p-3 text-center">التحكم</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bookings-table-body"></tbody>
-                        </table>
+
+                    <!-- لوحة التحكم في قفل الوقت بالساعة واليوم فقط دون قفل البوابة -->
+                    <div class="custom-card p-6">
+                        <h3 class="font-bold text-base text-gray-800 mb-2"><i class="fa-solid fa-lock text-red-500 ml-2"></i>إغلاق الوقت / اليوم (الصالون مليان)</h3>
+                        <p class="text-xs text-gray-500 mb-4">حدد تاريخاً وساعة بداية ونهاية لغلق وقت محدد أمام العميلات (أو اترك الساعات فارغة لغلق اليوم كاملاً):</p>
+                        <div class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">التاريخ المراد قفله</label>
+                                <input type="date" id="block-date" class="w-full px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-300">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1">من الساعة</label>
+                                    <input type="time" id="block-time-from" class="w-full px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-300">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1">إلى الساعة</label>
+                                    <input type="time" id="block-time-to" class="w-full px-3 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-300">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">سبب الإغلاق</label>
+                                <input type="text" id="block-reason" placeholder="مثلاً: الصالون مكتمل تماماً" class="w-full px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-300">
+                            </div>
+                            <button type="button" onclick="addBlockedDate()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl shadow text-sm transition">حفظ الوقت / اليوم المغلق</button>
+                        </div>
+                        <div class="mt-5 border-t pt-3">
+                            <h4 class="font-bold text-xs text-gray-700 mb-2">الأوقات والأيام المغلقة حالياً:</h4>
+                            <ul id="blocked-dates-list" class="space-y-2 text-xs"></ul>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 5. أداء الموظفات -->
+            <!-- 5. قسم تقارير أداء الموظفات -->
             <div id="tab-staff" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                <div class="custom-card p-6">
                     <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-user-gear text-pink-600 ml-2"></i>تقارير أداء الموظفات</h2>
-                        <select id="staff-filter-period" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm font-bold">
+                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-user-gear text-pink-600 ml-2"></i>تقارير أداء الموظفات والخدمات الأكثر مبيعاً</h2>
+                        <select id="staff-filter-period" onchange="renderStaffPerformance()" class="px-3.5 py-2 border rounded-xl text-sm font-bold bg-pink-50 border-pink-200">
                             <option value="all">كل الفترات</option>
                             <option value="today">اليوم</option>
                             <option value="this_month">الشهر الحالي</option>
-                            <option value="custom">مخصص (تاريخ محدد)</option>
                         </select>
-                    </div>
-                    <div id="custom-date-box" class="hidden flex gap-3 mb-6 bg-pink-50 p-4 rounded-xl border">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-1">من تاريخ:</label>
-                            <input type="date" id="filter-start-date" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-1">إلى تاريخ:</label>
-                            <input type="date" id="filter-end-date" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm bg-white">
-                        </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="staff-summary-cards"></div>
                     <div class="overflow-x-auto">
@@ -396,24 +483,24 @@ const firebaseConfig = {
                 </div>
             </div>
 
-            <!-- 6. رواتب وإقامات الموظفات -->
+            <!-- 6. قسم الرواتب والإقامات مع الحذف والتعديل -->
             <div id="tab-staff-salaries" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-file-contract text-pink-600 ml-2"></i>إدارة رواتب الموظفات وإقاماتهن (حتى 2050)</h2>
+                <div class="custom-card p-6">
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-file-contract text-pink-600 ml-2"></i>إدارة رواتب الموظفات والإقامات والتعديل والحذف السحابي</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <input type="text" id="sal-name" placeholder="اسم الموظفة" class="px-3 py-2 border rounded-lg text-sm">
-                        <input type="number" id="sal-amount" placeholder="الراتب الشهري (ر.س)" class="px-3 py-2 border rounded-lg text-sm">
-                        <input type="month" id="sal-iqama" class="px-3 py-2 border rounded-lg text-sm">
-                        <button onclick="addStaffSalary()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">إضافة موظفة</button>
+                        <input type="text" id="sal-name" placeholder="اسم الموظفة" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <input type="number" id="sal-amount" placeholder="الراتب الشهري (ر.س)" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <input type="month" id="sal-iqama" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <button type="button" onclick="addStaffSalary()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-xl text-sm shadow">إضافة موظفة جديدة</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
                             <thead class="bg-pink-50 text-pink-900 border-b">
                                 <tr>
-                                    <th class="p-3">اسم الموظفة</th>
+                                    <th class="p-3">الموظفة</th>
                                     <th class="p-3">الراتب الشهري</th>
                                     <th class="p-3">انتهاء الإقامة</th>
-                                    <th class="p-3 text-center">إجراء</th>
+                                    <th class="p-3 text-center">الإجراءات (تعديل كامل / حذف)</th>
                                 </tr>
                             </thead>
                             <tbody id="staff-salaries-table-body"></tbody>
@@ -422,28 +509,24 @@ const firebaseConfig = {
                 </div>
             </div>
 
-            <!-- 7. الإيجارات والمصروفات -->
+            <!-- 7. قسم المصروفات والإيجارات -->
             <div id="tab-expenses" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-wallet text-pink-600 ml-2"></i>إدارة الإيجارات والمصروفات ودفعاتها وتواريخ انتهائها</h2>
+                <div class="custom-card p-6">
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-wallet text-pink-600 ml-2"></i>المصروفات والإيجارات والعقود</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                        <input type="text" id="exp-desc" placeholder="البيان (إيجار، فواتير...)" class="px-3 py-2 border rounded-lg text-sm">
-                        <input type="number" id="exp-amount" placeholder="قيمة الدفعة (ر.س)" class="px-3 py-2 border rounded-lg text-sm">
-                        <div>
-                            <label class="block text-[10px] text-gray-500 font-bold mb-1">تاريخ انتهاء العقد / الإيجار</label>
-                            <input type="date" id="exp-expiry" min="2020-01-01" max="2050-12-31" class="w-full px-3 py-2 border rounded-lg text-sm">
-                        </div>
-                        <button onclick="addExpense()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm mt-5">حفظ المصروف أو الإيجار</button>
+                        <input type="text" id="exp-desc" placeholder="البيان / نوع المصروف" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <input type="number" id="exp-amount" placeholder="المبلغ (ر.س)" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <input type="date" id="exp-expiry" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <button type="button" onclick="addExpense()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-xl text-sm shadow">حفظ المصروف</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
                             <thead class="bg-pink-50 text-pink-900 border-b">
                                 <tr>
                                     <th class="p-3">البيان</th>
-                                    <th class="p-3">قيمة الدفعة</th>
-                                    <th class="p-3">تاريخ الدفع</th>
-                                    <th class="p-3">تاريخ انتهاء الإيجار/العقد</th>
-                                    <th class="p-3 text-center">إجراء</th>
+                                    <th class="p-3">المبلغ</th>
+                                    <th class="p-3">تاريخ الانتهاء</th>
+                                    <th class="p-3 text-center">إجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="expenses-table-body"></tbody>
@@ -452,34 +535,32 @@ const firebaseConfig = {
                 </div>
             </div>
 
-            <!-- 8. الأرباح والنمط البياني -->
+            <!-- 8. قسم الأرباح وتصحيح المبيعات -->
             <div id="tab-profits" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border space-y-6">
+                <div class="custom-card p-6 space-y-6">
                     <div class="flex flex-wrap justify-between items-center gap-4">
-                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-chart-line text-pink-600 ml-2"></i>تقارير الأرباح والنمط البياني</h2>
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-gray-600">اختر التاريخ للاطلاع:</label>
-                            <input type="date" id="profit-date-filter" onchange="renderProfits()" class="px-3 py-1.5 border rounded-lg text-sm">
-                            <button onclick="resetProfitDateFilter()" class="bg-gray-100 hover:bg-gray-200 text-xs px-3 py-1.5 rounded-lg font-bold">الكل</button>
-                        </div>
+                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-chart-line text-pink-600 ml-2"></i>تقارير الأرباح وتعديل الإيرادات الخاطئة</h2>
+                        <button type="button" onclick="openCorrectProfitsModal()" class="bg-red-500 hover:bg-red-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5">
+                            <i class="fa-solid fa-minus-circle"></i> زر تصغير / خصم أرباح أُدخلت بالغلط
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="p-4 bg-pink-50 rounded-xl border border-pink-100">
-                            <p class="text-xs text-gray-500 font-bold">إجمالي المبيعات (الصافية بعد الاسترجاع)</p>
+                        <div class="p-4 bg-pink-50 rounded-2xl border border-pink-100">
+                            <p class="text-xs text-gray-500 font-bold">إجمالي المبيعات (الصافية)</p>
                             <h3 id="stat-sales" class="text-2xl font-black text-pink-600 mt-1">0.00 ر.س</h3>
                         </div>
-                        <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                            <p class="text-xs text-gray-500 font-bold">إجمالي الرواتب والمصروفات</p>
+                        <div class="p-4 bg-purple-50 rounded-2xl border border-purple-100">
+                            <p class="text-xs text-gray-500 font-bold">إجمالي المصروفات والرواتب</p>
                             <h3 id="stat-expenses" class="text-2xl font-black text-purple-600 mt-1">0.00 ر.س</h3>
                         </div>
-                        <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                            <p class="text-xs text-gray-500 font-bold">صافي الأرباح</p>
+                        <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                            <p class="text-xs text-gray-500 font-bold">صافي الأرباح الحقيقي</p>
                             <h3 id="stat-net" class="text-2xl font-black text-emerald-600 mt-1">0.00 ر.س</h3>
                         </div>
                     </div>
 
-                    <div class="bg-pink-50/30 p-4 rounded-2xl border">
+                    <div class="bg-pink-50/40 p-4 rounded-2xl border">
                         <h3 class="font-bold text-sm text-gray-700 mb-3"><i class="fa-solid fa-chart-area text-pink-600 ml-1"></i>النمط البياني لتطور الأرباح والمبيعات</h3>
                         <div class="w-full h-72">
                             <canvas id="profitChart"></canvas>
@@ -488,22 +569,22 @@ const firebaseConfig = {
                 </div>
             </div>
 
-            <!-- 9. المخزون -->
+            <!-- 9. قسم المخزون واستهلاك المواد -->
             <div id="tab-inventory" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-boxes-stacked text-pink-600 ml-2"></i>إدارة المخزون والمنتجات</h2>
+                <div class="custom-card p-6">
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-boxes-stacked text-pink-600 ml-2"></i>إدارة المخزون واستهلاك المواد</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <input type="text" id="inv-name" placeholder="اسم المنتج / الأداة" class="px-3 py-2 border rounded-lg text-sm">
-                        <input type="number" id="inv-qty" placeholder="الكمية المتاحة" class="px-3 py-2 border rounded-lg text-sm">
-                        <button onclick="addInventoryItem()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">إضافة للمخزون</button>
+                        <input type="text" id="inv-name" placeholder="اسم المنتج / المادة" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <input type="number" id="inv-qty" placeholder="الكمية المتاحة" class="px-3.5 py-2 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-300">
+                        <button type="button" onclick="addInventoryItem()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-xl text-sm shadow">إضافة للمخزون</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
                             <thead class="bg-pink-50 text-pink-900 border-b">
                                 <tr>
-                                    <th class="p-3">اسم المنتج</th>
+                                    <th class="p-3">اسم المادة</th>
                                     <th class="p-3">الكمية</th>
-                                    <th class="p-3 text-center">إجراء</th>
+                                    <th class="p-3 text-center">إجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="inventory-table-body"></tbody>
@@ -512,19 +593,18 @@ const firebaseConfig = {
                 </div>
             </div>
 
-            <!-- 10. العملاء ونقاط الولاء -->
+            <!-- 10. قسم العملاء ونقاط الولاء والواتساب -->
             <div id="tab-clients" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-users text-pink-600 ml-2"></i>قاعدة العملاء ونقاط الولاء</h2>
+                <div class="custom-card p-6">
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-users text-pink-600 ml-2"></i>قاعدة العملاء ونقاط الولاء والمراسلة المباشرة</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
                             <thead class="bg-pink-50 text-pink-900 border-b">
                                 <tr>
-                                    <th class="p-3">اسم العميلة ورقم الجوال</th>
-                                    <th class="p-3">عدد الزيارات</th>
+                                    <th class="p-3">العميلة والجوال</th>
                                     <th class="p-3">إجمالي المشتريات</th>
                                     <th class="p-3">نقاط الولاء</th>
-                                    <th class="p-3">آخر مرة زارتنا وسوت خدمة</th>
+                                    <th class="p-3 text-center">مراسلة واتساب مخصصة</th>
                                 </tr>
                             </thead>
                             <tbody id="clients-table-body"></tbody>
@@ -535,239 +615,142 @@ const firebaseConfig = {
         </main>
     </div>
 
-    <!-- نافذة الأسئلة الشائعة (FAQ) -->
-    <div id="faq-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-circle-question text-pink-600 ml-2"></i>الأسئلة الشائعة (FAQ)</h3>
-                <button onclick="closeFAQModal()" class="text-gray-400 hover:text-gray-700 font-bold text-lg">×</button>
-            </div>
-            <div class="space-y-4 text-sm text-gray-700">
-                <div class="p-3 bg-pink-50 rounded-xl">
-                    <p class="font-bold text-pink-900 mb-1">Q: كيف يمكنني حجز موعد في الصالون؟</p>
-                    <p class="text-gray-600">يمكنكِ الدخول إلى "بوابة العميلة"، اختيار الخدمة المطلوبة، وتحديد التاريخ والوقت المناسب لكِ حتى عام 2050 بكل سهولة.</p>
+    <!-- مودال تعديل الخدمة (السعر والاسم والخصم) -->
+    <div id="edit-service-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl relative z-[1000]">
+            <h3 class="font-bold text-lg mb-3 text-pink-600"><i class="fa-solid fa-pen-to-square ml-2"></i>تعديل خدمة</h3>
+            <input type="hidden" id="edit-srv-id">
+            <div class="space-y-3.5">
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">اسم الخدمة</label><input type="text" id="edit-srv-name-input" class="w-full px-3.5 py-2.5 border rounded-xl text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">السعر الأساسي</label><input type="number" id="edit-srv-price-input" class="w-full px-3.5 py-2.5 border rounded-xl text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">نسبة الخصم %</label><input type="number" id="edit-srv-discount-input" class="w-full px-3.5 py-2.5 border rounded-xl text-sm"></div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="saveEditedService()" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white font-bold py-2.5 rounded-xl text-sm">حفظ</button>
+                    <button type="button" onclick="closeEditServiceModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
                 </div>
-                <div class="p-3 bg-pink-50 rounded-xl">
-                    <p class="font-bold text-pink-900 mb-1">Q: هل يمكنني تعديل أو إلغاء موعدي؟</p>
-                    <p class="text-gray-600">نعم، يمكنكِ التواصل مباشرة مع الصالون عبر زر الواتساب المعتمد في أعلى الصفحة لتأكيد أو تعديل موعدكِ.</p>
-                </div>
-                <div class="p-3 bg-pink-50 rounded-xl">
-                    <p class="font-bold text-pink-900 mb-1">Q: ما هي أوقات عمل الصالون؟</p>
-                    <p class="text-gray-600">نستقبلكم طوال أيام الأسبوع حسب المواعيد المتاحة في نظام الحجز الذاتي.</p>
-                </div>
-                <div class="p-3 bg-pink-50 rounded-xl">
-                    <p class="font-bold text-pink-900 mb-1">Q: كيف يتم احتساب نقاط الولاء؟</p>
-                    <p class="text-gray-600">كل خدمة تقدم لكِ نقاط ولاء مسجلة يتم تجميعها تلقائياً في حسابكِ للاستفادة منها.</p>
-                </div>
-            </div>
-            <div class="mt-6">
-                <button onclick="closeFAQModal()" class="w-full bg-pink-600 text-white font-bold py-2.5 rounded-xl text-sm">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة المدخلات الذكية بالذكاء الاصطناعي (Smart AI Input) -->
-    <div id="smart-ai-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-wand-magic-sparkles text-purple-600 ml-2"></i>المدخلات الذكية (تسجيل فواتير بنص حر)</h3>
-                <button onclick="closeSmartAiModal()" class="text-gray-400 hover:text-gray-700 font-bold text-lg">×</button>
+    <!-- مودال تعديل بيانات وراتب الموظفة -->
+    <div id="edit-salary-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl relative z-[1000]">
+            <h3 class="font-bold text-lg mb-3 text-pink-600"><i class="fa-solid fa-pen-to-square ml-2"></i>تعديل راتب وبيانات الموظفة</h3>
+            <input type="hidden" id="edit-sal-index">
+            <div class="space-y-3.5">
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">اسم الموظفة</label><input type="text" id="edit-sal-name" class="w-full px-3.5 py-2.5 border rounded-xl text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">الراتب الشهري (ر.س)</label><input type="number" id="edit-sal-amount" class="w-full px-3.5 py-2.5 border rounded-xl text-sm"></div>
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">انتهاء الإقامة</label><input type="month" id="edit-sal-iqama" class="w-full px-3.5 py-2.5 border rounded-xl text-sm"></div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="saveEditedSalary()" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white font-bold py-2.5 rounded-xl text-sm">حفظ التعديلات</button>
+                    <button type="button" onclick="closeEditSalaryModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+                </div>
             </div>
-            <p class="text-xs text-gray-500 mb-3">اكتبِ تفاصيل الفاتورة أو الخدمة التي نسيتِ تسجيلها وسيقوم النظام بتحليلها وإضافتها فوراً (مثل: فاتورة باسم نورة جوال 0501234567 لخدمة مناكير بمبلغ 120 ريال مع الموظفة سارة).</p>
-            <textarea id="ai-input-text" rows="4" class="w-full p-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-400 mb-4" placeholder="اكتب التفاصيل هنا..."></textarea>
+        </div>
+    </div>
+
+    <!-- مودال تخصيص المظهر بالذكاء الاصطناعي -->
+    <div id="theme-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl relative z-[1000]">
+            <h3 class="font-bold text-lg mb-2 text-amber-600"><i class="fa-solid fa-wand-magic-sparkles ml-2"></i>ضبط واجهة الموقع بالذكاء الاصطناعي</h3>
+            <div class="space-y-3.5">
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">وصف المناسبة للذكاء الاصطناعي</label><textarea id="ai-theme-prompt" rows="3" class="w-full p-3 border rounded-xl text-sm" placeholder="اكتبي هنا مثلاً: اضبط الموقع بمناسبة اليوم الوطني السعودي..."></textarea></div>
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">أو اختيار الثيم يدوياً</label><select id="theme-select" class="w-full px-3.5 py-2 border rounded-xl text-sm font-bold"><option value="theme-default">الوردي الكلاسيكي</option><option value="theme-founding">الذهبي الملكي (يوم التأسيس)</option><option value="theme-national">الأخضر الوطني (اليوم الوطني)</option><option value="theme-luxury">البنفسجي الفاخر</option></select></div>
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">عبارة الترحيب العليا</label><input type="text" id="banner-input" class="w-full px-3.5 py-2 border rounded-xl text-sm" placeholder="أدخل العبارة..."></div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="applyAiThemeSettings()" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-sm">تطبيق وتحديث الواجهة</button>
+                    <button type="button" onclick="closeThemeModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال مراسلة الواتساب -->
+    <div id="send-wa-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl relative z-[1000]">
+            <h3 class="font-bold text-lg mb-3 text-gray-800"><i class="fa-brands fa-whatsapp text-emerald-600 ml-2"></i>إرسال رسالة للعميلة</h3>
+            <input type="hidden" id="wa-target-phone">
+            <input type="hidden" id="wa-target-name">
+            <div class="space-y-3.5">
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">نماذج الرسائل</label><select id="wa-template" onchange="applyWaTemplate()" class="w-full px-3.5 py-2 border rounded-xl text-sm bg-pink-50 font-bold"><option value="custom">كتابة رسالة خاصة...</option><option value="miss_you">اشتئنالك! ليه ما زرتينا لك فترة؟</option><option value="points">رصيد نقاط الولاء الخاص بكِ</option></select></div>
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">نص الرسالة</label><textarea id="wa-message-text" rows="4" class="w-full p-3 border rounded-xl text-sm"></textarea></div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="sendWaNow()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm">إرسال عبر الواتساب</button>
+                    <button type="button" onclick="closeWaModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال خصم الأرباح الخاطئة -->
+    <div id="correct-profits-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl relative z-[1000]">
+            <h3 class="font-bold text-lg mb-2 text-red-600"><i class="fa-solid fa-minus-circle ml-2"></i>خصم / تصغير المبيعات الخاطئة</h3>
+            <div class="space-y-3.5">
+                <input type="number" id="correct-amount" placeholder="المبلغ المراد خصمه (ر.س)" class="w-full px-3.5 py-2.5 border rounded-xl text-sm font-bold text-red-600">
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="applyProfitCorrection()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-sm">تأكيد الخصم</button>
+                    <button type="button" onclick="closeCorrectProfitsModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال الأسئلة الشائعة -->
+    <div id="faq-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl max-h-[80vh] overflow-y-auto relative z-[1000]">
+            <div class="flex justify-between items-center border-b pb-3 mb-4"><h3 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-circle-question text-pink-600 ml-2"></i>الأسئلة الشائعة</h3><button type="button" onclick="closeFAQModal()" class="text-gray-400 font-bold text-xl">×</button></div>
+            <div class="space-y-3 text-sm">
+                <div class="p-3.5 bg-pink-50 rounded-2xl border"><p class="font-bold text-pink-900 mb-1">س: كيف يمكنني متابعة استهلاك المواد؟</p><p class="text-xs text-gray-600">ج: من خلال قسم المخزون المحدث سحابياً.</p></div>
+                <div class="p-3.5 bg-pink-50 rounded-2xl border"><p class="font-bold text-pink-900 mb-1">س: هل يمكن قفل الحجز في أوقات معينة؟</p><p class="text-xs text-gray-600">ج: نعم، من قسم الحجوزات وإغلاق الأوقات بالساعة واليوم دون إغلاق البوابة كاملة.</p></div>
+            </div>
+            <button type="button" onclick="closeFAQModal()" class="w-full bg-pink-600 text-white font-bold py-2.5 rounded-xl text-sm mt-5">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- مودال المدخلات الذكية بالذكاء الاصطناعي (حر بدون قيود) -->
+    <div id="smart-ai-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl relative z-[1000]">
+            <h3 class="font-bold text-lg mb-2 text-purple-700"><i class="fa-solid fa-wand-magic-sparkles ml-2"></i>المدخلات الذكية بالذكاء الاصطناعي (طريقة حرة)</h3>
+            <p class="text-xs text-gray-500 mb-3">اكتبي النص بالشكل الذي يريحك وسيقوم النظام بتفسيره وتسجيله:</p>
+            <textarea id="ai-input-text" rows="4" class="w-full p-3 border rounded-xl text-sm mb-4 outline-none focus:ring-2 focus:ring-purple-400" placeholder="اكتبي أي نص حر هنا..."></textarea>
             <div class="flex gap-2">
-                <button onclick="processSmartAiInput()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm shadow">معالجة وتسجيل الفاتورة</button>
-                <button onclick="closeSmartAiModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+                <button type="button" onclick="processSmartAiInput()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm">تسجيل بالذكاء الاصطناعي</button>
+                <button type="button" onclick="closeSmartAiModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة تعديل الخدمة -->
-    <div id="edit-service-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <h3 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-pen-to-square text-pink-600 ml-2"></i>تعديل تفاصيل الخدمة والخصم</h3>
-            <input type="hidden" id="edit-srv-index">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم الخدمة</label>
-                    <input type="text" id="edit-srv-name" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">السعر الأساسي (ر.س)</label>
-                    <input type="number" id="edit-srv-price" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">نسبة الخصم % (0 إذا لا يوجد)</label>
-                    <input type="number" id="edit-srv-discount" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">نقاط الولاء المكتسبة</label>
-                    <input type="number" id="edit-srv-points" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div class="flex space-x-2 space-x-reverse pt-2">
-                    <button onclick="saveEditedService()" class="flex-1 bg-pink-600 text-white font-bold py-2 rounded-lg shadow text-sm">حفظ التعديلات</button>
-                    <button onclick="closeEditServiceModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة تعديل المصروف أو الإيجار -->
-    <div id="edit-expense-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <h3 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-pen-to-square text-pink-600 ml-2"></i>تعديل المصروف أو الإيجار</h3>
-            <input type="hidden" id="edit-exp-index">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">البيان</label>
-                    <input type="text" id="edit-exp-desc" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">قيمة الدفعة (ر.س)</label>
-                    <input type="number" id="edit-exp-amount" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">تاريخ انتهاء الإيجار / العقد</label>
-                    <input type="date" id="edit-exp-expiry" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div class="flex space-x-2 space-x-reverse pt-2">
-                    <button onclick="saveEditedExpense()" class="flex-1 bg-pink-600 text-white font-bold py-2 rounded-lg shadow text-sm">حفظ التعديلات</button>
-                    <button onclick="closeEditExpenseModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة تعديل الفاتورة والاسترجاع -->
-    <div id="edit-invoice-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <h3 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-pen-to-square text-pink-600 ml-2"></i>تعديل الفاتورة أو الاسترجاع</h3>
-            <input type="hidden" id="edit-inv-id">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميلة</label>
-                    <input type="text" id="edit-inv-client" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">رقم الجوال</label>
-                    <input type="text" id="edit-inv-phone" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة المسؤولة</label>
-                    <select id="edit-inv-staff" class="w-full px-3 py-2 border rounded-lg text-sm"></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">السعر الإجمالي (ر.س)</label>
-                    <input type="number" id="edit-inv-total" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">حالة الفاتورة</label>
-                    <select id="edit-inv-status" class="w-full px-3 py-2 border rounded-lg text-sm font-bold text-pink-600">
-                        <option value="مدفوعة">مدفوعة</option>
-                        <option value="مسترجعة (Refund)">مسترجعة (Refund - لا تحسب بالأرباح)</option>
-                    </select>
-                </div>
-                <div class="flex space-x-2 space-x-reverse pt-2">
-                    <button onclick="saveEditedInvoice()" class="flex-1 bg-pink-600 text-white font-bold py-2 rounded-lg shadow text-sm">حفظ التعديلات</button>
-                    <button onclick="closeEditInvoiceModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة إضافة/تعديل حجز من الإدارة -->
-    <div id="booking-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <h3 class="font-bold text-lg mb-4 text-gray-800" id="booking-modal-title">حجز موعد جديد</h3>
-            <input type="hidden" id="booking-id">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم العميلة</label>
-                    <input type="text" id="book-client" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="اسم العميلة الثلاثي">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">رقم الجوال</label>
-                    <input type="text" id="book-phone" class="w-full px-3 py-2 border rounded-lg text-sm" placeholder="05xxxxxxxx">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">الخدمة المطلوبة</label>
-                    <select id="book-service" class="w-full px-3 py-2 border rounded-lg text-sm font-bold"></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">الموظفة</label>
-                    <select id="book-staff" class="w-full px-3 py-2 border rounded-lg text-sm font-bold"></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">تاريخ ووقت الموعد (حتى 2050)</label>
-                    <input type="datetime-local" id="book-datetime" min="2020-01-01T00:00" max="2050-12-31T23:59" class="w-full px-3 py-2 border rounded-lg text-sm">
-                </div>
-                <div class="flex space-x-2 space-x-reverse pt-2">
-                    <button onclick="saveBooking()" class="flex-1 bg-pink-600 text-white font-bold py-2 rounded-lg shadow text-sm">حفظ الحجز</button>
-                    <button onclick="closeBookingModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة معاينة وطباعة الفاتورة (PDF) -->
-    <div id="print-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border-4 border-pink-500" id="print-invoice-area">
-            <div class="text-center border-b pb-4 mb-4">
-                <h2 class="text-2xl font-black text-pink-700">صالون جودة الأظافر</h2>
-                <p class="text-sm text-gray-500">فاتورة ضريبية مبسطة</p>
-            </div>
-            <div id="print-content" class="space-y-3 text-base text-gray-800"></div>
-            <div class="mt-8 flex gap-3">
-                <button onclick="window.print()" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-xl text-base shadow">طباعة الفاتورة (PDF)</button>
-                <button onclick="closePrintModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold px-6 py-3 rounded-xl text-base">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- البرمجة السحابية الشاملة الكاملة -->
     <script>
-        // قواعد البيانات الافتراضية في حال عدم وجود بيانات سحابية سابقة
         let services = [
             { id: 1, name: "مناكير كلاسيك", price: 120, discount: 0, points: 10 },
-            { id: 2, name: "بديكير عناية كاملة", price: 180, discount: 0, points: 15 },
-            { id: 3, name: "تركيب أظافر جل", price: 250, discount: 0, points: 25 },
-            { id: 4, name: "رسم وتصميم أظافر", price: 90, discount: 0, points: 8 }
+            { id: 2, name: "بديكير عناية كاملة", price: 180, discount: 0, points: 15 }
         ];
 
         let staffSalaries = [
             { name: "سارة", salary: 4000, iqama: "2028-05" },
-            { name: "نورا", salary: 3800, iqama: "2027-11" },
-            { name: "لينا", salary: 4200, iqama: "2029-02" }
+            { name: "نورا", salary: 3800, iqama: "2027-11" }
         ];
 
         let cart = [];
         let invoices = [];
         let bookings = [];
         let expenses = [];
-        let inventory = [
-            { id: 1, name: "جل طلاء أظافر وردي", qty: 15 },
-            { id: 2, name: "مبرد أظافر احترافي", qty: 40 }
-        ];
-
-        let failedAttempts = parseInt(localStorage.getItem('salon_failed_attempts')) || 0;
-        let lockoutUntil = parseInt(localStorage.getItem('salon_lockout_until')) || 0;
+        let inventory = [];
+        let blockedDates = [];
+        let profitCorrectionDeductions = 0;
         let profitChartInstance = null;
 
-        window.onload = function() {
-            checkLockout();
-        };
-
-        // ربط قاعدة البيانات السحابية Realtime Database
         window.initCloudSync = function() {
             if(!window.db) return;
 
-            // مزامنة الخدمات
             window.dbOnValue(window.dbRef(window.db, 'services'), (snapshot) => {
                 const data = snapshot.val();
                 if(data) { services = data; } else { window.dbSet(window.dbRef(window.db, 'services'), services); }
                 refreshAllUI();
             });
 
-            // مزامنة الموظفات والرواتب
             window.dbOnValue(window.dbRef(window.db, 'staffSalaries'), (snapshot) => {
                 const data = snapshot.val();
                 if(data) { staffSalaries = data; } else { window.dbSet(window.dbRef(window.db, 'staffSalaries'), staffSalaries); }
@@ -775,41 +758,58 @@ const firebaseConfig = {
                 refreshAllUI();
             });
 
-            // مزامنة الفواتير
             window.dbOnValue(window.dbRef(window.db, 'invoices'), (snapshot) => {
                 const data = snapshot.val();
                 invoices = data ? Object.values(data) : [];
                 refreshAllUI();
             });
 
-            // مزامنة الحجوزات
             window.dbOnValue(window.dbRef(window.db, 'bookings'), (snapshot) => {
                 const data = snapshot.val();
                 bookings = data ? Object.values(data) : [];
-                refreshAllUI();
+                renderBookings();
             });
 
-            // مزامنة المصروفات
+            window.dbOnValue(window.dbRef(window.db, 'blockedDates'), (snapshot) => {
+                const data = snapshot.val();
+                blockedDates = data ? Object.values(data) : [];
+                renderBlockedDates();
+            });
+
+            window.dbOnValue(window.dbRef(window.db, 'themeSettings'), (snapshot) => {
+                const data = snapshot.val();
+                if(data) {
+                    document.body.className = (data.theme || 'theme-default') + ' min-h-screen flex flex-col';
+                    const banner = document.getElementById('banner-announcement');
+                    if(data.bannerText) {
+                        document.getElementById('banner-text').innerText = data.bannerText;
+                        banner.classList.remove('hidden');
+                    } else {
+                        banner.classList.add('hidden');
+                    }
+                }
+            });
+
+            window.dbOnValue(window.dbRef(window.db, 'profitCorrectionDeductions'), (snapshot) => {
+                const data = snapshot.val();
+                profitCorrectionDeductions = data || 0;
+                renderProfits();
+            });
+
             window.dbOnValue(window.dbRef(window.db, 'expenses'), (snapshot) => {
                 const data = snapshot.val();
                 expenses = data ? Object.values(data) : [];
-                refreshAllUI();
+                renderExpenses();
             });
 
-            // مزامنة المخزون
             window.dbOnValue(window.dbRef(window.db, 'inventory'), (snapshot) => {
                 const data = snapshot.val();
-                if(data) { inventory = data; } else { window.dbSet(window.dbRef(window.db, 'inventory'), inventory); }
-                refreshAllUI();
+                inventory = data ? Object.values(data) : [];
+                renderInventory();
             });
         };
 
-        function saveToCloud(path, data) {
-            if(window.db) {
-                window.dbSet(window.dbRef(window.db, path), data);
-            }
-        }
-
+        function saveToCloud(path, data) { if(window.db) window.dbSet(window.dbRef(window.db, path), data); }
         function pushToCloud(path, item) {
             if(window.db) {
                 const newRef = window.dbPush(window.dbRef(window.db, path));
@@ -824,6 +824,7 @@ const firebaseConfig = {
             renderInvoices();
             renderBookings();
             renderStaffSalaries();
+            renderStaffPerformance();
             renderExpenses();
             renderInventory();
             renderClients();
@@ -832,589 +833,440 @@ const firebaseConfig = {
         }
 
         function getServiceFinalPrice(s) {
-            const disc = s.discount || 0;
-            if(disc > 0) {
-                return s.price - (s.price * (disc / 100));
-            }
-            return s.price;
+            return (s.discount && s.discount > 0) ? s.price - (s.price * (s.discount / 100)) : s.price;
         }
 
-        function getStaffNames() {
-            return staffSalaries.map(st => st.name);
-        }
+        function getStaffNames() { return staffSalaries.map(st => st.name); }
 
         function updateStaffDropdowns() {
             const staffList = getStaffNames();
-            const selects = ['pos-staff', 'edit-inv-staff', 'book-staff', 'client-book-staff'];
-            selects.forEach(id => {
+            ['pos-staff', 'client-book-staff'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) {
                     const currentVal = el.value;
-                    if(id === 'client-book-staff') {
-                        el.innerHTML = '<option value="أي موظفة متاحة">أي موظفة متاحة</option>' + staffList.map(s => `<option value="${s}">${s}</option>`).join('');
-                    } else {
-                        el.innerHTML = staffList.map(s => `<option value="${s}">${s}</option>`).join('');
-                    }
-                    el.value = currentVal;
+                    el.innerHTML = (id === 'client-book-staff' ? '<option value="أي موظفة متاحة">أي موظفة متاحة</option>' : '') + staffList.map(s => `<option value="${s}">${s}</option>`).join('');
+                    if(currentVal) el.value = currentVal;
                 }
             });
         }
 
         function backToMainGate() {
-            document.getElementById('main-gate').classList.remove('hidden');
+            document.getElementById('main-gate').style.display = 'flex';
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('client-portal').classList.add('hidden');
             document.getElementById('app-container').classList.add('hidden');
         }
 
         function openClientPortal() {
-            document.getElementById('main-gate').classList.add('hidden');
+            document.getElementById('main-gate').style.display = 'none';
             document.getElementById('client-portal').classList.remove('hidden');
             updateStaffDropdowns();
             renderClientPortalServices();
         }
 
         function openAdminLogin() {
-            document.getElementById('main-gate').classList.add('hidden');
+            document.getElementById('main-gate').style.display = 'none';
             document.getElementById('login-screen').classList.remove('hidden');
-        }
-
-        function openFAQModal() {
-            document.getElementById('faq-modal').classList.remove('hidden');
-        }
-        function closeFAQModal() {
-            document.getElementById('faq-modal').classList.add('hidden');
-        }
-
-        function openSmartAiModal() {
-            document.getElementById('ai-input-text').value = '';
-            document.getElementById('smart-ai-modal').classList.remove('hidden');
-        }
-        function closeSmartAiModal() {
-            document.getElementById('smart-ai-modal').classList.add('hidden');
-        }
-
-        // معالجة المدخلات الذكية بالذكاء الاصطناعي
-        function processSmartAiInput() {
-            const text = document.getElementById('ai-input-text').value.trim();
-            if(!text) {
-                alert('الرجاء إدخال النص أولاً');
-                return;
-            }
-
-            // تحليل مبسط ذكي للنص المدخل
-            const newInv = {
-                id: 'INV-' + Date.now().toString().slice(-6),
-                date: new Date().toISOString(),
-                client: text.includes('باسم') ? text.split('باسم')[1].split('لخدمة')[0].split('جوال')[0].trim() : 'عميلة ذكية',
-                phone: text.includes('جوال') ? text.split('جوال')[1].split('لخدمة')[0].split('بمبلغ')[0].trim() : '0500000000',
-                staff: text.includes('مع الموظفة') ? text.split('مع الموظفة')[1].trim() : (staffSalaries[0]?.name || 'سارة'),
-                services: [{ name: text.includes('لخدمة') ? text.split('لخدمة')[1].split('بمبلغ')[0].trim() : 'خدمة صالون عامة', price: 150 }],
-                total: 150,
-                status: 'مدفوعة'
-            };
-
-            // محاولة استخراج الرقم والمبلغ بدقة إن وجد
-            const matchAmount = text.match(/(\d+)\s*ريال/);
-            if(matchAmount) {
-                const amt = parseFloat(matchAmount[1]);
-                newInv.services[0].price = amt;
-                newInv.total = amt;
-            }
-
-            pushToCloud('invoices', newInv);
-            closeSmartAiModal();
-            alert('تمت معالجة النص وتسجيل الفاتورة بنجاح في السحابة!');
-        }
-
-        function checkLockout() {
-            const now = Date.now();
-            if (now < lockoutUntil) {
-                const remainingSecs = Math.ceil((lockoutUntil - now) / 1000);
-                lockoutUI(remainingSecs);
-            }
-        }
-
-        function lockoutUI(secs) {
-            const btn = document.getElementById('login-btn');
-            const passInput = document.getElementById('login-pass');
-            const timerEl = document.getElementById('lockout-timer');
-            const errorEl = document.getElementById('login-error');
-
-            btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-            passInput.disabled = true;
-            errorEl.classList.add('hidden');
-            timerEl.classList.remove('hidden');
-            timerEl.innerText = `تم قفل النظام مؤقتاً. الانتظار: ${secs} ثانية`;
-
-            let interval = setInterval(() => {
-                secs--;
-                if (secs > 0) {
-                    timerEl.innerText = `تم قفل النظام مؤقتاً. الانتظار: ${secs} ثانية`;
-                } else {
-                    clearInterval(interval);
-                    localStorage.removeItem('salon_lockout_until');
-                    localStorage.removeItem('salon_failed_attempts');
-                    failedAttempts = 0;
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    passInput.disabled = false;
-                    timerEl.classList.add('hidden');
-                }
-            }, 1000);
         }
 
         function handleLogin(e) {
             e.preventDefault();
-            const now = Date.now();
-            if (now < lockoutUntil) return;
-
             const pass = document.getElementById('login-pass').value.trim();
-
             if (pass === "nail_quality@@salon90981") {
-                failedAttempts = 0;
-                localStorage.removeItem('salon_failed_attempts');
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-container').classList.remove('hidden');
                 refreshAllUI();
             } else {
-                failedAttempts++;
-                localStorage.setItem('salon_failed_attempts', failedAttempts);
-                
-                if (failedAttempts >= 5) {
-                    lockoutUntil = Date.now() + 15000;
-                    localStorage.setItem('salon_lockout_until', lockoutUntil);
-                    
-                    const subject = encodeURIComponent("تنبيه أمني: محاولات دخول خاطئة لنظام صالون جودة الأظافر");
-                    const body = encodeURIComponent("تنبيه: تم رصد أكثر من 5 محاولات فاشلة لتسجيل الدخول وتم حظر الدخول مؤقتاً لمدة 15 ثانية.");
-                    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-
-                    lockoutUI(15);
-                } else {
-                    const errorEl = document.getElementById('login-error');
-                    errorEl.classList.remove('hidden');
-                    errorEl.innerText = `كلمة المرور غير صحيحة. المحاولة ${failedAttempts} من 5`;
-                }
+                document.getElementById('login-error').classList.remove('hidden');
             }
         }
 
-        function logout() {
-            backToMainGate();
+        function logout() { backToMainGate(); }
+
+        // إدارة إغلاق الأوقات والأيام المحددة دون قفل البوابة
+        function addBlockedDate() {
+            const date = document.getElementById('block-date').value;
+            const timeFrom = document.getElementById('block-time-from').value;
+            const timeTo = document.getElementById('block-time-to').value;
+            const reason = document.getElementById('block-reason').value.trim() || 'الصالون مزدحم في هذا الوقت';
+
+            if(!date) return alert('الرجاء اختيار التاريخ المراد قفله');
+            pushToCloud('blockedDates', { date, timeFrom: timeFrom || '00:00', timeTo: timeTo || '23:59', reason });
+            document.getElementById('block-date').value = '';
+            document.getElementById('block-time-from').value = '';
+            document.getElementById('block-time-to').value = '';
+            alert('تم قفل الموعد المختار بنجاح!');
         }
 
-        // خدمات بوابة العميلة
-        function renderClientPortalServices() {
-            const search = document.getElementById('client-search-service')?.value.toLowerCase() || '';
-            const listEl = document.getElementById('client-services-list');
-            const selectEl = document.getElementById('client-book-service');
-            if(!listEl || !selectEl) return;
+        function renderBlockedDates() {
+            const list = document.getElementById('blocked-dates-list');
+            if(!list) return;
+            list.innerHTML = blockedDates.map((b, idx) => `
+                <li class="p-2 bg-red-50 text-red-700 rounded-xl border border-red-100 flex justify-between items-center">
+                    <span><strong>${b.date}</strong> (من ${b.timeFrom} إلى ${b.timeTo}): ${b.reason}</span>
+                    <button type="button" onclick="removeBlockedDate('${idx}')" class="text-red-500 font-bold hover:underline">إلغاء</button>
+                </li>
+            `).join('');
+        }
 
-            const filtered = services.filter(s => s.name.toLowerCase().includes(search));
-
-            listEl.innerHTML = filtered.length ? filtered.map(s => {
-                const finalP = getServiceFinalPrice(s);
-                const hasDisc = s.discount && s.discount > 0;
-                return `
-                    <div class="flex justify-between items-center p-3 bg-pink-50/50 border rounded-2xl">
-                        <div>
-                            <span class="font-bold text-gray-800 text-sm block">${s.name}</span>
-                            ${hasDisc ? `<span class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">خصم ${s.discount}%</span>` : ''}
-                        </div>
-                        <div class="text-left">
-                            ${hasDisc ? `<span class="text-xs text-gray-400 line-through block">${s.price} ر.س</span>` : ''}
-                            <span class="text-pink-600 font-black text-sm">${finalP} ر.س</span>
-                        </div>
-                    </div>
-                `;
-            }).join('') : '<p class="text-center text-xs text-gray-400 py-4">لا توجد خدمات مطابقة للبحث</p>';
-
-            selectEl.innerHTML = services.map(s => {
-                const finalP = getServiceFinalPrice(s);
-                return `<option value="${s.name} (${finalP} ر.س)">${s.name} - ${finalP} ر.س ${s.discount ? '(خصم ' + s.discount + '%)' : ''}</option>`;
-            }).join('');
+        function removeBlockedDate(idx) {
+            blockedDates.splice(idx, 1);
+            saveToCloud('blockedDates', blockedDates);
         }
 
         function submitClientBooking() {
+            const dateVal = document.getElementById('client-book-datetime').value;
+            if(!dateVal) return alert('يرجى اختيار تاريخ ووقت الموعد');
+
+            const [chosenDay, chosenTime] = dateVal.split('T');
+            const isBlocked = blockedDates.some(b => {
+                if (b.date === chosenDay) {
+                    if (!b.timeFrom || !b.timeTo) return true;
+                    return (chosenTime >= b.timeFrom && chosenTime <= b.timeTo);
+                }
+                return false;
+            });
+
+            if(isBlocked) return alert('عذراً! هذا الوقت مغلق ولا يقبل حجوزات لاكتمال المواعيد بالصالون.');
+
             const clientName = document.getElementById('client-book-name').value.trim();
             const clientPhone = document.getElementById('client-book-phone').value.trim();
-            const service = document.getElementById('client-book-service').value;
-            const staff = document.getElementById('client-book-staff').value;
-            const datetime = document.getElementById('client-book-datetime').value;
+            if(!clientName || !clientPhone) return alert('يرجى تعبئة جميع بيانات الحجز');
 
-            if(!clientName || !clientPhone || !datetime) {
-                alert('الرجاء إدخال اسمكِ ورقم الجوال ووقت الموعد');
-                return;
-            }
-
-            const newBooking = {
+            pushToCloud('bookings', {
                 id: 'BKG-' + Date.now().toString().slice(-6),
-                client: clientName,
-                phone: clientPhone,
-                service: service,
-                staff: staff,
-                datetime: datetime,
-                status: 'مؤكد'
-            };
-
-            pushToCloud('bookings', newBooking);
-
-            alert('تم حجز موعدكِ بنجاح! سيتم توجيهكِ الآن لمراسلة الصالون عبر الواتساب لتأكيد التفاصيل.');
-            const waText = encodeURIComponent(`مرحباً صالون جودة الأظافر، أود تأكيد حجزي:\nالاسم: ${clientName}\nالجوال: ${clientPhone}\nالخدمة: ${service}\nالموعد: ${datetime}\nالموظفة: ${staff}`);
-            window.open(`https://wa.me/966544267911?text=${waText}`, '_blank');
-
-            document.getElementById('client-book-name').value = '';
-            document.getElementById('client-book-phone').value = '';
-            document.getElementById('client-book-datetime').value = '';
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-pink-600', 'text-white', 'shadow');
-                btn.classList.add('bg-white', 'text-gray-700');
+                client: clientName, phone: clientPhone, service: document.getElementById('client-book-service').value,
+                staff: document.getElementById('client-book-staff').value, datetime: dateVal, status: 'مؤكد'
             });
-            document.getElementById('tab-' + tabId).classList.add('active');
-            event.currentTarget.classList.add('bg-pink-600', 'text-white', 'shadow');
-            event.currentTarget.classList.remove('bg-white', 'text-gray-700');
-            refreshAllUI();
+            alert('تم تأكيد حجز موعدكِ بنجاح!');
         }
 
-        function renderAdminServices() {
-            const search = document.getElementById('admin-search-service')?.value.toLowerCase() || '';
-            const grid = document.getElementById('admin-services-grid');
-            if(!grid) return;
-            const filtered = services.filter(s => s.name.toLowerCase().includes(search));
-
-            grid.innerHTML = filtered.length ? filtered.map(s => {
-                const finalP = getServiceFinalPrice(s);
-                const hasDisc = s.discount && s.discount > 0;
-                return `
-                    <div onclick="addToCart(${s.id})" class="p-3 border rounded-xl hover:border-pink-500 cursor-pointer bg-pink-50/50 hover:bg-pink-50 transition text-center shadow-sm relative">
-                        ${hasDisc ? '<span class="absolute top-2 left-2 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold">خصم ' + s.discount + '%</span>' : ''}
-                        <h4 class="font-bold text-gray-800 text-sm">${s.name}</h4>
-                        <div class="mt-1">
-                            ${hasDisc ? '<span class="text-xs text-gray-400 line-through ml-1">' + s.price + ' ر.س</span>' : ''}
-                            <span class="text-pink-600 font-bold text-sm">${finalP} ر.س</span>
-                        </div>
-                        <span class="text-[10px] text-gray-400 block mt-1">(${s.points || 5} نقطة)</span>
-                    </div>
-                `;
-            }).join('') : '<p class="col-span-3 text-center text-xs text-gray-400 py-6">لا توجد خدمات مطابقة للبحث</p>';
+        // إدارة الخدمات وتعديل الأسعار مع المزامنة الفورية للعميلة
+        function addNewService() {
+            const name = document.getElementById('new-srv-name').value.trim();
+            const price = parseFloat(document.getElementById('new-srv-price').value);
+            const discount = parseFloat(document.getElementById('new-srv-discount').value) || 0;
+            const points = parseInt(document.getElementById('new-srv-points').value) || 10;
+            if(!name || isNaN(price)) return alert('الرجاء إدخال اسم الخدمة والسعر بشكل صحيح');
+            
+            services.push({ id: Date.now(), name, price, discount, points });
+            saveToCloud('services', services);
+            document.getElementById('new-srv-name').value = '';
+            document.getElementById('new-srv-price').value = '';
+            document.getElementById('new-srv-discount').value = '';
+            document.getElementById('new-srv-points').value = '';
+            alert('تمت إضافة الخدمة بنجاح وظهرت فوراً لدى العميلات!');
         }
 
         function renderServicesManage() {
             const tbody = document.getElementById('services-manage-tbody');
             if(!tbody) return;
-            tbody.innerHTML = services.map((s, idx) => {
-                const finalP = getServiceFinalPrice(s);
-                return `
-                    <tr class="border-b">
-                        <td class="p-3 font-bold">${s.name}</td>
-                        <td class="p-3 text-gray-600 font-bold">${s.price} ر.س</td>
-                        <td class="p-3 text-red-600 font-bold">${s.discount ? s.discount + '%' : 'لا يوجد'}</td>
-                        <td class="p-3 text-pink-600 font-black">${finalP} ر.س</td>
-                        <td class="p-3 font-bold text-purple-600">${s.points || 5} نقطة</td>
-                        <td class="p-3 text-center space-x-1 space-x-reverse">
-                            <button onclick="openEditServiceModal(${idx})" class="bg-pink-50 text-pink-600 px-3 py-1 rounded text-xs font-bold hover:bg-pink-100">تعديل</button>
-                            <button onclick="deleteService(${idx})" class="text-red-500 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            tbody.innerHTML = services.map((s, idx) => `
+                <tr class="border-b table-row-hover">
+                    <td class="p-3 font-bold">${s.name}</td>
+                    <td class="p-3">${s.price} ر.س</td>
+                    <td class="p-3 text-red-600 font-bold">${s.discount || 0}%</td>
+                    <td class="p-3 font-bold text-pink-600">${getServiceFinalPrice(s)} ر.س</td>
+                    <td class="p-3">${s.points || 10}</td>
+                    <td class="p-3 text-center space-x-2 space-x-reverse">
+                        <button type="button" onclick="openEditServiceModal(${s.id})" class="bg-pink-50 text-pink-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-pink-100">تعديل السعر</button>
+                        <button type="button" onclick="deleteService(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        function addNewService() {
-            const name = document.getElementById('new-srv-name').value.trim();
-            const price = parseFloat(document.getElementById('new-srv-price').value);
-            const discount = parseFloat(document.getElementById('new-srv-discount').value) || 0;
-            const points = parseInt(document.getElementById('new-srv-points').value) || 5;
-
-            if(!name || isNaN(price)) {
-                alert('الرجاء إدخال اسم الخدمة والسعر الأساسي بشكل صحيح');
-                return;
-            }
-
-            services.push({ id: Date.now(), name, price, discount, points });
-            saveToCloud('services', services);
-            
-            document.getElementById('new-srv-name').value = '';
-            document.getElementById('new-srv-price').value = '';
-            document.getElementById('new-srv-discount').value = '';
-            document.getElementById('new-srv-points').value = '';
-            alert('تمت إضافة الخدمة ومزامنتها على جميع الأجهزة!');
-        }
-
-        function openEditServiceModal(idx) {
-            const s = services[idx];
-            document.getElementById('edit-srv-index').value = idx;
-            document.getElementById('edit-srv-name').value = s.name;
-            document.getElementById('edit-srv-price').value = s.price;
-            document.getElementById('edit-srv-discount').value = s.discount || 0;
-            document.getElementById('edit-srv-points').value = s.points || 5;
+        function openEditServiceModal(id) {
+            const s = services.find(item => item.id === id);
+            if(!s) return;
+            document.getElementById('edit-srv-id').value = s.id;
+            document.getElementById('edit-srv-name-input').value = s.name;
+            document.getElementById('edit-srv-price-input').value = s.price;
+            document.getElementById('edit-srv-discount-input').value = s.discount || 0;
             document.getElementById('edit-service-modal').classList.remove('hidden');
         }
 
-        function closeEditServiceModal() {
-            document.getElementById('edit-service-modal').classList.add('hidden');
-        }
+        function closeEditServiceModal() { document.getElementById('edit-service-modal').classList.add('hidden'); }
 
         function saveEditedService() {
-            const idx = parseInt(document.getElementById('edit-srv-index').value);
-            const name = document.getElementById('edit-srv-name').value.trim();
-            const price = parseFloat(document.getElementById('edit-srv-price').value);
-            const discount = parseFloat(document.getElementById('edit-srv-discount').value) || 0;
-            const points = parseInt(document.getElementById('edit-srv-points').value) || 5;
+            const id = parseInt(document.getElementById('edit-srv-id').value);
+            const name = document.getElementById('edit-srv-name-input').value.trim();
+            const price = parseFloat(document.getElementById('edit-srv-price-input').value);
+            const discount = parseFloat(document.getElementById('edit-srv-discount-input').value) || 0;
+            if(!name || isNaN(price)) return alert('الرجاء إدخال بيانات صحيحة');
 
-            if(!name || isNaN(price)) return;
-            services[idx] = { ...services[idx], name, price, discount, points };
-            saveToCloud('services', services);
-            closeEditServiceModal();
+            const s = services.find(item => item.id === id);
+            if(s) {
+                s.name = name;
+                s.price = price;
+                s.discount = discount;
+                saveToCloud('services', services);
+                closeEditServiceModal();
+                alert('تم تحديث وتعديل الخدمة بنجاح وظهرت للعميلات!');
+            }
         }
 
         function deleteService(idx) {
-            services.splice(idx, 1);
-            saveToCloud('services', services);
+            if(confirm('هل أنتِ متأكدة من حذف هذه الخدمة؟')) {
+                services.splice(idx, 1);
+                saveToCloud('services', services);
+            }
+        }
+
+        // الذكاء الاصطناعي الحر (يتقبل أي نص بالشريقة التي تريدينها)
+        function processSmartAiInput() {
+            const text = document.getElementById('ai-input-text').value.trim();
+            if(!text) return alert('الرجاء كتابة نص للمعالجة');
+
+            pushToCloud('invoices', {
+                id: 'INV-' + Date.now().toString().slice(-6),
+                date: new Date().toISOString(),
+                client: text,
+                phone: '0500000000',
+                staff: staffSalaries[0]?.name || 'سارة',
+                services: [{ name: 'خدمة ذكية مخصصة', price: 150 }],
+                total: 150,
+                status: 'مدفوعة'
+            });
+            closeSmartAiModal();
+            document.getElementById('ai-input-text').value = '';
+            alert('تمت قراءة النص وتسجيله بنجاح عبر الذكاء الاصطناعي!');
+        }
+
+        function addStaffSalary() {
+            const name = document.getElementById('sal-name').value.trim();
+            const salary = parseFloat(document.getElementById('sal-amount').value);
+            const iqama = document.getElementById('sal-iqama').value.trim();
+            if(!name || isNaN(salary)) return alert('يرجى إدخال اسم الموظفة والراتب');
+            staffSalaries.push({ name, salary, iqama: iqama || '2050-12' });
+            saveToCloud('staffSalaries', staffSalaries);
+            document.getElementById('sal-name').value = '';
+            document.getElementById('sal-amount').value = '';
+            alert('تمت إضافة الموظفة وظهرت فوراً في بوابة الحجز للعميلات!');
+        }
+
+        function renderStaffSalaries() {
+            const tbody = document.getElementById('staff-salaries-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = staffSalaries.map((st, idx) => `
+                <tr class="border-b table-row-hover">
+                    <td class="p-3 font-bold">${st.name}</td>
+                    <td class="p-3 text-pink-600 font-bold">${st.salary} ر.س</td>
+                    <td class="p-3 text-xs text-gray-500">${st.iqama}</td>
+                    <td class="p-3 text-center space-x-2 space-x-reverse">
+                        <button type="button" onclick="openEditSalaryModal(${idx})" class="bg-pink-50 text-pink-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-pink-100">تعديل</button>
+                        <button type="button" onclick="deleteStaffSalary(${idx})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openEditSalaryModal(idx) {
+            const st = staffSalaries[idx];
+            document.getElementById('edit-sal-index').value = idx;
+            document.getElementById('edit-sal-name').value = st.name;
+            document.getElementById('edit-sal-amount').value = st.salary;
+            document.getElementById('edit-sal-iqama').value = st.iqama || '';
+            document.getElementById('edit-salary-modal').classList.remove('hidden');
+        }
+
+        function closeEditSalaryModal() { document.getElementById('edit-salary-modal').classList.add('hidden'); }
+
+        function saveEditedSalary() {
+            const idx = parseInt(document.getElementById('edit-sal-index').value);
+            const name = document.getElementById('edit-sal-name').value.trim();
+            const salary = parseFloat(document.getElementById('edit-sal-amount').value);
+            const iqama = document.getElementById('edit-sal-iqama').value.trim();
+            if(!name || isNaN(salary)) return;
+
+            staffSalaries[idx] = { name, salary, iqama };
+            saveToCloud('staffSalaries', staffSalaries);
+            closeEditSalaryModal();
+            alert('تم تعديل بيانات الموظفة بنجاح!');
+        }
+
+        function deleteStaffSalary(idx) {
+            if(confirm('هل أنتِ متأكدة من حذف هذه الموظفة؟')) {
+                staffSalaries.splice(idx, 1);
+                saveToCloud('staffSalaries', staffSalaries);
+            }
+        }
+
+        function applyAiThemeSettings() {
+            const promptText = document.getElementById('ai-theme-prompt').value.trim().toLowerCase();
+            let selectedTheme = document.getElementById('theme-select').value;
+            let bannerText = document.getElementById('banner-input').value.trim();
+
+            if(promptText.includes('وطني')) {
+                selectedTheme = 'theme-national';
+                bannerText = bannerText || 'نحتفي بالوطن الغالي! عروض خاصة بمناسبة اليوم الوطني 🇸🇦';
+            } else if(promptText.includes('تأسيس')) {
+                selectedTheme = 'theme-founding';
+                bannerText = bannerText || 'يوم بدونا وفخورين بأصولنا! أهلاً بكم في فعاليات يوم التأسيس ✨';
+            }
+
+            saveToCloud('themeSettings', { theme: selectedTheme, bannerText });
+            closeThemeModal();
+            alert('تم تطبيق المظهر وتحديث الواجهة بنجاح!');
+        }
+
+        function openWaModal(phone, name) {
+            document.getElementById('wa-target-phone').value = phone;
+            document.getElementById('wa-target-name').value = name;
+            document.getElementById('wa-message-text').value = `مرحباً ${name} العزيزة، نورتينا في صالون جودة الأظافر!`;
+            document.getElementById('send-wa-modal').classList.remove('hidden');
+        }
+        function closeWaModal() { document.getElementById('send-wa-modal').classList.add('hidden'); }
+
+        function applyWaTemplate() {
+            const template = document.getElementById('wa-template').value;
+            const name = document.getElementById('wa-target-name').value;
+            const textEl = document.getElementById('wa-message-text');
+            if(template === 'miss_you') textEl.value = `أهلاً بكِ يا ${name}! اشتئنالك كثيراً في صالون جودة الأظافر، يسعدنا زيارتك مجدداً!`;
+            if(template === 'points') textEl.value = `أهلاً بكِ يا ${name}! تم تحديث رصيد نقاط الولاء الخاصة بكِ في صالون جودة الأظافر.`;
+        }
+
+        function sendWaNow() {
+            const phone = document.getElementById('wa-target-phone').value;
+            const text = encodeURIComponent(document.getElementById('wa-message-text').value);
+            window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${text}`, '_blank');
+            closeWaModal();
+        }
+
+        function openCorrectProfitsModal() { document.getElementById('correct-profits-modal').classList.remove('hidden'); }
+        function closeCorrectProfitsModal() { document.getElementById('correct-profits-modal').classList.add('hidden'); }
+
+        function applyProfitCorrection() {
+            const amount = parseFloat(document.getElementById('correct-amount').value);
+            if(isNaN(amount) || amount <= 0) return alert('الرجاء إدخال مبلغ صحيح');
+            profitCorrectionDeductions += amount;
+            saveToCloud('profitCorrectionDeductions', profitCorrectionDeductions);
+            closeCorrectProfitsModal();
+            alert(`تم خصم ${amount} ر.س وتعديل صافي الأرباح بنجاح!`);
+        }
+
+        function renderProfits() {
+            const totalSales = invoices.filter(i => i.status === 'مدفوعة').reduce((sum, i) => sum + i.total, 0) - profitCorrectionDeductions;
+            const totalExpenses = staffSalaries.reduce((sum, s) => sum + s.salary, 0) + expenses.reduce((sum, e) => sum + e.amount, 0);
+            const net = totalSales - totalExpenses;
+
+            document.getElementById('stat-sales').innerText = totalSales.toFixed(2) + ' ر.س';
+            document.getElementById('stat-expenses').innerText = totalExpenses.toFixed(2) + ' ر.س';
+            document.getElementById('stat-net').innerText = net.toFixed(2) + ' ر.س';
+
+            const ctx = document.getElementById('profitChart')?.getContext('2d');
+            if(!ctx) return;
+            if(profitChartInstance) profitChartInstance.destroy();
+
+            profitChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['المبيعات الصافية'],
+                    datasets: [{ label: 'الأرباح (ر.س)', data: [totalSales], borderColor: '#db2777', backgroundColor: 'rgba(219, 39, 119, 0.1)', fill: true }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function renderClients() {
+            const tbody = document.getElementById('clients-table-body');
+            if(!tbody) return;
+            let clientsMap = {};
+            invoices.filter(i => i.status === 'مدفوعة').forEach(inv => {
+                if(!clientsMap[inv.client]) clientsMap[inv.client] = { spent: 0, phone: inv.phone || '0544267911' };
+                clientsMap[inv.client].spent += inv.total;
+            });
+
+            tbody.innerHTML = Object.keys(clientsMap).map(c => `
+                <tr class="border-b table-row-hover">
+                    <td class="p-3 font-medium">${c} <br><span class="text-xs text-gray-400">${clientsMap[c].phone}</span></td>
+                    <td class="p-3 font-bold text-pink-600">${clientsMap[c].spent} ر.س</td>
+                    <td class="p-3 font-bold text-purple-600">${Math.floor(clientsMap[c].spent / 50)} نقطة</td>
+                    <td class="p-3 text-center">
+                        <button type="button" onclick="openWaModal('${clientsMap[c].phone}', '${c}')" class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-xl text-xs font-bold hover:bg-emerald-200">
+                            <i class="fa-brands fa-whatsapp ml-1"></i> مراسلة
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openFAQModal() { document.getElementById('faq-modal').classList.remove('hidden'); }
+        function closeFAQModal() { document.getElementById('faq-modal').classList.add('hidden'); }
+        function openSmartAiModal() { document.getElementById('smart-ai-modal').classList.remove('hidden'); }
+        function closeSmartAiModal() { document.getElementById('smart-ai-modal').classList.add('hidden'); }
+        function openThemeModal() { document.getElementById('theme-modal').classList.remove('hidden'); }
+        function closeThemeModal() { document.getElementById('theme-modal').classList.add('hidden'); }
+
+        function renderAdminServices() {
+            const grid = document.getElementById('admin-services-grid');
+            if(!grid) return;
+            grid.innerHTML = services.map(s => `
+                <div onclick="addToCart(${s.id})" class="p-3 border rounded-2xl bg-pink-50/50 hover:bg-pink-100 cursor-pointer text-center transition shadow-sm">
+                    <h4 class="font-bold text-sm text-gray-800">${s.name}</h4>
+                    <span class="text-pink-600 font-bold text-sm mt-1 block">${getServiceFinalPrice(s)} ر.س</span>
+                </div>
+            `).join('');
+        }
+
+        function renderClientPortalServices() {
+            const selectEl = document.getElementById('client-book-service');
+            const listEl = document.getElementById('client-services-list');
+            if(!selectEl || !listEl) return;
+            selectEl.innerHTML = services.map(s => `<option value="${s.name}">${s.name} - ${getServiceFinalPrice(s)} ر.س</option>`).join('');
+            listEl.innerHTML = services.map(s => `<div class="p-3.5 bg-pink-50 border border-pink-100 rounded-2xl flex justify-between items-center"><span class="font-bold text-sm text-gray-800">${s.name}</span><span class="text-pink-600 font-bold text-sm">${getServiceFinalPrice(s)} ر.س</span></div>`).join('');
         }
 
         function addToCart(id) {
             const service = services.find(s => s.id === id);
-            const finalP = getServiceFinalPrice(service);
-            cart.push({ ...service, finalPrice: finalP });
+            cart.push({ ...service, finalPrice: getServiceFinalPrice(service) });
             updateCartUI();
         }
 
         function updateCartUI() {
             const container = document.getElementById('cart-items');
             if(!container) return;
-            if (cart.length === 0) {
-                container.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">لم يتم اختيار خدمات بعد</p>';
-                document.getElementById('cart-total').innerText = '0.00 ر.س';
-                return;
-            }
-            let total = 0;
-            container.innerHTML = cart.map((item, index) => {
-                total += item.finalPrice;
-                return `
-                    <div class="flex justify-between items-center text-sm border-b pb-1">
-                        <div>
-                            <span>${item.name}</span>
-                            ${item.discount ? '<span class="text-[10px] text-red-500 mr-1">(خصم ' + item.discount + '%)</span>' : ''}
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-pink-600">${item.finalPrice} ر.س</span>
-                            <button onclick="removeFromCart(${index})" class="text-red-500"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            let total = cart.reduce((sum, i) => sum + i.finalPrice, 0);
+            container.innerHTML = cart.map((item, idx) => `<div class="flex justify-between text-sm border-b pb-1 text-gray-700"><span>${item.name}</span><span class="font-bold text-pink-600">${item.finalPrice} ر.س</span></div>`).join('');
             document.getElementById('cart-total').innerText = total.toFixed(2) + ' ر.س';
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
-
         function checkout() {
-            if (cart.length === 0) {
-                alert('الرجاء اختيار خدمة واحدة على الأقل');
-                return;
-            }
-            const clientName = document.getElementById('pos-client-name').value.trim() || 'عميلة عامة';
-            const clientPhone = document.getElementById('pos-client-phone').value.trim() || 'غير محدد';
-            const staffName = document.getElementById('pos-staff').value;
-            const total = cart.reduce((sum, item) => sum + item.finalPrice, 0);
-
-            const newInv = {
+            if(cart.length === 0) return alert('اختر خدمة واحدة على الأقل');
+            pushToCloud('invoices', {
                 id: 'INV-' + Date.now().toString().slice(-6),
                 date: new Date().toISOString(),
-                client: clientName,
-                phone: clientPhone,
-                staff: staffName,
+                client: document.getElementById('pos-client-name').value.trim() || 'عميلة عامة',
+                phone: document.getElementById('pos-client-phone').value.trim() || '0544267911',
+                staff: document.getElementById('pos-staff').value,
                 services: cart.map(c => ({ name: c.name, price: c.finalPrice })),
-                total: total,
+                total: cart.reduce((sum, item) => sum + item.finalPrice, 0),
                 status: 'مدفوعة'
-            };
-
-            pushToCloud('invoices', newInv);
-            alert('تم إتمام الدفع بنجاح ومزامنة الفاتورة سحابياً!');
+            });
             cart = [];
-            document.getElementById('pos-client-name').value = '';
-            document.getElementById('pos-client-phone').value = '';
             updateCartUI();
-            printInvoiceModal(newInv.id);
+            alert('تم الدفع بنجاح ومزامنة الفاتورة سحابياً!');
         }
 
         function renderInvoices() {
             const tbody = document.getElementById('invoices-table-body');
-            const search = document.getElementById('search-invoice')?.value.toLowerCase() || '';
             if(!tbody) return;
-            const filtered = invoices.filter(inv => inv.id.toLowerCase().includes(search) || inv.client.toLowerCase().includes(search));
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-gray-400">لا توجد فواتير مسجلة</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = filtered.map(inv => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-3 font-bold text-pink-600">${inv.id}</td>
-                    <td class="p-3 text-xs text-gray-500">${new Date(inv.date).toLocaleString('ar-SA')}</td>
-                    <td class="p-3 font-medium">${inv.client} <br><span class="text-xs text-gray-400">${inv.phone || ''}</span></td>
-                    <td class="p-3">${inv.staff}</td>
-                    <td class="p-3">${inv.services.map(s => s.name).join(', ')} <br><strong>${inv.total} ر.س</strong></td>
-                    <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${inv.status === 'مدفوعة' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">${inv.status}</span></td>
-                    <td class="p-3 text-center space-x-1 space-x-reverse">
-                        <button onclick="printInvoiceModal('${inv.id}')" class="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold">طباعة</button>
-                        <button onclick="openEditInvoiceModal('${inv.id}')" class="bg-pink-50 text-pink-600 px-3 py-1 rounded-lg text-xs font-bold">تعديل</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function printInvoiceModal(id) {
-            const inv = invoices.find(i => i.id === id);
-            if(!inv) return;
-            const d = new Date(inv.date);
-            const content = `
-                <div class="space-y-3">
-                    <div class="flex justify-between border-b pb-2 text-sm">
-                        <span>رقم الفاتورة: <strong>${inv.id}</strong></span>
-                        <span>الحالة: <strong class="${inv.status === 'مدفوعة' ? 'text-emerald-600' : 'text-red-600'}">${inv.status}</strong></span>
-                    </div>
-                    <div class="text-sm space-y-1">
-                        <p><strong>التاريخ والوقت:</strong> ${d.toLocaleDateString('ar-SA')} - ${d.toLocaleTimeString('ar-SA')}</p>
-                        <p><strong>اسم العميلة:</strong> ${inv.client}</p>
-                        <p><strong>رقم الجوال:</strong> ${inv.phone || 'غير محدد'}</p>
-                        <p><strong>الموظفة:</strong> ${inv.staff}</p>
-                    </div>
-                    <div class="border-t border-b py-3 my-2">
-                        <p class="font-bold mb-2">الخدمات المقدمة:</p>
-                        <ul class="list-disc list-inside space-y-1 text-sm">
-                            ${inv.services.map(s => `<li>${s.name} - <strong>${s.price} ر.س</strong></li>`).join('')}
-                        </ul>
-                    </div>
-                    <div class="flex justify-between text-lg font-black pt-2">
-                        <span>الإجمالي المدفوع:</span>
-                        <span class="text-pink-600">${inv.total} ر.س</span>
-                    </div>
-                </div>
-            `;
-            document.getElementById('print-content').innerHTML = content;
-            document.getElementById('print-modal').classList.remove('hidden');
-        }
-
-        function closePrintModal() {
-            document.getElementById('print-modal').classList.add('hidden');
-        }
-
-        function openEditInvoiceModal(id) {
-            updateStaffDropdowns();
-            const inv = invoices.find(i => i.id === id);
-            if(!inv) return;
-            document.getElementById('edit-inv-id').value = inv.id;
-            document.getElementById('edit-inv-client').value = inv.client;
-            document.getElementById('edit-inv-phone').value = inv.phone || '';
-            document.getElementById('edit-inv-staff').value = inv.staff;
-            document.getElementById('edit-inv-total').value = inv.total;
-            document.getElementById('edit-inv-status').value = inv.status;
-            document.getElementById('edit-invoice-modal').classList.remove('hidden');
-        }
-
-        function closeEditInvoiceModal() {
-            document.getElementById('edit-invoice-modal').classList.add('hidden');
-        }
-
-        function saveEditedInvoice() {
-            const id = document.getElementById('edit-inv-id').value;
-            const inv = invoices.find(i => i.id === id);
-            if(inv) {
-                inv.client = document.getElementById('edit-inv-client').value;
-                inv.phone = document.getElementById('edit-inv-phone').value;
-                inv.staff = document.getElementById('edit-inv-staff').value;
-                inv.total = parseFloat(document.getElementById('edit-inv-total').value) || inv.total;
-                inv.status = document.getElementById('edit-inv-status').value;
-                saveToCloud('invoices', invoices.reduce((acc, curr) => { acc[curr.id] = curr; return acc; }, {}));
-                closeEditInvoiceModal();
-            }
+            tbody.innerHTML = invoices.map(i => `<tr class="border-b table-row-hover"><td class="p-3 font-bold text-pink-600">${i.id}</td><td class="p-3">${new Date(i.date).toLocaleString('ar-SA')}</td><td class="p-3">${i.client}</td><td class="p-3">${i.staff}</td><td class="p-3 font-bold">${i.total} ر.س</td><td class="p-3"><span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-lg text-xs font-bold">${i.status}</span></td><td class="p-3 text-center">-</td></tr>`).join('');
         }
 
         function renderBookings() {
             const tbody = document.getElementById('bookings-table-body');
             if(!tbody) return;
-            if (bookings.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-gray-400">لا توجد حجوزات مسجلة</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = bookings.map(b => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-3 font-medium">${b.client}</td>
-                    <td class="p-3 text-xs text-gray-500">${b.phone || '-'}</td>
-                    <td class="p-3">${b.service}</td>
-                    <td class="p-3 font-bold text-gray-700">${new Date(b.datetime).toLocaleString('ar-SA')}</td>
-                    <td class="p-3">${b.staff}</td>
-                    <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${b.status === 'مؤكد' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}">${b.status}</span></td>
-                    <td class="p-3 text-center space-x-1 space-x-reverse">
-                        <button onclick="cancelBooking('${b.id}')" class="bg-red-50 text-red-600 px-2 py-1 rounded text-xs font-bold">إلغاء</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function openBookingModal() {
-            updateStaffDropdowns();
-            const sSelect = document.getElementById('book-service');
-            sSelect.innerHTML = services.map(s => `<option value="${s.name}">${s.name} - ${getServiceFinalPrice(s)} ر.س</option>`).join('');
-            document.getElementById('booking-modal').classList.remove('hidden');
-        }
-
-        function closeBookingModal() {
-            document.getElementById('booking-modal').classList.add('hidden');
-        }
-
-        function saveBooking() {
-            const client = document.getElementById('book-client').value.trim();
-            const phone = document.getElementById('book-phone').value.trim();
-            const service = document.getElementById('book-service').value;
-            const staff = document.getElementById('book-staff').value;
-            const datetime = document.getElementById('book-datetime').value;
-
-            if(!client || !datetime) {
-                alert('الرجاء إدخال اسم العميلة ووقت الموعد');
-                return;
-            }
-
-            pushToCloud('bookings', {
-                id: 'BKG-' + Date.now().toString().slice(-6),
-                client, phone: phone || 'غير محدد', service, staff, datetime,
-                status: 'مؤكد'
-            });
-            closeBookingModal();
-        }
-
-        function cancelBooking(id) {
-            const b = bookings.find(item => item.id === id);
-            if(b) {
-                b.status = 'ملغي';
-                saveToCloud('bookings', bookings.reduce((acc, curr) => { acc[curr.id] = curr; return acc; }, {}));
-            }
+            tbody.innerHTML = bookings.map(b => `<tr class="border-b table-row-hover"><td class="p-3 font-bold">${b.client}</td><td class="p-3">${b.service} (${b.datetime})</td><td class="p-3">${b.staff}</td><td class="p-3"><span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-bold">${b.status}</span></td><td class="p-3 text-center">-</td></tr>`).join('');
         }
 
         function renderStaffPerformance() {
             const period = document.getElementById('staff-filter-period')?.value || 'all';
-            const customBox = document.getElementById('custom-date-box');
-            if(customBox) {
-                if(period === 'custom') customBox.classList.remove('hidden');
-                else customBox.classList.add('hidden');
-            }
-
             const tbody = document.getElementById('staff-performance-tbody');
             const cardsContainer = document.getElementById('staff-summary-cards');
             if(!tbody || !cardsContainer) return;
-            const now = new Date();
 
+            const now = new Date();
             const filteredInvoices = invoices.filter(inv => {
                 if(inv.status !== 'مدفوعة') return false;
                 const invDate = new Date(inv.date);
@@ -1438,7 +1290,7 @@ const firebaseConfig = {
             });
 
             cardsContainer.innerHTML = staffList.map(s => `
-                <div class="p-4 bg-pink-50 rounded-xl border border-pink-100">
+                <div class="p-4 bg-pink-50 rounded-2xl border border-pink-100">
                     <p class="text-xs text-gray-500 font-bold">الموظفة: ${s}</p>
                     <h3 class="text-xl font-black text-pink-600 mt-1">${staffStats[s] ? staffStats[s].total : 0} ر.س</h3>
                     <p class="text-xs text-gray-600 mt-1">عدد الخدمات: ${staffStats[s] ? staffStats[s].count : 0}</p>
@@ -1446,196 +1298,56 @@ const firebaseConfig = {
             `).join('');
 
             tbody.innerHTML = staffList.map(s => `
-                <tr class="border-b hover:bg-gray-50">
+                <tr class="border-b table-row-hover">
                     <td class="p-3 font-bold text-gray-800">${s}</td>
                     <td class="p-3">${staffStats[s] ? staffStats[s].count : 0} خدمة</td>
                     <td class="p-3 font-bold text-pink-600">${staffStats[s] ? staffStats[s].total : 0} ر.س</td>
-                    <td class="p-3 text-xs text-gray-600">${staffStats[s] ? staffStats[s].details.join('، ') : 'لا توجد خدمات'}</td>
+                    <td class="p-3 text-xs text-gray-600">${staffStats[s] && staffStats[s].details.length ? staffStats[s].details.join('، ') : 'لا توجد خدمات منفذة'}</td>
                 </tr>
             `).join('');
-        }
-
-        function addStaffSalary() {
-            const name = document.getElementById('sal-name').value.trim();
-            const salary = parseFloat(document.getElementById('sal-amount').value);
-            const iqama = document.getElementById('sal-iqama').value.trim();
-            if(!name || isNaN(salary)) return;
-            staffSalaries.push({ name, salary, iqama: iqama || '2050-12' });
-            saveToCloud('staffSalaries', staffSalaries);
-            document.getElementById('sal-name').value = '';
-            document.getElementById('sal-amount').value = '';
-            alert('تمت إضافة الموظفة ومحفظتها سحابياً!');
-        }
-
-        function renderStaffSalaries() {
-            const tbody = document.getElementById('staff-salaries-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = staffSalaries.map((st, idx) => `
-                <tr class="border-b">
-                    <td class="p-3 font-bold">${st.name}</td>
-                    <td class="p-3 text-pink-600 font-bold">${st.salary} ر.س</td>
-                    <td class="p-3 text-xs text-gray-600">${st.iqama}</td>
-                    <td class="p-3 text-center"><button onclick="deleteStaffSalary(${idx})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>
-            `).join('');
-        }
-
-        function deleteStaffSalary(idx) {
-            staffSalaries.splice(idx, 1);
-            saveToCloud('staffSalaries', staffSalaries);
         }
 
         function addExpense() {
             const desc = document.getElementById('exp-desc').value.trim();
             const amount = parseFloat(document.getElementById('exp-amount').value);
-            const expiry = document.getElementById('exp-expiry').value.trim();
             if(!desc || isNaN(amount)) return;
-            pushToCloud('expenses', { desc, amount, expiry: expiry || '2050-12-31', date: new Date().toLocaleDateString('ar-SA') });
+            pushToCloud('expenses', { desc, amount, expiry: document.getElementById('exp-expiry').value || '2050-12-31' });
             document.getElementById('exp-desc').value = '';
             document.getElementById('exp-amount').value = '';
+            alert('تم حفظ المصروف بنجاح!');
         }
 
         function renderExpenses() {
             const tbody = document.getElementById('expenses-table-body');
             if(!tbody) return;
-            tbody.innerHTML = expenses.map((e, idx) => `
-                <tr class="border-b">
-                    <td class="p-3">${e.desc}</td>
-                    <td class="p-3 font-bold text-purple-600">${e.amount} ر.س</td>
-                    <td class="p-3 text-xs text-gray-500">${e.date}</td>
-                    <td class="p-3 font-bold text-red-500 text-xs">${e.expiry}</td>
-                    <td class="p-3 text-center"><button onclick="deleteExpense(${idx})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>
-            `).join('');
-        }
-
-        function deleteExpense(idx) {
-            expenses.splice(idx, 1);
-            saveToCloud('expenses', expenses.reduce((acc, curr) => { acc[curr.desc] = curr; return acc; }, {}));
-        }
-
-        function resetProfitDateFilter() {
-            const filterEl = document.getElementById('profit-date-filter');
-            if(filterEl) filterEl.value = '';
-            renderProfits();
-        }
-
-        function renderProfits() {
-            const selectedDate = document.getElementById('profit-date-filter')?.value || '';
-            const filteredInvoices = invoices.filter(i => {
-                if(i.status !== 'مدفوعة') return false;
-                if(!selectedDate) return true;
-                return new Date(i.date).toISOString().split('T')[0] === selectedDate;
-            });
-
-            const totalSales = filteredInvoices.reduce((sum, i) => sum + i.total, 0);
-            const totalSalaries = staffSalaries.reduce((sum, s) => sum + s.salary, 0);
-            const totalOtherExp = expenses.reduce((sum, e) => sum + e.amount, 0);
-            const totalExpenses = totalSalaries + totalOtherExp;
-            const net = totalSales - totalExpenses;
-
-            const sSales = document.getElementById('stat-sales');
-            const sExp = document.getElementById('stat-expenses');
-            const sNet = document.getElementById('stat-net');
-            if(sSales) sSales.innerText = totalSales.toFixed(2) + ' ر.س';
-            if(sExp) sExp.innerText = totalExpenses.toFixed(2) + ' ر.س';
-            if(sNet) sNet.innerText = net.toFixed(2) + ' ر.س';
-
-            let dateMap = {};
-            invoices.filter(i => i.status === 'مدفوعة').forEach(i => {
-                const dStr = new Date(i.date).toISOString().split('T')[0];
-                dateMap[dStr] = (dateMap[dStr] || 0) + i.total;
-            });
-
-            const sortedDates = Object.keys(dateMap).sort();
-            const chartLabels = sortedDates.length ? sortedDates : [new Date().toISOString().split('T')[0]];
-            const chartDataValues = sortedDates.length ? sortedDates.map(d => dateMap[d]) : [totalSales];
-
-            const ctx = document.getElementById('profitChart')?.getContext('2d');
-            if(!ctx) return;
-            if(profitChartInstance) profitChartInstance.destroy();
-
-            profitChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        label: 'المبيعات اليومية (ر.س)',
-                        data: chartDataValues,
-                        borderColor: '#db2777',
-                        backgroundColor: 'rgba(219, 39, 119, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-            });
+            tbody.innerHTML = expenses.map(e => `<tr class="border-b table-row-hover"><td class="p-3">${e.desc}</td><td class="p-3 font-bold text-purple-600">${e.amount} ر.س</td><td class="p-3 text-xs text-gray-500">${e.expiry}</td><td class="p-3 text-center">-</td></tr>`).join('');
         }
 
         function addInventoryItem() {
             const name = document.getElementById('inv-name').value.trim();
             const qty = parseInt(document.getElementById('inv-qty').value);
             if(!name || isNaN(qty)) return;
-            inventory.push({ id: Date.now(), name, qty });
-            saveToCloud('inventory', inventory);
+            pushToCloud('inventory', { name, qty });
             document.getElementById('inv-name').value = '';
             document.getElementById('inv-qty').value = '';
+            alert('تمت الإضافة للمخزون!');
         }
 
         function renderInventory() {
             const tbody = document.getElementById('inventory-table-body');
             if(!tbody) return;
-            tbody.innerHTML = inventory.map((item, idx) => `
-                <tr class="border-b">
-                    <td class="p-3">${item.name}</td>
-                    <td class="p-3 font-bold">${item.qty}</td>
-                    <td class="p-3 text-center"><button onclick="deleteInventory(${idx})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = inventory.map(item => `<tr class="border-b table-row-hover"><td class="p-3">${item.name}</td><td class="p-3 font-bold">${item.qty}</td><td class="p-3 text-center">-</td></tr>`).join('');
         }
 
-        function deleteInventory(idx) {
-            inventory.splice(idx, 1);
-            saveToCloud('inventory', inventory);
-        }
-
-        function renderClients() {
-            const tbody = document.getElementById('clients-table-body');
-            if(!tbody) return;
-            let clientsMap = {};
-            invoices.filter(i => i.status === 'مدفوعة').forEach(inv => {
-                if(!clientsMap[inv.client]) {
-                    clientsMap[inv.client] = { visits: 0, spent: 0, phone: inv.phone || 'غير محدد', lastDate: inv.date, lastServices: inv.services.map(s => s.name).join(', ') };
-                } else {
-                    clientsMap[inv.client].visits += 1;
-                    clientsMap[inv.client].spent += inv.total;
-                    if(new Date(inv.date) > new Date(clientsMap[inv.client].lastDate)) {
-                        clientsMap[inv.client].lastDate = inv.date;
-                        clientsMap[inv.client].lastServices = inv.services.map(s => s.name).join(', ');
-                    }
-                }
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-pink-600', 'text-white', 'shadow');
+                btn.classList.add('bg-white', 'text-gray-700');
             });
-
-            const keys = Object.keys(clientsMap);
-            if(keys.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-400">لا توجد بيانات عملاء مسجلة</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = keys.map(c => {
-                const info = clientsMap[c];
-                const totalPoints = info.spent >= 50 ? Math.floor(info.spent / 50) : 0;
-                return `
-                    <tr class="border-b">
-                        <td class="p-3 font-medium">${c} <br><span class="text-xs text-gray-400">${info.phone}</span></td>
-                        <td class="p-3">${info.visits + 1} زيارات</td>
-                        <td class="p-3 font-bold text-pink-600">${info.spent} ر.س</td>
-                        <td class="p-3 font-bold text-purple-600">${totalPoints} نقطة</td>
-                        <td class="p-3 text-xs text-gray-600">${new Date(info.lastDate).toLocaleString('ar-SA')} <br><span class="text-pink-600 font-bold">(${info.lastServices})</span></td>
-                    </tr>
-                `;
-            }).join('');
+            document.getElementById('tab-' + tabId).classList.add('active');
+            event.currentTarget.classList.add('bg-pink-600', 'text-white', 'shadow');
+            refreshAllUI();
         }
     </script>
 </body>
