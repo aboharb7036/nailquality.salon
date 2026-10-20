@@ -540,9 +540,14 @@
                 <div class="custom-card p-6 space-y-6">
                     <div class="flex flex-wrap justify-between items-center gap-4">
                         <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-chart-line text-pink-600 ml-2"></i>تقارير الأرباح وتعديل الإيرادات الخاطئة</h2>
-                        <button type="button" onclick="openCorrectProfitsModal()" class="bg-red-500 hover:bg-red-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5">
-                            <i class="fa-solid fa-minus-circle"></i> زر تصغير / خصم أرباح أُدخلت بالغلط
-                        </button>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="openModifyProfitsModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5">
+                                <i class="fa-solid fa-sliders"></i> تعديل الأرباح (على كيفي)
+                            </button>
+                            <button type="button" onclick="resetProfitsZero()" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5">
+                                <i class="fa-solid fa-rotate-right"></i> تصفير الأرباح
+                            </button>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -654,7 +659,7 @@
         <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl relative z-[1000]">
             <h3 class="font-bold text-lg mb-2 text-amber-600"><i class="fa-solid fa-wand-magic-sparkles ml-2"></i>ضبط واجهة الموقع بالذكاء الاصطناعي</h3>
             <div class="space-y-3.5">
-                <div><label class="block text-xs font-bold text-gray-600 mb-1">وصف المناسبة للذكاء الاصطناعي</label><textarea id="ai-theme-prompt" rows="3" class="w-full p-3 border rounded-xl text-sm" placeholder="اكتبي هنا مثلاً: اضبط الموقع بمناسبة اليوم الوطني السعودي..."></textarea></div>
+                <div><label class="block text-xs font-bold text-gray-600 mb-1">وصف المناسبة للذكاء الاصطناعي</label><textarea id="ai-theme-prompt" rows="3" class="w-full p-3 border rounded-xl text-sm" placeholder="اكتبي هنا مثلاً: اليوم الوطني، يوم التأسيس، هالوين، عرائس..."></textarea></div>
                 <div><label class="block text-xs font-bold text-gray-600 mb-1">أو اختيار الثيم يدوياً</label><select id="theme-select" class="w-full px-3.5 py-2 border rounded-xl text-sm font-bold"><option value="theme-default">الوردي الكلاسيكي</option><option value="theme-founding">الذهبي الملكي (يوم التأسيس)</option><option value="theme-national">الأخضر الوطني (اليوم الوطني)</option><option value="theme-luxury">البنفسجي الفاخر</option></select></div>
                 <div><label class="block text-xs font-bold text-gray-600 mb-1">عبارة الترحيب العليا</label><input type="text" id="banner-input" class="w-full px-3.5 py-2 border rounded-xl text-sm" placeholder="أدخل العبارة..."></div>
                 <div class="flex gap-2 pt-2">
@@ -682,15 +687,16 @@
         </div>
     </div>
 
-    <!-- مودال خصم الأرباح الخاطئة -->
-    <div id="correct-profits-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
+    <!-- مودال تعديل الأرباح (على كيفي) -->
+    <div id="modify-profits-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl relative z-[1000]">
-            <h3 class="font-bold text-lg mb-2 text-red-600"><i class="fa-solid fa-minus-circle ml-2"></i>خصم / تصغير المبيعات الخاطئة</h3>
+            <h3 class="font-bold text-lg mb-2 text-blue-600"><i class="fa-solid fa-sliders ml-2"></i>تعديل الأرباح والمبيعات</h3>
+            <p class="text-xs text-gray-500 mb-4">أدخلي المبلغ المطلوب إضافته (أو خصمه برقم بالسالب) لتعديل الأرباح كما تريدين:</p>
             <div class="space-y-3.5">
-                <input type="number" id="correct-amount" placeholder="المبلغ المراد خصمه (ر.س)" class="w-full px-3.5 py-2.5 border rounded-xl text-sm font-bold text-red-600">
+                <input type="number" id="manual-profit-amount" placeholder="المبلغ المراد إضافته أو تعديله (ر.س)" class="w-full px-3.5 py-2.5 border rounded-xl text-sm font-bold text-blue-600 outline-none focus:ring-2 focus:ring-blue-300">
                 <div class="flex gap-2 pt-2">
-                    <button type="button" onclick="applyProfitCorrection()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-sm">تأكيد الخصم</button>
-                    <button type="button" onclick="closeCorrectProfitsModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+                    <button type="button" onclick="applyManualProfitAdjustment()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-sm">تعديل الأرباح الآن</button>
+                    <button type="button" onclick="closeModifyProfitsModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
                 </div>
             </div>
         </div>
@@ -712,7 +718,7 @@
     <div id="smart-ai-modal" class="fixed inset-0 bg-black/50 hidden z-[999] flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl relative z-[1000]">
             <h3 class="font-bold text-lg mb-2 text-purple-700"><i class="fa-solid fa-wand-magic-sparkles ml-2"></i>المدخلات الذكية بالذكاء الاصطناعي (طريقة حرة)</h3>
-            <p class="text-xs text-gray-500 mb-3">اكتبي النص بالشكل الذي يريحك وسيقوم النظام بتفسيره وتسجيله:</p>
+            <p class="text-xs text-gray-500 mb-3">اكتبي النص بالشكل الذي يريحك وسيقوم النظام بتفسيره وتسجيل الفاتورة فوراً (مثلاً: "فاتورة باسم نورة جوال 0551112233 لخدمة مناكير 150"):</p>
             <textarea id="ai-input-text" rows="4" class="w-full p-3 border rounded-xl text-sm mb-4 outline-none focus:ring-2 focus:ring-purple-400" placeholder="اكتبي أي نص حر هنا..."></textarea>
             <div class="flex gap-2">
                 <button type="button" onclick="processSmartAiInput()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm">تسجيل بالذكاء الاصطناعي</button>
@@ -721,7 +727,7 @@
         </div>
     </div>
 
-    <!-- البرمجة السحابية الشاملة الكاملة -->
+    <!-- البرمجة السحابية الشاملة الكاملة والمعدلة -->
     <script>
         let services = [
             { id: 1, name: "مناكير كلاسيك", price: 120, discount: 0, points: 10 },
@@ -739,7 +745,7 @@
         let expenses = [];
         let inventory = [];
         let blockedDates = [];
-        let profitCorrectionDeductions = 0;
+        let manualProfitAdjustment = 0;
         let profitChartInstance = null;
 
         window.initCloudSync = function() {
@@ -747,13 +753,15 @@
 
             window.dbOnValue(window.dbRef(window.db, 'services'), (snapshot) => {
                 const data = snapshot.val();
-                if(data) { services = data; } else { window.dbSet(window.dbRef(window.db, 'services'), services); }
+                if(data) { services = Array.isArray(data) ? data : Object.values(data); } 
+                else { window.dbSet(window.dbRef(window.db, 'services'), services); }
                 refreshAllUI();
             });
 
             window.dbOnValue(window.dbRef(window.db, 'staffSalaries'), (snapshot) => {
                 const data = snapshot.val();
-                if(data) { staffSalaries = data; } else { window.dbSet(window.dbRef(window.db, 'staffSalaries'), staffSalaries); }
+                if(data) { staffSalaries = Array.isArray(data) ? data : Object.values(data); } 
+                else { window.dbSet(window.dbRef(window.db, 'staffSalaries'), staffSalaries); }
                 updateStaffDropdowns();
                 refreshAllUI();
             });
@@ -790,9 +798,9 @@
                 }
             });
 
-            window.dbOnValue(window.dbRef(window.db, 'profitCorrectionDeductions'), (snapshot) => {
+            window.dbOnValue(window.dbRef(window.db, 'manualProfitAdjustment'), (snapshot) => {
                 const data = snapshot.val();
-                profitCorrectionDeductions = data || 0;
+                manualProfitAdjustment = data || 0;
                 renderProfits();
             });
 
@@ -891,10 +899,13 @@
             const reason = document.getElementById('block-reason').value.trim() || 'الصالون مزدحم في هذا الوقت';
 
             if(!date) return alert('الرجاء اختيار التاريخ المراد قفله');
-            pushToCloud('blockedDates', { date, timeFrom: timeFrom || '00:00', timeTo: timeTo || '23:59', reason });
+            const item = { date, timeFrom: timeFrom || '00:00', timeTo: timeTo || '23:59', reason };
+            blockedDates.push(item);
+            pushToCloud('blockedDates', item);
             document.getElementById('block-date').value = '';
             document.getElementById('block-time-from').value = '';
             document.getElementById('block-time-to').value = '';
+            renderBlockedDates();
             alert('تم قفل الموعد المختار بنجاح!');
         }
 
@@ -912,8 +923,10 @@
         function removeBlockedDate(idx) {
             blockedDates.splice(idx, 1);
             saveToCloud('blockedDates', blockedDates);
+            renderBlockedDates();
         }
 
+        // إصلاح حجز العميلة مع الحفظ الفوري
         function submitClientBooking() {
             const dateVal = document.getElementById('client-book-datetime').value;
             if(!dateVal) return alert('يرجى اختيار تاريخ ووقت الموعد');
@@ -933,15 +946,24 @@
             const clientPhone = document.getElementById('client-book-phone').value.trim();
             if(!clientName || !clientPhone) return alert('يرجى تعبئة جميع بيانات الحجز');
 
-            pushToCloud('bookings', {
+            const newBooking = {
                 id: 'BKG-' + Date.now().toString().slice(-6),
                 client: clientName, phone: clientPhone, service: document.getElementById('client-book-service').value,
                 staff: document.getElementById('client-book-staff').value, datetime: dateVal, status: 'مؤكد'
-            });
-            alert('تم تأكيد حجز موعدكِ بنجاح!');
+            };
+
+            bookings.push(newBooking);
+            pushToCloud('bookings', newBooking);
+            renderBookings();
+
+            document.getElementById('client-book-name').value = '';
+            document.getElementById('client-book-phone').value = '';
+            document.getElementById('client-book-datetime').value = '';
+
+            alert('تم تأكيد حجز موعدكِ بنجاح وصعد مباشرة للإدارة!');
         }
 
-        // إدارة الخدمات وتعديل الأسعار مع المزامنة الفورية للعميلة
+        // إدارة الخدمات وتعديل الأسعار
         function addNewService() {
             const name = document.getElementById('new-srv-name').value.trim();
             const price = parseFloat(document.getElementById('new-srv-price').value);
@@ -955,6 +977,7 @@
             document.getElementById('new-srv-price').value = '';
             document.getElementById('new-srv-discount').value = '';
             document.getElementById('new-srv-points').value = '';
+            refreshAllUI();
             alert('تمت إضافة الخدمة بنجاح وظهرت فوراً لدى العميلات!');
         }
 
@@ -1002,6 +1025,7 @@
                 s.discount = discount;
                 saveToCloud('services', services);
                 closeEditServiceModal();
+                refreshAllUI();
                 alert('تم تحديث وتعديل الخدمة بنجاح وظهرت للعميلات!');
             }
         }
@@ -1010,27 +1034,53 @@
             if(confirm('هل أنتِ متأكدة من حذف هذه الخدمة؟')) {
                 services.splice(idx, 1);
                 saveToCloud('services', services);
+                refreshAllUI();
             }
         }
 
-        // الذكاء الاصطناعي الحر (يتقبل أي نص بالشريقة التي تريدينها)
+        // الذكاء الاصطناعي الحر وإصلاح تسجيل الفاتورة الذكية
         function processSmartAiInput() {
             const text = document.getElementById('ai-input-text').value.trim();
             if(!text) return alert('الرجاء كتابة نص للمعالجة');
 
-            pushToCloud('invoices', {
+            // استخراج ذكي للبيانات من النص الحر
+            let extractedName = "عميلة ذكية";
+            let extractedPhone = "0500000000";
+            let extractedStaff = staffSalaries[0]?.name || "سارة";
+            let extractedAmount = 150;
+            let extractedService = "خدمة صالون ذكية";
+
+            const nameMatch = text.match(/(?:باسم|العميلة|اسم)\s+([^\s\d]+)/);
+            if(nameMatch) extractedName = nameMatch[1];
+
+            const phoneMatch = text.match(/(05\d{8})/);
+            if(phoneMatch) extractedPhone = phoneMatch[1];
+
+            const priceMatch = text.match(/(\d+)\s*(?:ريال|رس|ر\.س)?/);
+            if(priceMatch && parseInt(priceMatch[1]) > 0) extractedAmount = parseFloat(priceMatch[1]);
+
+            staffSalaries.forEach(st => {
+                if(text.includes(st.name)) extractedStaff = st.name;
+            });
+
+            const newInv = {
                 id: 'INV-' + Date.now().toString().slice(-6),
                 date: new Date().toISOString(),
-                client: text,
-                phone: '0500000000',
-                staff: staffSalaries[0]?.name || 'سارة',
-                services: [{ name: 'خدمة ذكية مخصصة', price: 150 }],
-                total: 150,
+                client: extractedName,
+                phone: extractedPhone,
+                staff: extractedStaff,
+                services: [{ name: extractedService, price: extractedAmount }],
+                total: extractedAmount,
                 status: 'مدفوعة'
-            });
+            };
+
+            invoices.unshift(newInv);
+            pushToCloud('invoices', newInv);
+            
             closeSmartAiModal();
             document.getElementById('ai-input-text').value = '';
-            alert('تمت قراءة النص وتسجيله بنجاح عبر الذكاء الاصطناعي!');
+            refreshAllUI();
+            alert(`تم تسجيل الفاتورة بنجاح باسم (${extractedName}) بمبلغ ${extractedAmount} ر.س!`);
         }
 
         function addStaffSalary() {
@@ -1042,6 +1092,7 @@
             saveToCloud('staffSalaries', staffSalaries);
             document.getElementById('sal-name').value = '';
             document.getElementById('sal-amount').value = '';
+            refreshAllUI();
             alert('تمت إضافة الموظفة وظهرت فوراً في بوابة الحجز للعميلات!');
         }
 
@@ -1082,6 +1133,7 @@
             staffSalaries[idx] = { name, salary, iqama };
             saveToCloud('staffSalaries', staffSalaries);
             closeEditSalaryModal();
+            refreshAllUI();
             alert('تم تعديل بيانات الموظفة بنجاح!');
         }
 
@@ -1089,6 +1141,7 @@
             if(confirm('هل أنتِ متأكدة من حذف هذه الموظفة؟')) {
                 staffSalaries.splice(idx, 1);
                 saveToCloud('staffSalaries', staffSalaries);
+                refreshAllUI();
             }
         }
 
@@ -1097,17 +1150,28 @@
             let selectedTheme = document.getElementById('theme-select').value;
             let bannerText = document.getElementById('banner-input').value.trim();
 
-            if(promptText.includes('وطني')) {
+            if(promptText.includes('وطني') || promptText.includes('اليوم الوطني')) {
                 selectedTheme = 'theme-national';
                 bannerText = bannerText || 'نحتفي بالوطن الغالي! عروض خاصة بمناسبة اليوم الوطني 🇸🇦';
-            } else if(promptText.includes('تأسيس')) {
+            } else if(promptText.includes('تأسيس') || promptText.includes('يوم التأسيس')) {
                 selectedTheme = 'theme-founding';
                 bannerText = bannerText || 'يوم بدونا وفخورين بأصولنا! أهلاً بكم في فعاليات يوم التأسيس ✨';
+            } else if(promptText.includes('فاخر') || promptText.includes('عروس') || promptText.includes('عرايس')) {
+                selectedTheme = 'theme-luxury';
+                bannerText = bannerText || 'عروض العرائس والعناية الفاخرة متوفرة الآن ✨';
             }
 
             saveToCloud('themeSettings', { theme: selectedTheme, bannerText });
+            
+            document.body.className = selectedTheme + ' min-h-screen flex flex-col';
+            const banner = document.getElementById('banner-announcement');
+            if(bannerText) {
+                document.getElementById('banner-text').innerText = bannerText;
+                banner.classList.remove('hidden');
+            }
+
             closeThemeModal();
-            alert('تم تطبيق المظهر وتحديث الواجهة بنجاح!');
+            alert('تم تطبيق المظهر الذكي وتحديث الواجهة بنجاح!');
         }
 
         function openWaModal(phone, name) {
@@ -1133,24 +1197,40 @@
             closeWaModal();
         }
 
-        function openCorrectProfitsModal() { document.getElementById('correct-profits-modal').classList.remove('hidden'); }
-        function closeCorrectProfitsModal() { document.getElementById('correct-profits-modal').classList.add('hidden'); }
+        // أزرار التحكم في الأرباح (تعديل وتصفير)
+        function openModifyProfitsModal() { document.getElementById('modify-profits-modal').classList.remove('hidden'); }
+        function closeModifyProfitsModal() { document.getElementById('modify-profits-modal').classList.add('hidden'); }
 
-        function applyProfitCorrection() {
-            const amount = parseFloat(document.getElementById('correct-amount').value);
-            if(isNaN(amount) || amount <= 0) return alert('الرجاء إدخال مبلغ صحيح');
-            profitCorrectionDeductions += amount;
-            saveToCloud('profitCorrectionDeductions', profitCorrectionDeductions);
-            closeCorrectProfitsModal();
-            alert(`تم خصم ${amount} ر.س وتعديل صافي الأرباح بنجاح!`);
+        function applyManualProfitAdjustment() {
+            const amount = parseFloat(document.getElementById('manual-profit-amount').value);
+            if(isNaN(amount)) return alert('الرجاء إدخال مبلغ صحيح');
+            
+            manualProfitAdjustment += amount;
+            saveToCloud('manualProfitAdjustment', manualProfitAdjustment);
+            closeModifyProfitsModal();
+            document.getElementById('manual-profit-amount').value = '';
+            renderProfits();
+            alert('تم تعديل الأرباح بنجاح على كيفك!');
+        }
+
+        function resetProfitsZero() {
+            if(confirm('هل أنتِ متأكدة من تصفير الأرباح والمبيعات بالكامل؟')) {
+                invoices = [];
+                manualProfitAdjustment = 0;
+                saveToCloud('invoices', []);
+                saveToCloud('manualProfitAdjustment', 0);
+                refreshAllUI();
+                alert('تم تصفير الأرباح بالكامل بنجاح!');
+            }
         }
 
         function renderProfits() {
-            const totalSales = invoices.filter(i => i.status === 'مدفوعة').reduce((sum, i) => sum + i.total, 0) - profitCorrectionDeductions;
+            const totalSalesFromInvoices = invoices.filter(i => i.status === 'مدفوعة').reduce((sum, i) => sum + i.total, 0);
+            const finalSales = totalSalesFromInvoices + manualProfitAdjustment;
             const totalExpenses = staffSalaries.reduce((sum, s) => sum + s.salary, 0) + expenses.reduce((sum, e) => sum + e.amount, 0);
-            const net = totalSales - totalExpenses;
+            const net = finalSales - totalExpenses;
 
-            document.getElementById('stat-sales').innerText = totalSales.toFixed(2) + ' ر.س';
+            document.getElementById('stat-sales').innerText = finalSales.toFixed(2) + ' ر.س';
             document.getElementById('stat-expenses').innerText = totalExpenses.toFixed(2) + ' ر.س';
             document.getElementById('stat-net').innerText = net.toFixed(2) + ' ر.س';
 
@@ -1162,7 +1242,7 @@
                 type: 'line',
                 data: {
                     labels: ['المبيعات الصافية'],
-                    datasets: [{ label: 'الأرباح (ر.س)', data: [totalSales], borderColor: '#db2777', backgroundColor: 'rgba(219, 39, 119, 0.1)', fill: true }]
+                    datasets: [{ label: 'الأرباح (ر.س)', data: [finalSales], borderColor: '#db2777', backgroundColor: 'rgba(219, 39, 119, 0.1)', fill: true }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
@@ -1231,9 +1311,11 @@
             document.getElementById('cart-total').innerText = total.toFixed(2) + ' ر.س';
         }
 
+        // إصلاح الدفع والترحيل الفوري لسجل الفواتير الأرباح
         function checkout() {
             if(cart.length === 0) return alert('اختر خدمة واحدة على الأقل');
-            pushToCloud('invoices', {
+            
+            const newInvoice = {
                 id: 'INV-' + Date.now().toString().slice(-6),
                 date: new Date().toISOString(),
                 client: document.getElementById('pos-client-name').value.trim() || 'عميلة عامة',
@@ -1242,10 +1324,18 @@
                 services: cart.map(c => ({ name: c.name, price: c.finalPrice })),
                 total: cart.reduce((sum, item) => sum + item.finalPrice, 0),
                 status: 'مدفوعة'
-            });
+            };
+
+            invoices.unshift(newInvoice);
+            pushToCloud('invoices', newInvoice);
+
             cart = [];
             updateCartUI();
-            alert('تم الدفع بنجاح ومزامنة الفاتورة سحابياً!');
+            document.getElementById('pos-client-name').value = '';
+            document.getElementById('pos-client-phone').value = '';
+
+            refreshAllUI();
+            alert('تم الدفع بنجاح وتسجيل الفاتورة في السجل والأرباح!');
         }
 
         function renderInvoices() {
@@ -1311,9 +1401,13 @@
             const desc = document.getElementById('exp-desc').value.trim();
             const amount = parseFloat(document.getElementById('exp-amount').value);
             if(!desc || isNaN(amount)) return;
-            pushToCloud('expenses', { desc, amount, expiry: document.getElementById('exp-expiry').value || '2050-12-31' });
+            
+            const newExp = { desc, amount, expiry: document.getElementById('exp-expiry').value || '2050-12-31' };
+            expenses.push(newExp);
+            pushToCloud('expenses', newExp);
             document.getElementById('exp-desc').value = '';
             document.getElementById('exp-amount').value = '';
+            refreshAllUI();
             alert('تم حفظ المصروف بنجاح!');
         }
 
@@ -1327,9 +1421,13 @@
             const name = document.getElementById('inv-name').value.trim();
             const qty = parseInt(document.getElementById('inv-qty').value);
             if(!name || isNaN(qty)) return;
-            pushToCloud('inventory', { name, qty });
+            
+            const newInvItem = { name, qty };
+            inventory.push(newInvItem);
+            pushToCloud('inventory', newInvItem);
             document.getElementById('inv-name').value = '';
             document.getElementById('inv-qty').value = '';
+            renderInventory();
             alert('تمت الإضافة للمخزون!');
         }
 
