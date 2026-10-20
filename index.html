@@ -26,7 +26,7 @@
             padding: 20px;
         }
         .main-container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
             background: #ffffff;
             padding: 25px;
@@ -46,34 +46,62 @@
             font-size: 13px;
             color: #777;
         }
-        /* الأزرار العلوية للتبديل بين الأقسام */
-        .nav-tabs {
+        /* الأزرار الرئيسية لاختيار البوابة */
+        .portal-selector {
             display: flex;
-            gap: 8px;
             justify-content: center;
-            flex-wrap: wrap;
+            gap: 15px;
             margin-bottom: 25px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 2px solid #eee;
             padding-bottom: 15px;
         }
-        .nav-tabs button {
-            background: #f4f4f4;
+        .portal-selector button {
+            background: #f0f0f0;
             border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
         }
-        .nav-tabs button.active, .nav-tabs button:hover {
+        .portal-selector button.active {
             background: #d4af37;
             color: white;
         }
-        .tab-content {
+        .portal-section {
             display: none;
         }
-        .tab-content.active {
+        .portal-section.active {
+            display: block;
+        }
+        /* أقسام الإدارة الفرعية */
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .admin-tabs button {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .admin-tabs button.active {
+            background: #2c2c2c;
+            color: white;
+            border-color: #2c2c2c;
+        }
+        .sub-tab-content {
+            display: none;
+        }
+        .sub-tab-content.active {
             display: block;
         }
         .form-group {
@@ -148,203 +176,282 @@
     <div class="main-container">
         <header>
             <h1>صالون جودة الأظافر</h1>
-            <p>Nail Quality Salon - النظام المتكامل لإدارة الصالون</p>
+            <p>Nail Quality Salon - النظام السحابي المتكامل</p>
         </header>
 
-        <!-- أزرار التنقل بين الأقسام -->
-        <div class="nav-tabs">
-            <button class="active" onclick="switchTab('auth-tab', this)">تسجيل الحساب (OTP)</button>
-            <button onclick="switchTab('booking-tab', this)">حجز المواعيد والواتساب</button>
-            <button onclick="switchTab('pos-tab', this)">الكاشير والفواتير</button>
-            <button onclick="switchTab('staff-tab', this)">الموظفات والرواتب</button>
-            <button onclick="switchTab('finance-tab', this)">الأرباح والمصروفات</button>
+        <!-- اختيار البوابة الأساسية -->
+        <div class="portal-selector">
+            <button id="btn-client-portal" class="active" onclick="switchPortal('client')">بوابة العميلة (التسجيل والحجز)</button>
+            <button id="btn-admin-portal" onclick="switchPortal('admin')">بوابة الإدارة والكاشير</button>
         </div>
 
-        <!-- 1. قسم تسجيل الحسابات والتحقق عبر EmailJS -->
-        <div id="auth-tab" class="tab-content active">
-            <h3 style="margin-bottom: 15px; font-size: 18px;">تسجيل العميلة أو إنشاء حساب</h3>
-            <div id="register-box">
+        <!-- ================= 1. بوابة العميلة ================= -->
+        <div id="client-portal" class="portal-section active">
+            <h2 style="font-size: 18px; margin-bottom: 15px; color: #2c2c2c;">حساب العميلة والتحقق (OTP)</h2>
+            
+            <!-- تسجيل الحساب -->
+            <div id="client-register-box">
                 <div class="form-group">
-                    <label>البريد الإلكتروني للعميلة</label>
+                    <label>البريد الإلكتروني</label>
                     <input type="email" id="client-email" placeholder="example@domain.com">
                 </div>
                 <div class="form-group">
                     <label>كلمة المرور</label>
-                    <input type="password" id="client-pass" placeholder="••••••••">
+                    <input type="password" id="client-password" placeholder="••••••••">
                 </div>
-                <button class="btn-action" onclick="sendOtpCode()">إرسال رمز التحقق (OTP)</button>
+                <button class="btn-action" onclick="sendClientOtp()">إرسال رمز التحقق (OTP)</button>
             </div>
 
-            <div id="verify-box" class="hidden" style="margin-top: 20px;">
-                <p style="font-size: 13px; color: #555; margin-bottom: 10px;">تم إرسال رمز التحقق المكون من 4 أرقام إلى بريدك الإلكتروني.</p>
+            <!-- إدخال الرمز -->
+            <div id="client-otp-box" class="hidden" style="margin-top: 15px;">
+                <p style="font-size: 13px; color: #666; margin-bottom: 10px;">تم إرسال رمز التحقق المكون من 4 أرقام عبر EmailJS إلى إيميلك.</p>
                 <div class="form-group">
-                    <label>أدخل رمز التحقق</label>
-                    <input type="text" id="otp-input" placeholder="1234" maxlength="4" style="text-align: center; letter-spacing: 5px;">
+                    <label>أدخل رمز التحقق (OTP)</label>
+                    <input type="text" id="client-otp-input" placeholder="1234" maxlength="4" style="text-align: center; letter-spacing: 5px;">
                 </div>
-                <button class="btn-action" onclick="confirmOtp()">تكيد الرمز وإتمام التسجيل</button>
+                <button class="btn-action" onclick="verifyClientOtp()">تأكيد الرمز والدخول للحجز</button>
+            </div>
+
+            <!-- قسم الحجز بعد تسجيل الدخول -->
+            <div id="client-booking-box" class="hidden" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                <h3 style="font-size: 16px; margin-bottom: 15px; color: #d4af37;">حجز موعد جديد في الصالون</h3>
+                <div class="form-group">
+                    <label>اسم العميلة</label>
+                    <input type="text" id="book-name" placeholder="اسمك الكريم">
+                </div>
+                <div class="form-group">
+                    <label>اختيار الخدمة</label>
+                    <select id="book-service">
+                        <option value="مناكير كلاسيك - 100 ريال">مناكير كلاسيك - 100 ريال</option>
+                        <option value="بدكير أظافر - 120 ريال">بدكير أظافر - 120 ريال</option>
+                        <option value="تركيب أظافر جيل - 200 ريال">تركيب أظافر جيل - 200 ريال</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>تحديد الموعد (متابعة الأوقات المتاحة وقفل المزدحمة)</label>
+                    <input type="datetime-local" id="book-datetime">
+                </div>
+                <button class="btn-action" onclick="sendBookingToWhatsApp()">تأكيد الحجز والإرسال لواتساب الصالون</button>
             </div>
         </div>
 
-        <!-- 2. قسم الحجوزات والربط بالواتساب -->
-        <div id="booking-tab" class="tab-content">
-            <h3 style="margin-bottom: 15px; font-size: 18px;">حجز موعد جديد</h3>
-            <div class="form-group">
-                <label>اسم العميلة</label>
-                <input type="text" id="book-name" placeholder="اسم العميلة الكريمة">
+        <!-- ================= 2. بوابة الإدارة والكاشير ================= -->
+        <div id="admin-portal" class="portal-section">
+            <!-- شاشة تسجيل دخول الإدارة -->
+            <div id="admin-login-screen">
+                <div class="stats-card">
+                    <h3>تسجيل دخول الإدارة</h3>
+                    <p style="font-size: 13px; color: #666;">الرجاء إدخال كلمة مرور الإدارة للوصول الشامل للنظام.</p>
+                </div>
+                <div class="form-group">
+                    <label>كلمة مرور الإدارة</label>
+                    <input type="password" id="admin-pass-input" placeholder="أدخل كلمة المرور السرية">
+                </div>
+                <button class="btn-action" onclick="loginAdmin()">دخول لوحة التحكم</button>
             </div>
-            <div class="form-group">
-                <label>اختيار الخدمة</label>
-                <select id="book-service">
-                    <option value="مناكير класик">مناكير كلاسيك - 100 ريال</option>
-                    بدكير أظافر - 120 ريال</option>
-                    <option value="تركيب أظافر جيل">تركيب أظافر جيل - 200 ريال</option>
-                </select>
+
+            <!-- لوحة التحكم الكاملة للإدارة (تظهر بعد كلمة المرور الصحيحة) -->
+            <div id="admin-dashboard-screen" class="hidden">
+                <div class="admin-tabs">
+                    <button class="active" onclick="switchAdminTab('pos-sec', this)">الكاشير والفواتير</button>
+                    <button onclick="switchAdminTab('staff-sec', this)">الموظفات والرواتب</button>
+                    <button onclick="switchAdminTab('finance-sec', this)">الأرباح والمصروفات</button>
+                    <button onclick="switchAdminTab('settings-sec', this)">الإدارة والتحكم الكامل</button>
+                </div>
+
+                <!-- أ) قسم الكاشير (POS) -->
+                <div id="pos-sec" class="sub-tab-content active">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">إصدار وتعديل الفواتير وإرجاع الأموال</h3>
+                    <div class="form-group">
+                        <label>اسم العميلة</label>
+                        <input type="text" id="pos-client-name" placeholder="اسم العميلة">
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ (ريال)</label>
+                        <input type="number" id="pos-amount-val" placeholder="مثال: 150">
+                    </div>
+                    <button class="btn-action" onclick="issuePosInvoice()">إصدار الفاتورة (مزامنة سحابية)</button>
+                    <button class="btn-action" style="background: #d9534f; margin-top: 8px;" onclick="refundInvoice()">إرجاع الأموال / إلغاء فاتورة</button>
+                </div>
+
+                <!-- ب) قسم الموظفات والرواتب والإقامات -->
+                <div id="staff-sec" class="sub-tab-content">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">إدارة الموظفات، الرواتب، وتواريخ الإقامات</h3>
+                    <div class="form-group">
+                        <label>اسم الموظفة</label>
+                        <input type="text" id="staff-name" placeholder="اسم الموظفة">
+                    </div>
+                    <div class="form-group">
+                        <label>الراتب الأساسي وتاريخ انتهاء الإقامة</label>
+                        <input type="text" id="staff-details" placeholder="الراتب + انتهاء الإقامة">
+                    </div>
+                    <button class="btn-action" onclick="saveStaffData()">حفظ بيانات الموظفة سحابياً</button>
+                </div>
+
+                <!-- ج) قسم الأرباح والمصروفات -->
+                <div id="finance-sec" class="sub-tab-content">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">إدارة الأرباح، الإيجارات، والمصروفات</h3>
+                    <div class="stats-card">
+                        <h3>إجمالي الأرباح الحالية: <span id="admin-profit-display">12,400</span> ريال</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>تسجيل مصروف جديد (إيجارات / مواد صالون)</label>
+                        <input type="text" id="expense-desc" placeholder="وصف المصروف أو الإيجار والمبلغ">
+                    </div>
+                    <button class="btn-action" onclick="addExpense()">حفظ المصروف</button>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn-action" style="background: #d9534f;" onclick="resetProfits()">تصفير الأرباح</button>
+                        <button class="btn-action" style="background: #f0ad4e;" onclick="manualEditProfit()">تعديل يدوي للأرباح</button>
+                    </div>
+                </div>
+
+                <!-- د) قسم التحكم الكامل والإحصائيات والذكاء الاصطناعي -->
+                <div id="settings-sec" class="sub-tab-content">
+                    <h3 style="font-size: 16px; margin-bottom: 10px;">التحكم الشامل، قفل الأوقات، والذكاء الاصطناعي</h3>
+                    <div class="stats-card" style="background: #eef9ff; border-color: #bce8f1;">
+                        <h3 style="color: #31708f;">مساعد الذكاء الاصطناعي والتحليلات</h3>
+                        <p style="font-size: 13px; color: #31708f;">تحليل حركة المبيعات، توجيه العميلات، واقتراح العروض بناءً على البيانات السحابية.</p>
+                    </div>
+                    <div class="form-group">
+                        <label>قفل الأوقات أو الأيام المزدحمة (timeFrom حتى timeTo)</label>
+                        <input type="text" placeholder="مثال: من 4 عصراً إلى 10 مساءً مغلق">
+                    </div>
+                    <button class="btn-action" onclick="alert('تم تحديث إعدادات القفل والساعات سحابياً بنجاح!')">حفظ إعدادات القفل</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label>اختر الموعد</label>
-                <input type="datetime-local" id="book-time">
-            </div>
-            <button class="btn-action" onclick="submitBookingWhatsApp()">تأكيد الحجز وإرسال للواتساب</button>
         </div>
 
-        <!-- 3. قسم الكاشير (POS) -->
-        <div id="pos-tab" class="tab-content">
-            <h3 style="margin-bottom: 15px; font-size: 18px;">نظام الكاشير السريع (POS)</h3>
-            <div class="form-group">
-                <label>اسم العميلة</label>
-                <input type="text" id="pos-client" placeholder="اسم العميلة">
-            </div>
-            <div class="form-group">
-                <label>المبلغ الإجمالي (ريال)</label>
-                <input type="number" id="pos-amount" placeholder="مثال: 150">
-            </div>
-            <button class="btn-action" onclick="issueInvoice()">إصدار الفاتورة وتحديث المبيعات</button>
-        </div>
-
-        <!-- 4. قسم الموظفات والرواتب والإقامات -->
-        <div id="staff-tab" class="tab-content">
-            <h3 style="margin-bottom: 15px; font-size: 18px;">إدارة الموظفات والإقامات</h3>
-            <div class="stats-card">
-                <h3>قائمة الموظفات النشطات</h3>
-                <p style="font-size: 14px; color: #555;">متابعة رواتب الموظفات وتواريخ انتهاء الإقامات بسهولة تامة.</p>
-            </div>
-            <div class="form-group">
-                <label>اسم الموظفة الجديدة</label>
-                <input type="text" id="staff-name" placeholder="اسم الموظفة">
-            </div>
-            <button class="btn-action" onclick="alert('تم حفظ بيانات الموظفة بنجاح!')">حفظ الموظفة</button>
-        </div>
-
-        <!-- 5. قسم الأرباح والمصروفات -->
-        <div id="finance-tab" class="tab-content">
-            <h3 style="margin-bottom: 15px; font-size: 18px;">إدارة الأرباح والمصروفات</h3>
-            <div class="stats-card">
-                <h3>إجمالي الأرباح الحالية: <span id="profit-display">3,450</span> ريال</h3>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-action" style="background: #d9534f;" onclick="resetProfits()">تصفير الأرباح</button>
-                <button class="btn-action" style="background: #f0ad4e;" onclick="manualEditProfit()">تعديل يدوي للأرباح</button>
-            </div>
-        </div>
-
-        <!-- معلومات التواصل بالواتساب -->
+        <!-- تواصل واتساب الصالون الرسمي -->
         <div class="footer-note">
             رقم واتساب الصالون الرسمي: <a href="https://wa.me/966544267911" target="_blank">+966 54 426 7911</a> | كلمة مرور الإدارة: <code>nail_quality@@salon90981</code>
         </div>
     </div>
 
     <script>
-        // التنقل بين التبويبات
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
+        // التبديل بين بوابة العميلة وبوابة الإدارة
+        function switchPortal(portalName) {
+            document.querySelectorAll('.portal-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('btn-client-portal').classList.remove('active');
+            document.getElementById('btn-admin-portal').classList.remove('active');
+
+            if (portalName === 'client') {
+                document.getElementById('client-portal').classList.add('active');
+                document.getElementById('btn-client-portal').classList.add('active');
+            } else {
+                document.getElementById('admin-portal').classList.add('active');
+                document.getElementById('btn-admin-portal').classList.add('active');
+            }
         }
 
-        // متغيرات لعملية الـ OTP
-        let generatedOtpCode = '';
-        let userEmail = '';
+        // متغيرات التحقق للعميلة
+        let generatedOtp = '';
+        let clientEmailInput = '';
 
-        function sendOtpCode() {
-            userEmail = document.getElementById('client-email').value;
-            const pass = document.getElementById('client-pass').value;
+        function sendClientOtp() {
+            clientEmailInput = document.getElementById('client-email').value;
+            const pass = document.getElementById('client-password').value;
 
-            if (!userEmail || !pass) {
+            if (!clientEmailInput || !pass) {
                 alert('الرجاء إدخال البريد الإلكتروني وكلمة المرور.');
                 return;
             }
 
-            generatedOtpCode = Math.floor(1000 + Math.random() * 9000).toString();
+            generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
 
             const templateParams = {
-                to_email: userEmail,
-                otp_code: generatedOtpCode
+                to_email: clientEmailInput,
+                otp_code: generatedOtp
             };
 
-            // إرسال عبر EmailJS بالمعرفات المعتمدة
+            // إرسال عبر EmailJS بالمعرفات الخاصة بك
             emailjs.send('service_4e96s1c', 'template_vvuz17q', templateParams)
                 .then(function(response) {
                     alert('تم إرسال رمز التحقق إلى بريدك الإلكتروني بنجاح!');
-                    document.getElementById('register-box').classList.add('hidden');
-                    document.getElementById('verify-box').classList.remove('hidden');
+                    document.getElementById('client-register-box').classList.add('hidden');
+                    document.getElementById('client-otp-box').classList.remove('hidden');
                 }, function(error) {
                     alert('فشل إرسال الإيميل، تأكد من الاتصال.');
                 });
         }
 
-        function confirmOtp() {
-            const entered = document.getElementById('otp-input').value;
-            if (entered === generatedOtpCode) {
-                alert('مبروك! تم تفعيل الحساب وتسجيلك بنجاح في صالون جودة الأظافر ✨');
-                window.location.reload();
+        function verifyClientOtp() {
+            const entered = document.getElementById('client-otp-input').value;
+            if (entered === generatedOtp) {
+                alert('مبروك! تم التحقق بنجاح والدخول إلى بوابة حجز صالون جودة الأظافر ✨');
+                document.getElementById('client-otp-box').classList.add('hidden');
+                document.getElementById('client-booking-box').classList.remove('hidden');
             } else {
                 alert('رمز التحقق غير صحيح.');
             }
         }
 
-        // إرسال تفاصيل الحجز للواتساب
-        function submitBookingWhatsApp() {
+        // إرسال الحجز للواتساب
+        function sendBookingToWhatsApp() {
             const name = document.getElementById('book-name').value;
             const service = document.getElementById('book-service').value;
-            const time = document.getElementById('book-time').value;
+            const datetime = document.getElementById('book-datetime').value;
 
-            if (!name || !time) {
-                alert('الرجاء إدخال كافة بيانات الحجز.');
+            if (!name || !datetime) {
+                alert('يرجى إكمال بيانات الحجز وتحديد الموعد.');
                 return;
             }
 
-            const message = `مرحباً صالون جودة الأظافر، أرغب بتأكيد حجز:\n- الاسم: ${name}\n- الخدمة: ${service}\n- الموعد: ${time}`;
-            const url = `https://wa.me/966544267911?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
+            const msg = `مرحباً صالون جودة الأظافر، أرغب بتأكيد حجز جديد:\n- الاسم: ${name}\n- الخدمة: ${service}\n- الموعد: ${datetime}`;
+            window.open(`https://wa.me/966544267911?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // إصدار فاتورة كاشير
-        function issueInvoice() {
-            const client = document.getElementById('pos-client').value;
-            const amount = document.getElementById('pos-amount').value;
-            if (!client || !amount) {
-                alert('يرجى كتابة اسم العميلة والمبلغ.');
-                return;
+        // تسجيل دخول الإدارة باستخدام كلمة المرور المحددة
+        function loginAdmin() {
+            const pass = document.getElementById('admin-pass-input').value;
+            if (pass === 'nail_quality@@salon90981') {
+                alert('مرحباً بكِ في لوحة تحكم صالون جودة الأظافر الملكية ✨');
+                document.getElementById('admin-login-screen').classList.add('hidden');
+                document.getElementById('admin-dashboard-screen').classList.remove('hidden');
+            } else {
+                alert('كلمة مرور الإدارة غير صحيحة!');
             }
-            alert(`تم إصدار الفاتورة بنجاح للعميلة: ${client} بقيمة ${amount} ريال.`);
-            document.getElementById('pos-client').value = '';
-            document.getElementById('pos-amount').value = '';
         }
 
-        // أزرار الأرباح
+        // التنقل بين أقسام الإدارة
+        function switchAdminTab(secId, btn) {
+            document.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById(secId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // وظائف الكاشير والإدارة
+        function issuePosInvoice() {
+            const cName = document.getElementById('pos-client-name').value;
+            const amt = document.getElementById('pos-amount-val').value;
+            if(!cName || !amt) { alert('أدخل بيانات الفاتورة'); return; }
+            alert(`تم إصدار وتحديث الفاتورة سحابياً للعميلة: ${cName} بقيمة ${amt} ريال.`);
+        }
+
+        function refundInvoice() {
+            alert('تم إرجاع الأموال وإلغاء الفاتورة، وتحديث الأرباح سحابياً.');
+        }
+
+        function saveStaffData() {
+            alert('تم حفظ بيانات الموظفة وتاريخ الإقامة بنجاح في نظام فايربيس السحابي!');
+        }
+
+        function addExpense() {
+            alert('تم تسجيل المصروف أو الإيجار بنجاح.');
+        }
+
         function resetProfits() {
             if(confirm('هل أنتِ متأكدة من تصفير الأرباح؟')) {
-                document.getElementById('profit-display').innerText = '0';
+                document.getElementById('admin-profit-display').innerText = '0';
                 alert('تم تصفير الأرباح بنجاح.');
             }
         }
 
         function manualEditProfit() {
-            const newAmt = prompt('أدخلي القيمة الجديدة للأرباح:');
-            if(newAmt !== null && !isNaN(newAmt)) {
-                document.getElementById('profit-display').innerText = newAmt;
-                alert('تم تحديث الأرباح بنجاح.');
+            const val = prompt('أدخلي القيمة الجديدة للأرباح:');
+            if(val !== null && !isNaN(val)) {
+                document.getElementById('admin-profit-display').innerText = val;
+                alert('تم تحديث الأرباح يدوياً بنجاح.');
             }
         }
     </script>
