@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صالون جودة الأظافر - النظام المتكامل السحابي الذكي</title>
+    <title>صالون جودة الأظافر - النظام المتكامل السحابي والذكي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- مكتبات Firebase السحابية -->
+
+    <!-- مكتبات Firebase السحابية المعتمدة -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
       import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -28,7 +29,7 @@
       window.dbOnValue = onValue;
       window.dbPush = push;
       window.dbRemove = remove;
-      
+
       if(window.initCloudSync) window.initCloudSync();
     </script>
 
@@ -36,7 +37,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
         body { font-family: 'Tajawal', sans-serif; transition: background-color 0.3s, color 0.3s; }
         
-        /* ثيمات الواجهة المتعددة */
         body.theme-default { background-color: #fdf2f8; color: #4a5568; }
         body.theme-founding { background-color: #fefce8; color: #713f12; }
         body.theme-national { background-color: #f0fdf4; color: #14532d; }
@@ -44,6 +44,7 @@
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+
         @media print {
             body * { visibility: hidden; }
             #print-invoice-area, #print-invoice-area * { visibility: visible; }
@@ -53,12 +54,12 @@
 </head>
 <body class="theme-default min-h-screen flex flex-col">
 
-    <!-- شريط العبارة الترحيبية المناسباتية (إن وجدت) -->
+    <!-- شريط الإعلان الترحيبي سحابياً -->
     <div id="banner-announcement" class="hidden bg-pink-600 text-white text-center py-2 px-4 text-sm font-bold shadow-md">
         <span id="banner-text">أهلاً بكم في صالون جودة الأظافر</span>
     </div>
 
-    <!-- اختيار البوابة الرئيسية عند فتح الموقع -->
+    <!-- البوابة الرئيسية لتحديد نوع المستخدم -->
     <div id="main-gate" class="fixed inset-0 bg-pink-950/90 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 text-center border-t-8 border-pink-500">
             <div class="w-20 h-20 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
@@ -84,7 +85,7 @@
         </div>
     </div>
 
-    <!-- شاشة تسجيل دخول الإدارة المحمية -->
+    <!-- شاشة تسجيل دخول الإدارة -->
     <div id="login-screen" class="fixed inset-0 bg-pink-950/85 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 border-t-4 border-pink-500">
             <div class="text-center mb-6">
@@ -100,13 +101,12 @@
                     دخول لوحة التحكم
                 </button>
                 <p id="login-error" class="text-red-500 text-sm text-center hidden font-medium">كلمة المرور غير صحيحة.</p>
-                <p id="lockout-timer" class="text-orange-600 text-sm text-center hidden font-bold"></p>
                 <button type="button" onclick="backToMainGate()" class="w-full text-gray-500 text-xs mt-2 hover:underline">الرجوع للقائمة الرئيسية</button>
             </form>
         </div>
     </div>
 
-    <!-- بوابة العميلة (الحجز الذاتي) -->
+    <!-- بوابة العميلة -->
     <div id="client-portal" class="flex-1 flex flex-col hidden">
         <header class="bg-white shadow-sm border-b sticky top-0 z-40">
             <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -180,7 +180,7 @@
         </main>
     </div>
 
-    <!-- التطبيق الرئيسي (الإدارة) -->
+    <!-- لوحة التحكم للإدارة -->
     <div id="app-container" class="flex-1 flex flex-col hidden">
         <header class="bg-white shadow-sm border-b sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -190,7 +190,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-gray-800 text-lg">صالون جودة الأظافر</h1>
-                        <span class="text-xs text-pink-600 font-medium">لوحة التحكم السحابية والذكية</span>
+                        <span class="text-xs text-pink-600 font-medium">لوحة التحكم السحابية والذكية الشاملة</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
@@ -198,7 +198,7 @@
                         <i class="fa-solid fa-wand-magic-sparkles"></i> إدخال ذكي (AI)
                     </button>
                     <button onclick="openThemeModal()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center gap-1">
-                        <i class="fa-solid fa-palette"></i> مظهر الموقع
+                        <i class="fa-solid fa-palette"></i> مظهر الموقع والذكاء الاصطناعي
                     </button>
                     <button onclick="backToMainGate()" class="text-gray-700 hover:text-gray-900 text-xs font-bold px-3 py-1.5 rounded-lg border bg-gray-50">الرئيسية</button>
                     <button onclick="logout()" class="text-red-500 hover:text-red-700 text-sm font-bold px-3 py-1.5 rounded-lg border border-red-200 hover:bg-red-50 transition">
@@ -217,7 +217,7 @@
                 <button onclick="switchTab('staff')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-user-gear ml-1"></i> أداء الموظفات</button>
                 <button onclick="switchTab('staff-salaries')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-file-contract ml-1"></i> الرواتب والإقامات</button>
                 <button onclick="switchTab('expenses')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-wallet ml-1"></i> الإيجارات والمصروفات</button>
-                <button onclick="switchTab('profits')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-chart-line ml-1"></i> الأرباح والتصحيح</button>
+                <button onclick="switchTab('profits')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-chart-line ml-1"></i> الأرباح وتصحيح المبيعات</button>
                 <button onclick="switchTab('inventory')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-boxes-stacked ml-1"></i> المخزون واستهلاك المواد</button>
                 <button onclick="switchTab('clients')" class="tab-btn px-4 py-2 rounded-lg font-bold text-sm bg-white text-gray-700 hover:bg-pink-200 transition"><i class="fa-solid fa-users ml-1"></i> العملاء ومراسلة الواتساب</button>
             </div>
@@ -230,12 +230,7 @@
                     <div class="md:col-span-2 bg-white p-5 rounded-2xl shadow-sm border flex flex-col">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-wand-magic-sparkles text-pink-600 ml-2"></i>الخدمات المتاحة</h2>
-                            <div class="relative w-64">
-                                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </span>
-                                <input type="text" id="admin-search-service" onkeyup="renderAdminServices()" placeholder="بحث عن خدمة..." class="w-full pr-9 pl-3 py-1.5 border rounded-xl text-sm focus:ring-2 focus:ring-pink-400 outline-none">
-                            </div>
+                            <input type="text" id="admin-search-service" onkeyup="renderAdminServices()" placeholder="بحث عن خدمة..." class="px-3 py-1.5 border rounded-xl text-sm w-64">
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 overflow-y-auto max-h-[450px]" id="admin-services-grid"></div>
                     </div>
@@ -278,7 +273,7 @@
                         <input type="number" id="new-srv-price" placeholder="السعر الأساسي" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="number" id="new-srv-discount" placeholder="نسبة الخصم %" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="number" id="new-srv-points" placeholder="نقاط الولاء" class="px-3 py-2 border rounded-lg text-sm">
-                        <button onclick="addNewService()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded-lg shadow text-sm">إضافة خدمة</button>
+                        <button onclick="addNewService()" class="bg-pink-600 text-white font-bold py-2 rounded-lg text-sm">إضافة خدمة</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
@@ -298,7 +293,7 @@
                 </div>
             </div>
 
-            <!-- 3. الفواتير -->
+            <!-- 3. الفواتير والتعديل -->
             <div id="tab-invoices" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex justify-between items-center mb-4">
@@ -315,7 +310,7 @@
                                     <th class="p-3">الموظفة</th>
                                     <th class="p-3">الخدمات والمبلغ</th>
                                     <th class="p-3">الحالة</th>
-                                    <th class="p-3 text-center">التحكم</th>
+                                    <th class="p-3 text-center">التحكم والطباعة</th>
                                 </tr>
                             </thead>
                             <tbody id="invoices-table-body"></tbody>
@@ -324,13 +319,12 @@
                 </div>
             </div>
 
-            <!-- 4. الحجوزات وإغلاق الأوقات -->
+            <!-- 4. الحجوزات وإغلاق الأوقات محددة بالساعة -->
             <div id="tab-bookings" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-calendar-check text-pink-600 ml-2"></i>إدارة الحجوزات القادمة</h2>
-                            <button onclick="openBookingModal()" class="bg-pink-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-pink-700">+ حجز جديد</button>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-right text-sm">
@@ -348,23 +342,32 @@
                         </div>
                     </div>
 
-                    <!-- قسم إغلاق وقت الحجز عندما يكون الصالون مليان -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border">
                         <h3 class="font-bold text-base text-gray-800 mb-2"><i class="fa-solid fa-lock text-red-500 ml-2"></i>إغلاق الوقت / اليوم (الصالون مليان)</h3>
-                        <p class="text-xs text-gray-500 mb-4">حددي تاريخاً أو وقتاً لإغلاق الحجز الذاتي أمام العميلات:</p>
+                        <p class="text-xs text-gray-500 mb-4">حددي تاريخاً مع ساعة بداية ونهاية لإغلاق وقت محدد أمام العميلات:</p>
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1">التاريخ المطلوب إغلاقه</label>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">التاريخ</label>
                                 <input type="date" id="block-date" class="w-full px-3 py-2 border rounded-lg text-sm">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1">من الساعة</label>
+                                    <input type="time" id="block-time-from" class="w-full px-3 py-2 border rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-600 mb-1">إلى الساعة</label>
+                                    <input type="time" id="block-time-to" class="w-full px-3 py-2 border rounded-lg text-sm">
+                                </div>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-600 mb-1">سبب الإغلاق</label>
-                                <input type="text" id="block-reason" placeholder="مثلاً: اليوم مكتمل بالكامل" class="w-full px-3 py-2 border rounded-lg text-sm">
+                                <input type="text" id="block-reason" placeholder="مثلاً: الصالون مزدحم جداً" class="w-full px-3 py-2 border rounded-lg text-sm">
                             </div>
-                            <button onclick="addBlockedDate()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg shadow text-sm">قفل الحجز لهذا التاريخ</button>
+                            <button onclick="addBlockedDate()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg shadow text-sm">قفل الموعد المحجوز</button>
                         </div>
                         <div class="mt-4 border-t pt-3">
-                            <h4 class="font-bold text-xs text-gray-700 mb-2">الأيام والأوقات المغلقة حالياً:</h4>
+                            <h4 class="font-bold text-xs text-gray-700 mb-2">الأوقات والأيام المغلقة حالياً:</h4>
                             <ul id="blocked-dates-list" class="space-y-2 text-xs"></ul>
                         </div>
                     </div>
@@ -375,7 +378,7 @@
             <div id="tab-staff" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-user-gear text-pink-600 ml-2"></i>تقارير أداء الموظفات والخدمة الأكثر مبيعاً</h2>
+                        <h2 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-user-gear text-pink-600 ml-2"></i>تقارير أداء الموظفات والخدمات الأكثر مبيعاً</h2>
                         <select id="staff-filter-period" onchange="renderStaffPerformance()" class="px-3 py-2 border rounded-lg text-sm font-bold">
                             <option value="all">كل الفترات</option>
                             <option value="today">اليوم</option>
@@ -388,9 +391,9 @@
                             <thead class="bg-pink-50 text-pink-900 border-b">
                                 <tr>
                                     <th class="p-3">اسم الموظفة</th>
-                                    <th class="p-3">عدد الخدمات</th>
-                                    <th class="p-3">الإيرادات</th>
-                                    <th class="p-3">التفاصيل</th>
+                                    <th class="p-3">عدد الخدمات المنفذة</th>
+                                    <th class="p-3">إجمالي الإيرادات</th>
+                                    <th class="p-3">تفاصيل الخدمات والأسعار</th>
                                 </tr>
                             </thead>
                             <tbody id="staff-performance-tbody"></tbody>
@@ -402,21 +405,21 @@
             <!-- 6. رواتب وإقامات الموظفات -->
             <div id="tab-staff-salaries" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-file-contract text-pink-600 ml-2"></i>إدارة رواتب الموظفات والإقامات</h2>
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-file-contract text-pink-600 ml-2"></i>إدارة رواتب الموظفات والإقامات والتعديل والحذف</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                         <input type="text" id="sal-name" placeholder="اسم الموظفة" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="number" id="sal-amount" placeholder="الراتب الشهري" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="month" id="sal-iqama" class="px-3 py-2 border rounded-lg text-sm">
-                        <button onclick="addStaffSalary()" class="bg-pink-600 text-white font-bold py-2 rounded-lg text-sm">إضافة موظفة</button>
+                        <button onclick="addStaffSalary()" class="bg-pink-600 text-white font-bold py-2 rounded-lg text-sm">إضافة موظفة جديدة</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-sm">
                             <thead class="bg-pink-50 text-pink-900 border-b">
                                 <tr>
                                     <th class="p-3">الموظفة</th>
-                                    <th class="p-3">الراتب</th>
+                                    <th class="p-3">الراتب الشهري</th>
                                     <th class="p-3">انتهاء الإقامة</th>
-                                    <th class="p-3 text-center">إجراء</th>
+                                    <th class="p-3 text-center">الإجراءات (تعديل / حذف)</th>
                                 </tr>
                             </thead>
                             <tbody id="staff-salaries-table-body"></tbody>
@@ -428,7 +431,7 @@
             <!-- 7. المصروفات -->
             <div id="tab-expenses" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-wallet text-pink-600 ml-2"></i>المصروفات والإيجارات</h2>
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-wallet text-pink-600 ml-2"></i>المصروفات والإيجارات والعقود</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                         <input type="text" id="exp-desc" placeholder="البيان" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="number" id="exp-amount" placeholder="المبلغ" class="px-3 py-2 border rounded-lg text-sm">
@@ -441,8 +444,8 @@
                                 <tr>
                                     <th class="p-3">البيان</th>
                                     <th class="p-3">المبلغ</th>
-                                    <th class="p-3">تاريخ العقد/الانتهائ</th>
-                                    <th class="p-3 text-center">إجراء</th>
+                                    <th class="p-3">تاريخ الانتهاء</th>
+                                    <th class="p-3 text-center">إجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="expenses-table-body"></tbody>
@@ -451,7 +454,7 @@
                 </div>
             </div>
 
-            <!-- 8. تقارير الأرباح وزر تصغير/تعديل المبيعات الخاطئة -->
+            <!-- 8. الأرباح وتصحيح المبيعات -->
             <div id="tab-profits" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border space-y-6">
                     <div class="flex flex-wrap justify-between items-center gap-4">
@@ -488,7 +491,7 @@
             <!-- 9. المخزون واستهلاك المواد -->
             <div id="tab-inventory" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-boxes-stacked text-pink-600 ml-2"></i>إدارة المخزون واستهلاك المواد العاملة</h2>
+                    <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-boxes-stacked text-pink-600 ml-2"></i>إدارة المخزون واستهلاك المواد</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <input type="text" id="inv-name" placeholder="اسم المنتج / المادة" class="px-3 py-2 border rounded-lg text-sm">
                         <input type="number" id="inv-qty" placeholder="الكمية المتاحة" class="px-3 py-2 border rounded-lg text-sm">
@@ -509,7 +512,7 @@
                 </div>
             </div>
 
-            <!-- 10. العملاء ومراسلة الواتساب المباشرة -->
+            <!-- 10. العملاء والواتساب -->
             <div id="tab-clients" class="tab-content space-y-6">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-800"><i class="fa-solid fa-users text-pink-600 ml-2"></i>قاعدة العملاء ونقاط الولاء والمراسلة المباشرة</h2>
@@ -531,19 +534,76 @@
         </main>
     </div>
 
-    <!-- نافذة مراسلة العميلة عبر الواتساب -->
+    <!-- نافذة تعديل الموظفة والراتب -->
+    <div id="edit-salary-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl">
+            <h3 class="font-bold text-lg mb-3 text-pink-600"><i class="fa-solid fa-pen-to-square ml-2"></i>تعديل راتب وبيانات الموظفة</h3>
+            <input type="hidden" id="edit-sal-index">
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">اسم الموظفة</label>
+                    <input type="text" id="edit-sal-name" class="w-full px-3 py-2 border rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">الراتب الشهري (ر.س)</label>
+                    <input type="number" id="edit-sal-amount" class="w-full px-3 py-2 border rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">انتهاء الإقامة</label>
+                    <input type="month" id="edit-sal-iqama" class="w-full px-3 py-2 border rounded-xl text-sm">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="saveEditedSalary()" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white font-bold py-2.5 rounded-xl text-sm shadow">حفظ التعديلات</button>
+                    <button onclick="closeEditSalaryModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تخصيص المظهر بالذكاء الاصطناعي -->
+    <div id="theme-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl">
+            <h3 class="font-bold text-lg mb-2 text-amber-600"><i class="fa-solid fa-wand-magic-sparkles ml-2"></i>ضبط واجهة الموقع بالذكاء الاصطناعي</h3>
+            <p class="text-xs text-gray-500 mb-4">اكتبي المناسبة التي ترغبين بها وسيقوم الذكاء الاصطناعي بضبط الثيم والعبارة تلقائياً!</p>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">وصف المناسبة للذكاء الاصطناعي</label>
+                    <textarea id="ai-theme-prompt" rows="3" class="w-full p-3 border rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-400" placeholder="اكتبي هنا مثلاً: اضبط الموقع بمناسبة اليوم الوطني السعودي..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">أو اختيار الثيم يدوياً</label>
+                    <select id="theme-select" class="w-full px-3 py-2 border rounded-xl text-sm font-bold">
+                        <option value="theme-default">الوردي الكلاسيكي (الافتراضي)</option>
+                        <option value="theme-founding">الذهبي الملكي (يوم التأسيس)</option>
+                        <option value="theme-national">الأخضر الوطني (اليوم الوطني)</option>
+                        <option value="theme-luxury">البنفسجي الفاخر</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">عبارة الترحيب العليا</label>
+                    <input type="text" id="banner-input" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="أدخل العبارة...">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="applyAiThemeSettings()" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-sm shadow">تطبيق وتحديث الواجهة</button>
+                    <button onclick="closeThemeModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة الواتساب -->
     <div id="send-wa-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl">
-            <h3 class="font-bold text-lg mb-3 text-gray-800"><i class="fa-brands fa-whatsapp text-emerald-600 ml-2"></i>إرسال رسالة واتساب للعميلة</h3>
+            <h3 class="font-bold text-lg mb-3 text-gray-800"><i class="fa-brands fa-whatsapp text-emerald-600 ml-2"></i>إرسال رسالة للعميلة</h3>
             <input type="hidden" id="wa-target-phone">
             <input type="hidden" id="wa-target-name">
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">اختر نموذج رسالة جاهز</label>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">نماذج الرسائل</label>
                     <select id="wa-template" onchange="applyWaTemplate()" class="w-full px-3 py-2 border rounded-xl text-sm bg-pink-50 font-bold">
                         <option value="custom">كتابة رسالة خاصة...</option>
                         <option value="miss_you">اشتئنالك! ليه ما زرتينا لك فترة؟</option>
-                        <option value="points">رصيد نقاط الولاء الخاصة بكِ</option>
+                        <option value="points">رصيد نقاط الولاء الخاص بكِ</option>
                     </select>
                 </div>
                 <div>
@@ -558,74 +618,41 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل / خصم المبيعات والأرباح الخاطئة -->
+    <!-- نافذة خصم الأرباح الخاطئة -->
     <div id="correct-profits-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl">
             <h3 class="font-bold text-lg mb-2 text-red-600"><i class="fa-solid fa-minus-circle ml-2"></i>خصم / تصغير المبيعات الخاطئة</h3>
-            <p class="text-xs text-gray-500 mb-4">أدخلي المبلغ الخاطئ الذي تم تسجيله وسيقوم النظام بخصمه وتصحيح الميزانية فوراً دون المساس بباقي السجلات.</p>
+            <p class="text-xs text-gray-500 mb-4">أدخلي المبلغ الخاطئ الذي تم تسجيله بالغلط وسيقوم النظام بخصمه وتصحيح الأرباح فوراً.</p>
             <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">المبلغ المراد خصمه (ر.س)</label>
-                    <input type="number" id="correct-amount" placeholder="مثلاً: 500" class="w-full px-3 py-2 border rounded-xl text-sm font-bold text-red-600">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">سبب الخصم والتعديل</label>
-                    <input type="text" id="correct-reason" placeholder="خطأ في الإدخال كاشير" class="w-full px-3 py-2 border rounded-xl text-sm">
-                </div>
+                <input type="number" id="correct-amount" placeholder="المبلغ المراد خصمه (ر.س)" class="w-full px-3 py-2 border rounded-xl text-sm font-bold text-red-600">
                 <div class="flex gap-2 pt-2">
-                    <button onclick="applyProfitCorrection()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-sm shadow">تأكيد الخصم والتصحيح</button>
+                    <button onclick="applyProfitCorrection()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-sm shadow">تأكيد الخصم</button>
                     <button onclick="closeCorrectProfitsModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- نافذة تغيير المظهر والعبارات المناسباتية (يوم التأسيس إلخ) -->
-    <div id="theme-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl">
-            <h3 class="font-bold text-lg mb-3 text-amber-600"><i class="fa-solid fa-palette ml-2"></i>تخصيص مظهر الموقع والعبارات</h3>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">اختر ثيم الألوان والواجهة</label>
-                    <select id="theme-select" class="w-full px-3 py-2 border rounded-xl text-sm font-bold">
-                        <option value="theme-default">الوردي الكلاسيكي (الافتراضي)</option>
-                        <option value="theme-founding">الذهبي / التأسيس (يوم التأسيس)</option>
-                        <option value="theme-national">الأخضر الوطني (اليوم الوطني)</option>
-                        <option value="theme-luxury">البنفسجي الفاخر</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-600 mb-1">عبارة المناسبات الترحيبية (تظهر أعلى الموقع)</label>
-                    <input type="text" id="banner-input" placeholder="مثلاً: نحتفي بـ يوم التأسيس مع خصومات خاصة!" class="w-full px-3 py-2 border rounded-xl text-sm">
-                </div>
-                <div class="flex gap-2 pt-2">
-                    <button onclick="saveThemeSettings()" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-sm shadow">تطبيق المظهر فوراً</button>
-                    <button onclick="closeThemeModal()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2.5 rounded-xl text-sm">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- باقي النوافذ الطافية: الأسئلة الشائعة، الذكاء الاصطناعي، الحجز، وطباعة الفاتورة -->
+    <!-- الأسئلة الشائعة -->
     <div id="faq-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-circle-question text-pink-600 ml-2"></i>الأسئلة الشائعة وتوضيح خدمات الصالون</h3>
+                <h3 class="font-bold text-lg text-gray-800"><i class="fa-solid fa-circle-question text-pink-600 ml-2"></i>الأسئلة الشائعة والخدمات</h3>
                 <button onclick="closeFAQModal()" class="text-gray-400 font-bold text-lg">×</button>
             </div>
             <div class="space-y-3 text-sm">
-                <div class="p-3 bg-pink-50 rounded-xl"><p class="font-bold text-pink-900">Q: هل تحتاجين معرفة استهلاك كل عاملة من المواد؟</p><p class="text-xs text-gray-600">نعم، يتيح لكِ قسم المخزون المحدث تتبع استهلاك كل مادة ومنتج بالدقة.</p></div>
-                <div class="p-3 bg-pink-50 rounded-xl"><p class="font-bold text-pink-900">Q: هل تعرفين أكثر خدمة تنباع بالصالون؟</p><p class="text-xs text-gray-600">نعم، يوضح لكِ قسم تقارير الموظفات أعلى الخدمات مبيعاً والأكثر طلباً تلقائياً.</p></div>
-                <div class="p-3 bg-pink-50 rounded-xl"><p class="font-bold text-pink-900">Q: بطاقات الإهداء ونقاط الولاء؟</p><p class="text-xs text-gray-600">يتم احتساب نقاط الولاء تلقائياً لكل عميلة مع إمكانية إرسال بطاقة رصيدها عبر الواتساب.</p></div>
+                <div class="p-3 bg-pink-50 rounded-xl"><p class="font-bold text-pink-900">Q: هل تحتاجين معرفة استهلاك كل عاملة من المواد؟</p><p class="text-xs text-gray-600">نعم، عبر قسم المخزون المحدث بالدقة.</p></div>
+                <div class="p-3 bg-pink-50 rounded-xl"><p class="font-bold text-pink-900">Q: هل تعرفين أكثر خدمة تنباع بالصالون؟</p><p class="text-xs text-gray-600">نعم، يوضحها قسم أداء الموظفات تلقائياً.</p></div>
             </div>
             <button onclick="closeFAQModal()" class="w-full bg-pink-600 text-white font-bold py-2.5 rounded-xl text-sm mt-4">إغلاق</button>
         </div>
     </div>
 
+    <!-- المدخلات الذكية بالذكاء الاصطناعي -->
     <div id="smart-ai-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl">
             <h3 class="font-bold text-lg mb-2 text-purple-700"><i class="fa-solid fa-wand-magic-sparkles ml-2"></i>المدخلات الذكية بالذكاء الاصطناعي</h3>
-            <p class="text-xs text-gray-500 mb-3">اكتبي أي نص حر للفاتورة التي نسيتِ إدخالها وسيتم تسجيلها تلقائياً سحابياً (مثال: فاتورة باسم سارة جوال 0551112233 لخدمة بديكير بـ 180 ريال مع نورا).</p>
+            <p class="text-xs text-gray-500 mb-3">اكتبي أي نص حر للفاتورة أو الأسماء وسيتم تسجيلها تلقائياً (مثال: فاتورة باسم نورة جوال 0551112233 لخدمة بديكير بمبلغ 180 مع سارة).</p>
             <textarea id="ai-input-text" rows="4" class="w-full p-3 border rounded-xl text-sm mb-4 outline-none focus:ring-2 focus:ring-purple-400"></textarea>
             <div class="flex gap-2">
                 <button onclick="processSmartAiInput()" class="flex-1 bg-purple-600 text-white font-bold py-2.5 rounded-xl text-sm shadow">تسجيل بالذكاء الاصطناعي</button>
@@ -634,7 +661,7 @@
         </div>
     </div>
 
-    <!-- نافذة الطباعة (PDF) -->
+    <!-- الطباعة PDF -->
     <div id="print-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl border-4 border-pink-500" id="print-invoice-area">
             <div class="text-center border-b pb-4 mb-4">
@@ -667,9 +694,6 @@
         let inventory = [];
         let blockedDates = [];
         let profitCorrectionDeductions = 0;
-
-        let failedAttempts = parseInt(localStorage.getItem('salon_failed_attempts')) || 0;
-        let lockoutUntil = parseInt(localStorage.getItem('salon_lockout_until')) || 0;
         let profitChartInstance = null;
 
         window.initCloudSync = function() {
@@ -684,374 +708,4 @@
             window.dbOnValue(window.dbRef(window.db, 'staffSalaries'), (snapshot) => {
                 const data = snapshot.val();
                 if(data) { staffSalaries = data; } else { window.dbSet(window.dbRef(window.db, 'staffSalaries'), staffSalaries); }
-                updateStaffDropdowns();
-                refreshAllUI();
-            });
-
-            window.dbOnValue(window.dbRef(window.db, 'invoices'), (snapshot) => {
-                const data = snapshot.val();
-                invoices = data ? Object.values(data) : [];
-                refreshAllUI();
-            });
-
-            window.dbOnValue(window.dbRef(window.db, 'bookings'), (snapshot) => {
-                const data = snapshot.val();
-                bookings = data ? Object.values(data) : [];
-                refreshAllUI();
-            });
-
-            window.dbOnValue(window.dbRef(window.db, 'blockedDates'), (snapshot) => {
-                const data = snapshot.val();
-                blockedDates = data ? Object.values(data) : [];
-                renderBlockedDates();
-            });
-
-            window.dbOnValue(window.dbRef(window.db, 'themeSettings'), (snapshot) => {
-                const data = snapshot.val();
-                if(data) {
-                    document.body.className = data.theme || 'theme-default';
-                    const banner = document.getElementById('banner-announcement');
-                    if(data.bannerText) {
-                        document.getElementById('banner-text').innerText = data.bannerText;
-                        banner.classList.remove('hidden');
-                    } else {
-                        banner.classList.add('hidden');
-                    }
-                }
-            });
-
-            window.dbOnValue(window.dbRef(window.db, 'profitCorrectionDeductions'), (snapshot) => {
-                const data = snapshot.val();
-                profitCorrectionDeductions = data || 0;
-                renderProfits();
-            });
-        };
-
-        function saveToCloud(path, data) {
-            if(window.db) window.dbSet(window.dbRef(window.db, path), data);
-        }
-
-        function pushToCloud(path, item) {
-            if(window.db) {
-                const newRef = window.dbPush(window.dbRef(window.db, path));
-                window.dbSet(newRef, item);
-            }
-        }
-
-        function refreshAllUI() {
-            updateStaffDropdowns();
-            renderAdminServices();
-            renderServicesManage();
-            renderInvoices();
-            renderBookings();
-            renderStaffSalaries();
-            renderExpenses();
-            renderInventory();
-            renderClients();
-            renderProfits();
-            renderClientPortalServices();
-        }
-
-        function getServiceFinalPrice(s) {
-            return (s.discount && s.discount > 0) ? s.price - (s.price * (s.discount / 100)) : s.price;
-        }
-
-        function getStaffNames() { return staffSalaries.map(st => st.name); }
-
-        function updateStaffDropdowns() {
-            const staffList = getStaffNames();
-            ['pos-staff', 'edit-inv-staff', 'book-staff', 'client-book-staff'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) {
-                    const currentVal = el.value;
-                    el.innerHTML = (id === 'client-book-staff' ? '<option value="أي موظفة متاحة">أي موظفة متاحة</option>' : '') + staffList.map(s => `<option value="${s}">${s}</option>`).join('');
-                    if(currentVal) el.value = currentVal;
-                }
-            });
-        }
-
-        function backToMainGate() {
-            document.getElementById('main-gate').classList.remove('hidden');
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('client-portal').classList.add('hidden');
-            document.getElementById('app-container').classList.add('hidden');
-        }
-
-        function openClientPortal() {
-            document.getElementById('main-gate').classList.add('hidden');
-            document.getElementById('client-portal').classList.remove('hidden');
-            updateStaffDropdowns();
-            renderClientPortalServices();
-        }
-
-        function openAdminLogin() {
-            document.getElementById('main-gate').classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden');
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const pass = document.getElementById('login-pass').value.trim();
-            if (pass === "nail_quality@@salon90981") {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-container').classList.remove('hidden');
-                refreshAllUI();
-            } else {
-                document.getElementById('login-error').classList.remove('hidden');
-            }
-        }
-
-        function logout() { backToMainGate(); }
-
-        // قفل أوقات الحجز الذاتي
-        function addBlockedDate() {
-            const date = document.getElementById('block-date').value;
-            const reason = document.getElementById('block-reason').value.trim() || 'الصالون مكتمل للحجوزات';
-            if(!date) return alert('الرجاء اختيار التاريخ المراد قفله');
-            pushToCloud('blockedDates', { date, reason });
-            document.getElementById('block-date').value = '';
-            alert('تم قفل الحجز لهذا التاريخ وسيتعذر الحجز فيه بالبوابة الذاتية');
-        }
-
-        function renderBlockedDates() {
-            const list = document.getElementById('blocked-dates-list');
-            if(!list) return;
-            list.innerHTML = blockedDates.map(b => `<li class="p-2 bg-red-50 text-red-700 rounded border flex justify-between"><span><strong>${b.date}:</strong> ${b.reason}</span></li>`).join('');
-        }
-
-        function submitClientBooking() {
-            const dateVal = document.getElementById('client-book-datetime').value;
-            const chosenDayStr = dateVal ? dateVal.split('T')[0] : '';
-            if(blockedDates.some(b => b.date === chosenDayStr)) {
-                return alert('عذراً! هذا اليوم مغلق ولا يقبل حجوزات إضافية بسب اكتمل الطاقة الاستيعابية.');
-            }
-
-            const clientName = document.getElementById('client-book-name').value.trim();
-            const clientPhone = document.getElementById('client-book-phone').value.trim();
-            const service = document.getElementById('client-book-service').value;
-            const staff = document.getElementById('client-book-staff').value;
-
-            if(!clientName || !clientPhone || !dateVal) return alert('يرجى تعبئة جميع بيانات الحجز');
-
-            pushToCloud('bookings', {
-                id: 'BKG-' + Date.now().toString().slice(-6),
-                client: clientName, phone: clientPhone, service: service, staff: staff, datetime: dateVal, status: 'مؤكد'
-            });
-
-            alert('تم حجز موعدكِ بنجاح! جاري توجيهكِ لمراسلة الواتساب لتأكيد الحجز.');
-            const waText = encodeURIComponent(`مرحباً صالون جودة الأظافر، أود تأكيد حجزي:\nالاسم: ${clientName}\nالجوال: ${clientPhone}\nالخدمة: ${service}\nالموعد: ${dateVal}`);
-            window.open(`https://wa.me/966544267911?text=${waText}`, '_blank');
-        }
-
-        // مراسلة العميلات عبر الواتساب
-        function openWaModal(phone, name) {
-            document.getElementById('wa-target-phone').value = phone;
-            document.getElementById('wa-target-name').value = name;
-            document.getElementById('wa-message-text').value = `مرحباً ${name} العزيزة، نورتينا في صالون جودة الأظافر!`;
-            document.getElementById('send-wa-modal').classList.remove('hidden');
-        }
-        function closeWaModal() { document.getElementById('send-wa-modal').classList.add('hidden'); }
-
-        function applyWaTemplate() {
-            const template = document.getElementById('wa-template').value;
-            const name = document.getElementById('wa-target-name').value;
-            const textEl = document.getElementById('wa-message-text');
-            if(template === 'miss_you') textEl.value = `أهلاً بكِ يا ${name}! اشتئنالك كثيراً في صالون جودة الأظافر، يسعدنا زيارتك مجدداً والاستمتاع بأفضل الخدمات!`;
-            if(template === 'points') textEl.value = `أهلاً بكِ يا ${name}! تم تحديث حسابك ونقاط الولاء الخاصة بكِ في صالون جودة الأظافر. يسعدنا استقبالكِ دائماً!`;
-        }
-
-        function sendWaNow() {
-            const phone = document.getElementById('wa-target-phone').value;
-            const text = encodeURIComponent(document.getElementById('wa-message-text').value);
-            window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${text}`, '_blank');
-            closeWaModal();
-        }
-
-        // خصم المبيعات والأرباح الخاطئة
-        function openCorrectProfitsModal() { document.getElementById('correct-profits-modal').classList.remove('hidden'); }
-        function closeCorrectProfitsModal() { document.getElementById('correct-profits-modal').classList.add('hidden'); }
-
-        function applyProfitCorrection() {
-            const amount = parseFloat(document.getElementById('correct-amount').value);
-            if(isNaN(amount) || amount <= 0) return alert('الرجاء إدخال مبلغ صحيح للخصم');
-            profitCorrectionDeductions += amount;
-            saveToCloud('profitCorrectionDeductions', profitCorrectionDeductions);
-            closeCorrectProfitsModal();
-            alert(`تم خصم ${amount} ر.س وتعديل صافي الأرباح فوراً!`);
-        }
-
-        // الثيمات والواجهات
-        function openThemeModal() { document.getElementById('theme-modal').classList.remove('hidden'); }
-        function closeThemeModal() { document.getElementById('theme-modal').classList.add('hidden'); }
-
-        function saveThemeSettings() {
-            const theme = document.getElementById('theme-select').value;
-            const bannerText = document.getElementById('banner-input').value.trim();
-            saveToCloud('themeSettings', { theme, bannerText });
-            closeThemeModal();
-        }
-
-        function renderProfits() {
-            const totalSales = invoices.filter(i => i.status === 'مدفوعة').reduce((sum, i) => sum + i.total, 0) - profitCorrectionDeductions;
-            const totalExpenses = staffSalaries.reduce((sum, s) => sum + s.salary, 0) + expenses.reduce((sum, e) => sum + e.amount, 0);
-            const net = totalSales - totalExpenses;
-
-            document.getElementById('stat-sales').innerText = totalSales.toFixed(2) + ' ر.س';
-            document.getElementById('stat-expenses').innerText = totalExpenses.toFixed(2) + ' ر.س';
-            document.getElementById('stat-net').innerText = net.toFixed(2) + ' ر.س';
-
-            const ctx = document.getElementById('profitChart')?.getContext('2d');
-            if(!ctx) return;
-            if(profitChartInstance) profitChartInstance.destroy();
-
-            profitChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['إجمالي المبيعات الصافية'],
-                    datasets: [{ label: 'الأرباح (ر.س)', data: [totalSales], borderColor: '#db2777', backgroundColor: 'rgba(219, 39, 119, 0.1)', fill: true }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        function renderClients() {
-            const tbody = document.getElementById('clients-table-body');
-            if(!tbody) return;
-            let clientsMap = {};
-            invoices.filter(i => i.status === 'مدفوعة').forEach(inv => {
-                if(!clientsMap[inv.client]) clientsMap[inv.client] = { spent: 0, phone: inv.phone || '0544267911' };
-                clientsMap[inv.client].spent += inv.total;
-            });
-
-            tbody.innerHTML = Object.keys(clientsMap).map(c => `
-                <tr class="border-b">
-                    <td class="p-3 font-medium">${c} <br><span class="text-xs text-gray-400">${clientsMap[c].phone}</span></td>
-                    <td class="p-3 font-bold text-pink-600">${clientsMap[c].spent} ر.س</td>
-                    <td class="p-3 font-bold text-purple-600">${Math.floor(clientsMap[c].spent / 50)} نقطة</td>
-                    <td class="p-3 text-center">
-                        <button onclick="openWaModal('${clientsMap[c].phone}', '${c}')" class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-lg text-xs font-bold hover:bg-emerald-200">
-                            <i class="fa-brands fa-whatsapp ml-1"></i> مراسلة
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function openFAQModal() { document.getElementById('faq-modal').classList.remove('hidden'); }
-        function closeFAQModal() { document.getElementById('faq-modal').classList.add('hidden'); }
-        function openSmartAiModal() { document.getElementById('smart-ai-modal').classList.remove('hidden'); }
-        function closeSmartAiModal() { document.getElementById('smart-ai-modal').classList.add('hidden'); }
-
-        function processSmartAiInput() {
-            const text = document.getElementById('ai-input-text').value.trim();
-            if(!text) return;
-            pushToCloud('invoices', {
-                id: 'INV-' + Date.now().toString().slice(-6),
-                date: new Date().toISOString(),
-                client: text.includes('باسم') ? text.split('باسم')[1].split('لخدمة')[0].trim() : 'عميلة ذكية',
-                phone: '0500000000', staff: 'سارة', services: [{ name: 'خدمة عامة', price: 150 }], total: 150, status: 'مدفوعة'
-            });
-            closeSmartAiModal();
-            alert('تم تسجيل الفاتورة بالذكاء الاصطناعي ومزامنتها سحابياً!');
-        }
-
-        function renderAdminServices() {
-            const grid = document.getElementById('admin-services-grid');
-            if(!grid) return;
-            grid.innerHTML = services.map(s => `
-                <div onclick="addToCart(${s.id})" class="p-3 border rounded-xl bg-pink-50/50 hover:bg-pink-50 cursor-pointer text-center">
-                    <h4 class="font-bold text-sm">${s.name}</h4>
-                    <span class="text-pink-600 font-bold text-sm">${getServiceFinalPrice(s)} ر.س</span>
-                </div>
-            `).join('');
-        }
-
-        function renderClientPortalServices() {
-            const selectEl = document.getElementById('client-book-service');
-            const listEl = document.getElementById('client-services-list');
-            if(!selectEl || !listEl) return;
-            selectEl.innerHTML = services.map(s => `<option value="${s.name}">${s.name} - ${getServiceFinalPrice(s)} ر.س</option>`).join('');
-            listEl.innerHTML = services.map(s => `<div class="p-3 bg-pink-50 border rounded-2xl flex justify-between"><span class="font-bold text-sm">${s.name}</span><span class="text-pink-600 font-bold text-sm">${getServiceFinalPrice(s)} ر.س</span></div>`).join('');
-        }
-
-        function addToCart(id) {
-            const service = services.find(s => s.id === id);
-            cart.push({ ...service, finalPrice: getServiceFinalPrice(service) });
-            updateCartUI();
-        }
-
-        function updateCartUI() {
-            const container = document.getElementById('cart-items');
-            if(!container) return;
-            let total = cart.reduce((sum, i) => sum + i.finalPrice, 0);
-            container.innerHTML = cart.map((item, idx) => `<div class="flex justify-between text-sm border-b pb-1"><span>${item.name}</span><span class="font-bold text-pink-600">${item.finalPrice} ر.س</span></div>`).join('');
-            document.getElementById('cart-total').innerText = total.toFixed(2) + ' ر.س';
-        }
-
-        function checkout() {
-            if(cart.length === 0) return alert('اختر خدمة واحدة على الأقل');
-            const newInv = {
-                id: 'INV-' + Date.now().toString().slice(-6),
-                date: new Date().toISOString(),
-                client: document.getElementById('pos-client-name').value.trim() || 'عميلة عامة',
-                phone: document.getElementById('pos-client-phone').value.trim() || '0544267911',
-                staff: document.getElementById('pos-staff').value,
-                services: cart.map(c => ({ name: c.name, price: c.finalPrice })),
-                total: cart.reduce((sum, item) => sum + item.finalPrice, 0),
-                status: 'مدفوعة'
-            };
-            pushToCloud('invoices', newInv);
-            cart = [];
-            updateCartUI();
-            alert('تم الدفع بنجاح وطبع الفاتورة سحابياً!');
-        }
-
-        function renderInvoices() {
-            const tbody = document.getElementById('invoices-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = invoices.map(i => `<tr class="border-b"><td class="p-3 font-bold text-pink-600">${i.id}</td><td class="p-3">${i.client}</td><td class="p-3">${i.staff}</td><td class="p-3 font-bold">${i.total} ر.س</td><td class="p-3"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs">${i.status}</span></td></tr>`).join('');
-        }
-
-        function renderBookings() {
-            const tbody = document.getElementById('bookings-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = bookings.map(b => `<tr class="border-b"><td class="p-3 font-bold">${b.client}</td><td class="p-3">${b.service} (${b.datetime})</td><td class="p-3">${b.staff}</td><td class="p-3"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">${b.status}</span></td></tr>`).join('');
-        }
-
-        function renderServicesManage() {
-            const tbody = document.getElementById('services-manage-tbody');
-            if(!tbody) return;
-            tbody.innerHTML = services.map(s => `<tr class="border-b"><td class="p-3 font-bold">${s.name}</td><td class="p-3">${s.price} ر.س</td><td class="p-3 text-red-600 font-bold">${s.discount}%</td><td class="p-3 font-bold text-pink-600">${getServiceFinalPrice(s)} ر.س</td><td class="p-3">${s.points || 5}</td></tr>`).join('');
-        }
-
-        function renderStaffSalaries() {
-            const tbody = document.getElementById('staff-salaries-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = staffSalaries.map(st => `<tr class="border-b"><td class="p-3 font-bold">${st.name}</td><td class="p-3">${st.salary} ر.س</td><td class="p-3 text-xs text-gray-500">${st.iqama}</td></tr>`).join('');
-        }
-
-        function renderExpenses() {
-            const tbody = document.getElementById('expenses-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = expenses.map(e => `<tr class="border-b"><td class="p-3">${e.desc}</td><td class="p-3 font-bold text-purple-600">${e.amount} ر.س</td><td class="p-3 text-xs text-gray-500">${e.expiry}</td></tr>`).join('');
-        }
-
-        function renderInventory() {
-            const tbody = document.getElementById('inventory-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = inventory.map(item => `<tr class="border-b"><td class="p-3">${item.name}</td><td class="p-3 font-bold">${item.qty}</td></tr>`).join('');
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('bg-pink-600', 'text-white', 'shadow');
-                btn.classList.add('bg-white', 'text-gray-700');
-            });
-            document.getElementById('tab-' + tabId).classList.add('active');
-            event.currentTarget.classList.add('bg-pink-600', 'text-white', 'shadow');
-            refreshAllUI();
-        }
-    </script>
-</body>
-</html>
+                update
